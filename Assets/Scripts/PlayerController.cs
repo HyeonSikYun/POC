@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     public float speed;
     public bool isPc;
+    public bool hasGun = false; // 총을 가지고 있는지 여부
     private Vector2 move, mouseLook, joystickLook;
     private Vector3 rotationTarget;
     private Animator anim;
@@ -34,6 +35,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // hasGun 상태를 애니메이터에 전달
+        anim.SetBool("gunReady", hasGun);
+
         if (isPc)
         {
             RaycastHit hit;
