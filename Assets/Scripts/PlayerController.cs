@@ -1,12 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Movement")]
     public float speed;
     public bool isPc;
-    public bool hasGun = false; // 총을 가지고 있는지 여부
+
+    [Header("Gun")]
+    public bool hasGun = false;
+    [SerializeField] private GunController gunController;
+
     private Vector2 move, mouseLook, joystickLook;
     private Vector3 rotationTarget;
     private Animator anim;
@@ -31,21 +35,30 @@ public class PlayerController : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         charCon = GetComponent<CharacterController>();
+
+        // GunController가 자식 오브젝트에 있다면 자동으로 찾기
+        if (gunController == null)
+        {
+            gunController = GetComponentInChildren<GunController>();
+        }
     }
 
     void Update()
     {
-        // hasGun 상태를 애니메이터에 전달
-        anim.SetBool("gunReady", hasGun);
+        UpdateGunState();
+        UpdateMovement();
+    }
 
+    private void UpdateGunState()
+    {
+        anim.SetBool("gunReady", hasGun);
+    }
+
+    private void UpdateMovement()
+    {
         if (isPc)
         {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(mouseLook);
-            if (Physics.Raycast(ray, out hit))
-            {
-                rotationTarget = hit.point;
-            }
+            UpdateMouseAim();
             movePlayerWithAim();
         }
         else
@@ -61,35 +74,54 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void UpdateMouseAim()
+    {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(mouseLook);
+        if (Physics.Raycast(ray, out hit))
+        {
+            rotationTarget = hit.point;
+        }
+    }
+
     public void movePlayer()
     {
         Vector3 targetVector = new Vector3(move.x, 0f, move.y);
-
-        // 카메라 Y축 회전을 기준으로 입력 방향 회전
         Vector3 movement = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0) * targetVector;
 
-        // 애니메이션 파라미터 설정
-        anim.SetFloat("MoveX", move.x);
-        anim.SetFloat("MoveY", move.y);
-        anim.SetBool("isMoving", movement.magnitude > 0.01f);
+        UpdateAnimation(move.x, move.y, movement.magnitude > 0.01f);
 
         if (movement != Vector3.zero)
+        {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(movement), 0.15f);
+        }
 
         charCon.Move(movement * speed * Time.deltaTime);
     }
 
     public void movePlayerWithAim()
     {
-        // 회전 처리
+        UpdateRotation();
+
+        Vector3 targetVector = new Vector3(move.x, 0f, move.y);
+        Vector3 movement = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0) * targetVector;
+        Vector3 localMove = transform.InverseTransformDirection(movement);
+
+        UpdateAnimation(localMove.x, localMove.z, movement.magnitude > 0.01f);
+
+        charCon.Move(movement * speed * Time.deltaTime);
+    }
+
+    private void UpdateRotation()
+    {
         if (isPc)
         {
             var lookPos = rotationTarget - transform.position;
             lookPos.y = 0f;
-            var rotation = Quaternion.LookRotation(lookPos);
-            Vector3 aimDir = new Vector3(rotationTarget.x, 0f, rotationTarget.z);
-            if (aimDir != Vector3.zero)
+
+            if (lookPos != Vector3.zero)
             {
+                var rotation = Quaternion.LookRotation(lookPos);
                 transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.15f);
             }
         }
@@ -101,20 +133,12 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(aimDir), 0.15f);
             }
         }
+    }
 
-        Vector3 targetVector = new Vector3(move.x, 0f, move.y);
-
-        // 카메라 Y축 회전을 기준으로 입력 방향 회전
-        Vector3 movement = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0) * targetVector;
-
-        // 이동 방향을 로컬 좌표로 변환 (캐릭터 기준)
-        Vector3 localMove = transform.InverseTransformDirection(movement);
-
-        // 애니메이션 파라미터 설정 (로컬 방향 기준)
-        anim.SetFloat("MoveX", localMove.x);
-        anim.SetFloat("MoveY", localMove.z);
-        anim.SetBool("isMoving", movement.magnitude > 0.01f);
-
-        charCon.Move(movement * speed * Time.deltaTime);
+    private void UpdateAnimation(float moveX, float moveY, bool isMoving)
+    {
+        anim.SetFloat("MoveX", moveX);
+        anim.SetFloat("MoveY", moveY);
+        anim.SetBool("isMoving", isMoving);
     }
 }
