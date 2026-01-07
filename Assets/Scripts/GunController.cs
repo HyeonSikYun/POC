@@ -7,7 +7,8 @@ public class GunController : MonoBehaviour
     public enum GunType { Semi, Auto };
     public GunType gunType;
     public Transform spawn;
-    public float fireRate = 0.1f; // 연사 속도 (초 단위)
+    public Transform shellPoint;
+    public float fireRate = 0.1f;
 
     private PlayerController playerController;
     private Coroutine shootCoroutine;
@@ -16,7 +17,7 @@ public class GunController : MonoBehaviour
     private void Start()
     {
         playerController = GetComponentInParent<PlayerController>();
-        if(GetComponent<LineRenderer>())
+        if (GetComponent<LineRenderer>())
         {
             tracer = GetComponent<LineRenderer>();
         }
@@ -26,7 +27,6 @@ public class GunController : MonoBehaviour
     {
         if (!playerController.hasGun) return;
 
-        // 1. 버튼을 눌렀을 때 (Started)
         if (context.started)
         {
             if (gunType == GunType.Semi)
@@ -35,13 +35,11 @@ public class GunController : MonoBehaviour
             }
             else if (gunType == GunType.Auto)
             {
-                // 이미 실행 중인 코루틴이 있다면 중지 후 새로 시작
                 if (shootCoroutine != null) StopCoroutine(shootCoroutine);
                 shootCoroutine = StartCoroutine(AutoShootRoutine());
             }
         }
 
-        // 2. 버튼에서 손을 떼었을 때 (Canceled)
         if (context.canceled)
         {
             if (shootCoroutine != null)
@@ -71,11 +69,23 @@ public class GunController : MonoBehaviour
         {
             shotDistance = hit.distance;
         }
-        if(tracer)
+
+        if (tracer)
         {
             StartCoroutine("RenderTracer", ray.direction * shotDistance);
         }
-        Debug.Log("Shot!");
+
+        // 범용 오브젝트 풀에서 탄피 가져오기
+        GameObject shellObj = PoolManager.Instance.SpawnFromPool("Shell", shellPoint.position, Quaternion.identity);
+
+        if (shellObj != null)
+        {
+            Rigidbody rb = shellObj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddForce(shellPoint.forward * Random.Range(150f, 200f) + spawn.forward * Random.Range(-10f, 10f));
+            }
+        }
     }
 
     IEnumerator RenderTracer(Vector3 hitPoint)
