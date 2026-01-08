@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 6c4b071a6b12d0145af3632f1f43cd11
+labels:
+- Dungeon
+- EasyDG
+- Model
+- Wood
+timeCreated: 1498273335
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 93859
+  packageName: Wood and Stone - Easy DG
+  packageVersion: 1.0
+  assetPath: Assets/Easy DG Assets 1 - Wood + Stone/Prefabs/Wood/Corners/Corner-Wood
+    (3).prefab
+  uploadId: 186598

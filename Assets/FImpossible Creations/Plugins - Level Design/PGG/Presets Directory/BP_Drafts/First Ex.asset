@@ -1875,7 +1875,7 @@ MonoBehaviour:
       isInput: 1
     initValueSet: 1
     initialized: 0
-    Value: {x: 0.9848078, y: 0, z: 0.17364812}
+    Value: {x: 0.64278764, y: 0, z: 0.76604444}
 --- !u!114 &-8431716738166072036
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1962,7 +1962,7 @@ MonoBehaviour:
       isInput: 1
     initValueSet: 1
     initialized: 0
-    Value: 16
+    Value: 8
 --- !u!114 &-7666716615180611336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1999,7 +1999,7 @@ MonoBehaviour:
     _E_LatestCorrectPortRect:
       serializedVersion: 2
       x: 470.3715
-      y: 369.4413
+      y: 415.4413
       width: 27
       height: 27
     PortType: 0
@@ -2028,7 +2028,7 @@ MonoBehaviour:
     _E_LatestCorrectPortRect:
       serializedVersion: 2
       x: 580.37146
-      y: 369.4413
+      y: 415.4413
       width: 27
       height: 27
     PortType: 1
@@ -2358,7 +2358,7 @@ MonoBehaviour:
     initialized: 0
     Variable:
       Name: None
-      v3Val: {x: 16, y: 0, z: 0}
+      v3Val: {x: 8, y: 0, z: 0}
       colVal: {r: 0, g: 0, b: 0, a: 0}
       str: 
       mat: {fileID: 0}
@@ -2452,7 +2452,7 @@ MonoBehaviour:
     initialized: 0
     Variable:
       Name: None
-      v3Val: {x: 800, y: 0, z: 0}
+      v3Val: {x: 400, y: 0, z: 0}
       colVal: {r: 0, g: 0, b: 0, a: 0}
       str: 
       mat: {fileID: 0}
@@ -2526,7 +2526,7 @@ MonoBehaviour:
   FieldType: 0
   DefaultFieldSetup: {fileID: 0}
   DefaultPrefab: {fileID: 0}
-  Instances: 16
+  Instances: 8
   ExposeInstanceCount: 0
   DisableCollision: 0
   AlwaysPushOut: 1
@@ -6553,9 +6553,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FIMSpace.Generating.Planning.GeneratingLogics.SG_StaticSizeRectangle
   _editorForceChanged: 0
-  Width: 15
+  Width: 5
   YLevels: 1
-  Depth: 15
+  Depth: 5
   OriginInCenter: 1
 --- !u!114 &-1706085492066547978
 MonoBehaviour:
@@ -6614,7 +6614,7 @@ MonoBehaviour:
     initialized: 0
     Variable:
       Name: None
-      v3Val: {x: 0.9848078, y: 0, z: 0.17364812}
+      v3Val: {x: 0.64278764, y: 0, z: 0.76604444}
       colVal: {r: 0, g: 0, b: 0, a: 0}
       str: 
       mat: {fileID: 0}
@@ -6708,7 +6708,7 @@ MonoBehaviour:
     initialized: 0
     Variable:
       Name: None
-      v3Val: {x: 3.9392312, y: 0, z: 0.6945925}
+      v3Val: {x: 2.5711505, y: 0, z: 3.0641778}
       colVal: {r: 0, g: 0, b: 0, a: 0}
       str: 
       mat: {fileID: 0}
@@ -10121,8 +10121,8 @@ MonoBehaviour:
     ParentNode: {fileID: 5165550522437639514}
     _E_LatestCorrectPortRect:
       serializedVersion: 2
-      x: 560.6819
-      y: 489.36606
+      x: 571.6819
+      y: 516.3661
       width: 27
       height: 27
     PortType: 1
@@ -10144,8 +10144,8 @@ MonoBehaviour:
     ParentNode: {fileID: 5165550522437639514}
     _E_LatestCorrectPortRect:
       serializedVersion: 2
-      x: 560.6819
-      y: 489.36606
+      x: 571.6819
+      y: 536.3661
       width: 27
       height: 27
     PortType: 1
@@ -10178,7 +10178,7 @@ MonoBehaviour:
     _E_LatestCorrectPortRect:
       serializedVersion: 2
       x: 469.6819
-      y: 489.36606
+      y: 555.3661
       width: 27
       height: 27
     PortType: 0
@@ -11197,7 +11197,7 @@ MonoBehaviour:
     _E_LatestCorrectPortRect:
       serializedVersion: 2
       x: 622.8425
-      y: 916.52625
+      y: 942.52625
       width: 27
       height: 27
     PortType: 0
@@ -11220,7 +11220,7 @@ MonoBehaviour:
     _E_LatestCorrectPortRect:
       serializedVersion: 2
       x: 622.8425
-      y: 916.52625
+      y: 962.52625
       width: 27
       height: 27
     PortType: 0
@@ -11243,7 +11243,7 @@ MonoBehaviour:
     _E_LatestCorrectPortRect:
       serializedVersion: 2
       x: 749.8425
-      y: 916.52625
+      y: 983.52625
       width: 27
       height: 27
     PortType: 1

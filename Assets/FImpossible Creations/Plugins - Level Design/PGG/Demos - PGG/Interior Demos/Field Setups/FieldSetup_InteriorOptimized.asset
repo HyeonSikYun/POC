@@ -129,10 +129,10 @@ MonoBehaviour:
     _refMesh: {fileID: -2943837084719644361, guid: 4a8a3f1a2001b7e44a5e2a17582809ad, type: 3}
     _refCol: {fileID: 0}
   - Prefab: {fileID: 6644928218847455125, guid: e1a5009453f6cea40b98a2d18dc23ca1, type: 3}
-    MainCollider: {fileID: 0}
+    MainCollider: {fileID: 7488134749118163201, guid: e1a5009453f6cea40b98a2d18dc23ca1, type: 3}
     subID: 0
     _refMesh: {fileID: -348173146188741064, guid: f196cbb69e357dc4982af9da481c9452, type: 3}
-    _refCol: {fileID: 0}
+    _refCol: {fileID: 7488134749118163201, guid: e1a5009453f6cea40b98a2d18dc23ca1, type: 3}
   - Prefab: {fileID: 563180348275509939, guid: aaf6093e0c02d894aac9cd4f820426cd, type: 3}
     MainCollider: {fileID: 0}
     subID: 0
@@ -160,9 +160,9 @@ MonoBehaviour:
     DontInheritRotations: 0
     SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
-    UseGlobalRules: 0
-    UseParentPackageRules: 0
-    _wasEnablingGlobalRules: 0
+    UseGlobalRules: 1
+    UseParentPackageRules: 1
+    _wasEnablingGlobalRules: 1
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
@@ -182,9 +182,9 @@ MonoBehaviour:
     DontInheritRotations: 0
     SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
-    UseGlobalRules: 0
-    UseParentPackageRules: 0
-    _wasEnablingGlobalRules: 0
+    UseGlobalRules: 1
+    UseParentPackageRules: 1
+    _wasEnablingGlobalRules: 1
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
@@ -204,9 +204,9 @@ MonoBehaviour:
     DontInheritRotations: 0
     SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
-    UseGlobalRules: 0
-    UseParentPackageRules: 0
-    _wasEnablingGlobalRules: 0
+    UseGlobalRules: 1
+    UseParentPackageRules: 1
+    _wasEnablingGlobalRules: 1
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
@@ -226,9 +226,9 @@ MonoBehaviour:
     DontInheritRotations: 0
     SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
-    UseGlobalRules: 0
-    UseParentPackageRules: 0
-    _wasEnablingGlobalRules: 0
+    UseGlobalRules: 1
+    UseParentPackageRules: 1
+    _wasEnablingGlobalRules: 1
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
@@ -239,8 +239,8 @@ MonoBehaviour:
   _editor_drawSpawners: 1
   _editor_drawGlobalRules: 0
   _editor_drawModPackRules: 0
-  _editor_shareSelected: 3
-  ParentPreset: {fileID: 11400000}
+  _editor_shareSelected: 2
+  ParentPreset: {fileID: 0}
   ParentPack: {fileID: 5192682264000405028}
 --- !u!114 &-1270098888529892867
 MonoBehaviour:
@@ -463,9 +463,9 @@ MonoBehaviour:
     DontInheritRotations: 0
     SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
-    UseGlobalRules: 0
-    UseParentPackageRules: 0
-    _wasEnablingGlobalRules: 0
+    UseGlobalRules: 1
+    UseParentPackageRules: 1
+    _wasEnablingGlobalRules: 1
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
@@ -524,9 +524,9 @@ MonoBehaviour:
     DontInheritRotations: 0
     SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
-    UseGlobalRules: 0
-    UseParentPackageRules: 0
-    _wasEnablingGlobalRules: 0
+    UseGlobalRules: 1
+    UseParentPackageRules: 1
+    _wasEnablingGlobalRules: 1
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
@@ -538,7 +538,7 @@ MonoBehaviour:
   _editor_drawGlobalRules: 0
   _editor_drawModPackRules: 0
   _editor_shareSelected: 0
-  ParentPreset: {fileID: 11400000}
+  ParentPreset: {fileID: 0}
   ParentPack: {fileID: 5192682264000405028}
 --- !u!114 &5192682264000405028
 MonoBehaviour:
@@ -606,7 +606,7 @@ MonoBehaviour:
   Enabled: 1
   Ignore: 0
   _editor_drawRule: 1
-  CellAllow: 1
+  CellAllow: 0
   AllConditionsMet: 1
   replaceOnTag: Wall
   CheckMode: 0

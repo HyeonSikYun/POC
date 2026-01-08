@@ -10,33 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b7d2eb85d19a4da49a85b81a1cb59, type: 3}
-  m_Name: SR_RemoveSpawn-[Stairs Support]
+  m_Name: 'SR_RemoveSpawn-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 0
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 0}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -48,6 +29,16 @@ MonoBehaviour:
     RemoveWhen: 1
     UseSelfRotation: 2
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-9096597624309721148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,31 +49,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c360632d4510a074baef619f3210b541, type: 3}
-  m_Name: SR_CellNeightbours-[Floors]
+  m_Name: 'SR_CellNeightbours-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: OutDiagonals
-    SpawnerTag: 
-    StampPrefabID: 3
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: -6264359389069743112}
-    - {fileID: -9096597624309721148}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   CheckedCellsMustBe: 2
@@ -101,6 +75,8 @@ MonoBehaviour:
     ld: 0
     d: 0
     rd: 1
+    UseAdvancedSetup: 0
+    AdvancedSetup: []
   quartRotor:
     q1: 1
     q2: 1
@@ -119,6 +95,16 @@ MonoBehaviour:
   GetNeightbourPos: 0
   GetNeightbourRot: 0
   GetNeightbourScale: 0
+  UseRestrictedDir: 0
+  CustomCellsCheck: 0
+  FullRotGet: 0
+  Check3DAngles: 0
+  RotationSpaceDisplay: 0
+  CheckPosit90: 1
+  CheckNeg90: 1
+  OverridePitchRotation: 1
+  InitPitchRotation: 0
+  NotCheckDefaultPitch: 0
 --- !u!114 &-9059873901678383793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,31 +115,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9327e64f60ac33a4fa5e7efebb9176fb, type: 3}
-  m_Name: SR_GetCoords-[Floors]
+  m_Name: 'SR_GetCoords-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   GetFromTagged: 
@@ -172,7 +141,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -187,42 +158,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 893e62798003cfc4ba6de159ef003bf2, type: 3}
-  m_Name: SR_WallPlacer-[Wall]
+  m_Name: 'SR_WallPlacer-[Wall]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 0
-    Name: CurveIn
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: -8960929140736473275}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Module: 1
   CornerMode: 0
   CornerMode45: 0
   SpawnOnEachSide: 0
+  UseYLevel: -1
   AutoRemoveOverlaps: 1
+  SetGhosts: 0
+  OverlapDetectMode: 0
+  Version2: 0
+  ScaleBounds: 0.99
   Padding: 0
   YawOffset: 0
   DirectOffset: {x: 0, y: 0, z: -1}
   OffsetMode: 0
   IgnoreOtherMods: 1
+  DontCheckAdditionals: 0
 --- !u!114 &-8671974482538731010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,30 +194,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3401e8bda3cc91343b11bed2506f2b74, type: 3}
-  m_Name: SR_IfCellContainsTag-[Tiled Walls]
+  m_Name: 'SR_IfCellContainsTag-[Tiled Walls]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 1
   Global: 1
   Enabled: 0
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Wall
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: -5822670628294449985}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Tag: Wall
@@ -264,6 +209,16 @@ MonoBehaviour:
   UseRotationsCheck: 0
   OnlyWithSameDirection: 0
   CompareOffsetsAngle: 181
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 1
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-8553892138666748546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,7 +229,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f71187150bfd8104ab4d297e14b9bd0b, type: 3}
-  m_Name: SR_TransformOffsets-[Floors]
+  m_Name: 'SR_TransformOffsets-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
@@ -317,33 +272,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b7d2eb85d19a4da49a85b81a1cb59, type: 3}
-  m_Name: SR_RemoveSpawn-[Stairs Support]
+  m_Name: 'SR_RemoveSpawn-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 0}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -355,6 +291,16 @@ MonoBehaviour:
     RemoveWhen: 1
     UseSelfRotation: 2
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-7918171731653049074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,31 +311,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c360632d4510a074baef619f3210b541, type: 3}
-  m_Name: SR_CellNeightbours-[Floors]
+  m_Name: 'SR_CellNeightbours-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Rest
-    SpawnerTag: 
-    StampPrefabID: 2
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 1419856068444147240}
-    - {fileID: -7918171731653049074}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   CheckedCellsMustBe: 2
@@ -408,6 +337,8 @@ MonoBehaviour:
     ld: 0
     d: 0
     rd: 0
+    UseAdvancedSetup: 0
+    AdvancedSetup: []
   quartRotor:
     q1: 1
     q2: 1
@@ -426,6 +357,16 @@ MonoBehaviour:
   GetNeightbourPos: 0
   GetNeightbourRot: 0
   GetNeightbourScale: 0
+  UseRestrictedDir: 0
+  CustomCellsCheck: 0
+  FullRotGet: 0
+  Check3DAngles: 0
+  RotationSpaceDisplay: 0
+  CheckPosit90: 1
+  CheckNeg90: 1
+  OverridePitchRotation: 1
+  InitPitchRotation: 0
+  NotCheckDefaultPitch: 0
 --- !u!114 &-7883136402031826324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436,31 +377,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4e1ad890abd17544af7cb11a6e3643e, type: 3}
-  m_Name: SR_SubSpawner-[Floors]
+  m_Name: 'SR_SubSpawner-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   InheritCoords: 0
@@ -474,13 +398,19 @@ MonoBehaviour:
     - {fileID: 8793549242458326408}
     Mode: 0
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 0
     Repeat: 0
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 0
     DisplayPreviewGUI: 0
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
 --- !u!114 &-7244836885943393666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -491,35 +421,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5015748d498a9d94abd4c0c69a786f28, type: 3}
-  m_Name: SR_DirectOffset-[FieldMod_ExampleDoorHole]
+  m_Name: 'SR_DirectOffset-[FieldMod_ExampleDoorHole]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: WallHoleLarge
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -2500415021293134452}
-    Rules:
-    - {fileID: -3763152698794514097}
-    - {fileID: -7244836885943393666}
-    - {fileID: -1221397455110043087}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
-  Override: 0
+  Append: 0
   Randomize: 0
   GetOffsetFromTagged: 
   CheckMode: 0
@@ -542,17 +454,17 @@ MonoBehaviour:
   Enabled: 1
   ModTag: Floor
   DrawMeshAndBox: 0
+  Combine: 0
   RunEmittersIfContains: 0
   DrawSetupFor: 0
   OStamp: {fileID: 0}
   DrawObjectStamps: 1
   OMultiStamp: {fileID: 0}
   PrefabsList:
-  - Prefab: {fileID: 1930678246843336313, guid: e3a81bd95d7f4c747a7e845a94da283b,
-      type: 3}
+  - Prefab: {fileID: 1930678246843336313, guid: e3a81bd95d7f4c747a7e845a94da283b, type: 3}
+    MainCollider: {fileID: 0}
     subID: 0
-    _refMesh: {fileID: 4012410667830348366, guid: b04adc8f586d6284ca16d55634358ff7,
-      type: 3}
+    _refMesh: {fileID: 4012410667830348366, guid: b04adc8f586d6284ca16d55634358ff7, type: 3}
     _refCol: {fileID: 0}
   DrawMultiObjectStamps: 1
   Spawners:
@@ -565,16 +477,25 @@ MonoBehaviour:
     - {fileID: 4827424703780861843}
     Mode: 3
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 1
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
+  SubSpawners: []
   VariantOf: {fileID: 0}
   _editor_drawStamp: 1
   _editor_drawSpawners: 1
+  _editor_drawGlobalRules: 0
+  _editor_drawModPackRules: 0
   _editor_shareSelected: 0
   ParentPreset: {fileID: 11400000}
   ParentPack: {fileID: 6324579637144589045}
@@ -588,32 +509,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9327e64f60ac33a4fa5e7efebb9176fb, type: 3}
-  m_Name: SR_GetCoords-[Stairs Support]
+  m_Name: 'SR_GetCoords-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: StairsBase
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 1329701911354466189}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   GetFromTagged: Floor
@@ -632,7 +535,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -647,33 +552,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b7d2eb85d19a4da49a85b81a1cb59, type: 3}
-  m_Name: SR_RemoveSpawn-[Stairs Support]
+  m_Name: 'SR_RemoveSpawn-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 0
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 4056245372219014767}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -685,6 +571,16 @@ MonoBehaviour:
     RemoveWhen: 0
     UseSelfRotation: 1
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-6861215506414782197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -702,23 +598,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 0
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: OutDCorner
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: -1464953855566879800}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -730,6 +610,16 @@ MonoBehaviour:
     RemoveWhen: 0
     UseSelfRotation: 1
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-6726930609506613636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -740,31 +630,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3401e8bda3cc91343b11bed2506f2b74, type: 3}
-  m_Name: SR_IfCellContainsTag-[Stairs Support]
+  m_Name: 'SR_IfCellContainsTag-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Ceiling
-    SpawnerTag: 
-    StampPrefabID: 2
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -6726930609506613636}
-    - {fileID: 4222651533796459175}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Tag: Stairs
@@ -772,6 +645,16 @@ MonoBehaviour:
   UseRotationsCheck: 0
   OnlyWithSameDirection: 0
   CompareOffsetsAngle: 181
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 1
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-6269401718106110301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -789,23 +672,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Corners
-    SpawnerTag: 
-    StampPrefabID: 2
-    Parent: {fileID: -4131372485017240469}
-    Rules:
-    - {fileID: -6269401718106110301}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Mode: 2
@@ -815,6 +682,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &-6265783845628976838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -825,31 +700,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a80a4eda1baa814cb0a342f0acfc697, type: 3}
-  m_Name: SR_LimitSpawnCount-[Floors]
+  m_Name: 'SR_LimitSpawnCount-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Count:
@@ -857,6 +715,8 @@ MonoBehaviour:
     Max: 1
   CountMulVariable:
     name: 
+    requiredType: 1
+    Tooltip: 
   InheritFromCellsCount: 0
   RoomCellsDivBy:
     Min: 4
@@ -871,31 +731,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3401e8bda3cc91343b11bed2506f2b74, type: 3}
-  m_Name: SR_CellHaveTag-[Floors]
+  m_Name: 'SR_CellHaveTag-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 1
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: OutDiagonals
-    SpawnerTag: 
-    StampPrefabID: 3
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: -6264359389069743112}
-    - {fileID: -9096597624309721148}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Tag: Floor
@@ -903,6 +746,16 @@ MonoBehaviour:
   UseRotationsCheck: 0
   OnlyWithSameDirection: 0
   CompareOffsetsAngle: 181
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 1
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-6205476578213056168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -920,23 +773,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Sides
-    SpawnerTag: 
-    StampPrefabID: 2
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: -6205476578213056168}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Mode: 2
@@ -946,6 +783,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &-5822670628294449985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -956,42 +801,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 893e62798003cfc4ba6de159ef003bf2, type: 3}
-  m_Name: SR_WallPlacer-[Wall]
+  m_Name: 'SR_WallPlacer-[Wall]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Wall
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: -5822670628294449985}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Module: 0
   CornerMode: 0
   CornerMode45: 0
   SpawnOnEachSide: 1
+  UseYLevel: -1
   AutoRemoveOverlaps: 1
+  SetGhosts: 0
+  OverlapDetectMode: 0
+  Version2: 0
+  ScaleBounds: 0.99
   Padding: 0
   YawOffset: 0
   DirectOffset: {x: 0, y: 0, z: -1}
   OffsetMode: 0
   IgnoreOtherMods: 1
+  DontCheckAdditionals: 0
 --- !u!114 &-5645092655504692312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1002,32 +837,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c360632d4510a074baef619f3210b541, type: 3}
-  m_Name: SR_CellNeightbours-[Stairs Support]
+  m_Name: 'SR_CellNeightbours-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Side WallL
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: 2128192433342841958}
-    - {fileID: -5645092655504692312}
-    - {fileID: -1100599155525072650}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   CheckedCellsMustBe: 2
@@ -1046,6 +863,8 @@ MonoBehaviour:
     ld: 0
     d: 0
     rd: 0
+    UseAdvancedSetup: 0
+    AdvancedSetup: []
   quartRotor:
     q1: 1
     q2: 0
@@ -1064,6 +883,16 @@ MonoBehaviour:
   GetNeightbourPos: 0
   GetNeightbourRot: 0
   GetNeightbourScale: 0
+  UseRestrictedDir: 0
+  CustomCellsCheck: 0
+  FullRotGet: 0
+  Check3DAngles: 0
+  RotationSpaceDisplay: 0
+  CheckPosit90: 1
+  CheckNeg90: 1
+  OverridePitchRotation: 1
+  InitPitchRotation: 0
+  NotCheckDefaultPitch: 0
 --- !u!114 &-5105580585444892951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1074,31 +903,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9327e64f60ac33a4fa5e7efebb9176fb, type: 3}
-  m_Name: SR_GetCoords-[Floors]
+  m_Name: 'SR_GetCoords-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   GetFromTagged: 
@@ -1117,7 +929,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -1132,30 +946,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9327e64f60ac33a4fa5e7efebb9176fb, type: 3}
-  m_Name: SR_GetCoords-[Stairs Support]
+  m_Name: 'SR_GetCoords-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: 
-    SpawnerTag: 
-    StampPrefabID: 2
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -5032345683850072535}
-    Mode: 0
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 0
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 0
-    DisplayPreviewGUI: 0
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   GetFromTagged: Stairs
@@ -1174,7 +972,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -1189,30 +989,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3630e2a4943f49b40967499fb48c07ee, type: 3}
-  m_Name: SR_FloorPlacer-[Ceiling]
+  m_Name: 'SR_FloorPlacer-[Ceiling]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Base
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -4131372485017240469}
-    Rules:
-    - {fileID: -4615814133203086346}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Mode: 0
@@ -1222,6 +1006,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &-4131372485017240469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1238,17 +1030,17 @@ MonoBehaviour:
   Enabled: 1
   ModTag: Ceil
   DrawMeshAndBox: 0
+  Combine: 0
   RunEmittersIfContains: 0
   DrawSetupFor: 0
   OStamp: {fileID: 0}
   DrawObjectStamps: 1
   OMultiStamp: {fileID: 0}
   PrefabsList:
-  - Prefab: {fileID: 7749268601701201604, guid: ce1b5a81a97ff3644a3ff33d2961d76f,
-      type: 3}
+  - Prefab: {fileID: 7749268601701201604, guid: ce1b5a81a97ff3644a3ff33d2961d76f, type: 3}
+    MainCollider: {fileID: 0}
     subID: 0
-    _refMesh: {fileID: 1051399223010813255, guid: df21de69a4d8ea542bf154bf4985cdba,
-      type: 3}
+    _refMesh: {fileID: 1051399223010813255, guid: df21de69a4d8ea542bf154bf4985cdba, type: 3}
     _refCol: {fileID: 0}
   DrawMultiObjectStamps: 1
   Spawners:
@@ -1261,16 +1053,25 @@ MonoBehaviour:
     - {fileID: -4615814133203086346}
     Mode: 3
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 1
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
+  SubSpawners: []
   VariantOf: {fileID: 0}
   _editor_drawStamp: 1
   _editor_drawSpawners: 1
+  _editor_drawGlobalRules: 0
+  _editor_drawModPackRules: 0
   _editor_shareSelected: 0
   ParentPreset: {fileID: 11400000}
   ParentPack: {fileID: 6324579637144589045}
@@ -1284,32 +1085,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c360632d4510a074baef619f3210b541, type: 3}
-  m_Name: SR_CellNeightbours-[FieldMod_Root]
+  m_Name: 'SR_CellNeightbours-[FieldMod_Root]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: WallHoleLarge
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -2500415021293134452}
-    Rules:
-    - {fileID: -3763152698794514097}
-    - {fileID: -7244836885943393666}
-    - {fileID: -1221397455110043087}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   CheckedCellsMustBe: 2
@@ -1328,6 +1111,8 @@ MonoBehaviour:
     ld: 0
     d: 0
     rd: 0
+    UseAdvancedSetup: 0
+    AdvancedSetup: []
   quartRotor:
     q1: 1
     q2: 1
@@ -1346,6 +1131,16 @@ MonoBehaviour:
   GetNeightbourPos: 0
   GetNeightbourRot: 0
   GetNeightbourScale: 0
+  UseRestrictedDir: 0
+  CustomCellsCheck: 0
+  FullRotGet: 0
+  Check3DAngles: 0
+  RotationSpaceDisplay: 0
+  CheckPosit90: 1
+  CheckNeg90: 1
+  OverridePitchRotation: 1
+  InitPitchRotation: 0
+  NotCheckDefaultPitch: 0
 --- !u!114 &-3503317135852278202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1356,33 +1151,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d1e4d5aac49ca0345b5c3ac36491d897, type: 3}
-  m_Name: SR_WorldOffset-[Stairs Support]
+  m_Name: 'SR_WorldOffset-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 4056245372219014767}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   OverrideOffset: 1
@@ -1392,6 +1168,7 @@ MonoBehaviour:
   WorldOffset: {x: 0, y: -2, z: 0}
   OffsetMode: 0
   RandomWorldOffset: {x: 0, y: 0, z: 0}
+  RandomRange: {x: 0, y: 1}
 --- !u!114 &-3440605482332267101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1409,25 +1186,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Side WallR
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3440605482332267101}
-    - {fileID: 625102545485424846}
-    - {fileID: -555731757520276710}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Tag: Stairs
@@ -1435,6 +1194,16 @@ MonoBehaviour:
   UseRotationsCheck: 0
   OnlyWithSameDirection: 0
   CompareOffsetsAngle: 181
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 1
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-3422512150578586879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1445,33 +1214,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c360632d4510a074baef619f3210b541, type: 3}
-  m_Name: SR_CellNeightbours-[Stairs Support]
+  m_Name: 'SR_CellNeightbours-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 4056245372219014767}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   CheckedCellsMustBe: 1
@@ -1490,6 +1240,8 @@ MonoBehaviour:
     ld: 0
     d: 0
     rd: 0
+    UseAdvancedSetup: 0
+    AdvancedSetup: []
   quartRotor:
     q1: 1
     q2: 1
@@ -1508,6 +1260,16 @@ MonoBehaviour:
   GetNeightbourPos: 0
   GetNeightbourRot: 0
   GetNeightbourScale: 0
+  UseRestrictedDir: 0
+  CustomCellsCheck: 0
+  FullRotGet: 0
+  Check3DAngles: 0
+  RotationSpaceDisplay: 0
+  CheckPosit90: 1
+  CheckNeg90: 1
+  OverridePitchRotation: 1
+  InitPitchRotation: 0
+  NotCheckDefaultPitch: 0
 --- !u!114 &-3347841590119898150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1518,37 +1280,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d947b1a24efb7d643880e64d2f85e3ea, type: 3}
-  m_Name: SR_PreventModsSpawns-[Stairs Support]
+  m_Name: 'SR_PreventModsSpawns-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 4056245372219014767}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   PreventSpawnMod: {fileID: 0}
   PreventSpawnPack: {fileID: 0}
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 0
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-3145551090116012839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1559,30 +1312,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3401e8bda3cc91343b11bed2506f2b74, type: 3}
-  m_Name: SR_CellHaveTag-[Floors]
+  m_Name: 'SR_CellHaveTag-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 0
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: OutDCorner
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: -1464953855566879800}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Tag: 45
@@ -1590,6 +1327,16 @@ MonoBehaviour:
   UseRotationsCheck: 0
   OnlyWithSameDirection: 0
   CompareOffsetsAngle: 181
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 1
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-2593402822472489041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1600,31 +1347,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3401e8bda3cc91343b11bed2506f2b74, type: 3}
-  m_Name: SR_IfCellContainsTag-[Ceiling]
+  m_Name: 'SR_IfCellContainsTag-[Ceiling]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 1
   Global: 1
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Base
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -4131372485017240469}
-    Rules:
-    - {fileID: -4615814133203086346}
-    - {fileID: -2593402822472489041}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Tag: Ceil
@@ -1632,6 +1362,16 @@ MonoBehaviour:
   UseRotationsCheck: 0
   OnlyWithSameDirection: 0
   CompareOffsetsAngle: 181
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 1
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-2500415021293134452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1648,17 +1388,17 @@ MonoBehaviour:
   Enabled: 1
   ModTag: Hole
   DrawMeshAndBox: 0
+  Combine: 0
   RunEmittersIfContains: 0
   DrawSetupFor: 0
   OStamp: {fileID: 0}
   DrawObjectStamps: 1
   OMultiStamp: {fileID: 0}
   PrefabsList:
-  - Prefab: {fileID: 7049291215018863970, guid: b647824c069ea3f41a25b01811e0f79e,
-      type: 3}
+  - Prefab: {fileID: 7049291215018863970, guid: b647824c069ea3f41a25b01811e0f79e, type: 3}
+    MainCollider: {fileID: 0}
     subID: 0
-    _refMesh: {fileID: 8568771882487935041, guid: 12bdb1582ddc2bd4d9248e99494e1b8e,
-      type: 3}
+    _refMesh: {fileID: 8568771882487935041, guid: 12bdb1582ddc2bd4d9248e99494e1b8e, type: 3}
     _refCol: {fileID: 0}
   DrawMultiObjectStamps: 1
   Spawners:
@@ -1673,16 +1413,25 @@ MonoBehaviour:
     - {fileID: -1221397455110043087}
     Mode: 3
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 0
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
+  SubSpawners: []
   VariantOf: {fileID: 0}
   _editor_drawStamp: 1
   _editor_drawSpawners: 1
+  _editor_drawGlobalRules: 0
+  _editor_drawModPackRules: 0
   _editor_shareSelected: 0
   ParentPreset: {fileID: 0}
   ParentPack: {fileID: 6324579637144589045}
@@ -1702,6 +1451,7 @@ MonoBehaviour:
   Enabled: 1
   ModTag: Hole
   DrawMeshAndBox: 0
+  Combine: 0
   RunEmittersIfContains: 0
   DrawSetupFor: 0
   OStamp: {fileID: 0}
@@ -1720,16 +1470,25 @@ MonoBehaviour:
     - {fileID: -643779873604668597}
     Mode: 0
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 0
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
+  SubSpawners: []
   VariantOf: {fileID: 0}
   _editor_drawStamp: 1
   _editor_drawSpawners: 1
+  _editor_drawGlobalRules: 0
+  _editor_drawModPackRules: 0
   _editor_shareSelected: 0
   ParentPreset: {fileID: 0}
   ParentPack: {fileID: 6324579637144589045}
@@ -1750,23 +1509,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Sides
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: -4131372485017240469}
-    Rules:
-    - {fileID: -2405924949257580454}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Mode: 2
@@ -1776,6 +1519,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &-2144658091612604144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1786,42 +1537,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 893e62798003cfc4ba6de159ef003bf2, type: 3}
-  m_Name: SR_WallPlacer-[Wall]
+  m_Name: 'SR_WallPlacer-[Wall]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: ConnIn
-    SpawnerTag: Conn
-    StampPrefabID: 6
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: -2144658091612604144}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Module: 3
   CornerMode: 0
   CornerMode45: 0
   SpawnOnEachSide: 1
+  UseYLevel: -1
   AutoRemoveOverlaps: 1
+  SetGhosts: 0
+  OverlapDetectMode: 0
+  Version2: 0
+  ScaleBounds: 0.99
   Padding: 0
   YawOffset: 0
   DirectOffset: {x: -0.95, y: 0, z: -0.95}
   OffsetMode: 0
   IgnoreOtherMods: 1
+  DontCheckAdditionals: 0
 --- !u!114 &-1464953855566879800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1839,23 +1580,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: OutDCorner
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: -1464953855566879800}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Mode: 2
@@ -1865,6 +1590,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &-1221397455110043087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1875,32 +1608,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b7d2eb85d19a4da49a85b81a1cb59, type: 3}
-  m_Name: SR_RemoveSpawn-[FieldMod_Root]
+  m_Name: 'SR_RemoveSpawn-[FieldMod_Root]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: WallHoleLarge
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -2500415021293134452}
-    Rules:
-    - {fileID: -3763152698794514097}
-    - {fileID: -7244836885943393666}
-    - {fileID: -1221397455110043087}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -1912,6 +1627,16 @@ MonoBehaviour:
     RemoveWhen: 3
     UseSelfRotation: 2
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &-1175869393523808926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1929,23 +1654,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: FinalFill
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -4131372485017240469}
-    Rules:
-    - {fileID: -1175869393523808926}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Mode: 0
@@ -1955,6 +1664,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &-1100599155525072650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1965,32 +1682,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9327e64f60ac33a4fa5e7efebb9176fb, type: 3}
-  m_Name: SR_GetCoords-[Stairs Support]
+  m_Name: 'SR_GetCoords-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Side WallL
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: 2128192433342841958}
-    - {fileID: -5645092655504692312}
-    - {fileID: -1100599155525072650}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   GetFromTagged: Stairs
@@ -2009,7 +1708,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -2024,42 +1725,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 893e62798003cfc4ba6de159ef003bf2, type: 3}
-  m_Name: SR_WallPlacer-[Wall]
+  m_Name: 'SR_WallPlacer-[Wall]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: 45In
-    SpawnerTag: 45
-    StampPrefabID: 3
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: -811237903197673552}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Module: 2
   CornerMode: 0
   CornerMode45: 1
   SpawnOnEachSide: 0
+  UseYLevel: -1
   AutoRemoveOverlaps: 1
+  SetGhosts: 0
+  OverlapDetectMode: 0
+  Version2: 0
+  ScaleBounds: 0.99
   Padding: 2
   YawOffset: 45
   DirectOffset: {x: 0, y: 0, z: 0}
   OffsetMode: 0
   IgnoreOtherMods: 1
+  DontCheckAdditionals: 0
 --- !u!114 &-708422090952016082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2077,24 +1768,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Mirrored
-    SpawnerTag: 
-    StampPrefabID: 4
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 6088724834996191648}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Mode: 2
@@ -2104,6 +1778,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &-643779873604668597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2114,31 +1796,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d672d55056db764fa67b13fdb1cded5, type: 3}
-  m_Name: SR_RemoveInDirection-[FieldMod_Root]
+  m_Name: 'SR_RemoveInDirection-[FieldMod_Root]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Wall Remover
-    SpawnerTag: 
-    StampPrefabID: -2
-    Parent: {fileID: -2461712295834115319}
-    Rules:
-    - {fileID: 630083136306199679}
-    - {fileID: -643779873604668597}
-    Mode: 0
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   MustHaveTag: Wall
@@ -2165,25 +1830,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Side WallR
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3440605482332267101}
-    - {fileID: 625102545485424846}
-    - {fileID: -555731757520276710}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   GetFromTagged: Stairs
@@ -2202,7 +1849,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -2224,35 +1873,25 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 0
-    Name: CurveOut
-    SpawnerTag: 
-    StampPrefabID: 2
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: -551836769510744354}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Module: 1
   CornerMode: 1
   CornerMode45: 0
   SpawnOnEachSide: 1
+  UseYLevel: -1
   AutoRemoveOverlaps: 1
+  SetGhosts: 0
+  OverlapDetectMode: 0
+  Version2: 0
+  ScaleBounds: 0.99
   Padding: 0
   YawOffset: 0
   DirectOffset: {x: 0, y: 0, z: -1}
   OffsetMode: 0
   IgnoreOtherMods: 1
+  DontCheckAdditionals: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2277,55 +1916,83 @@ MonoBehaviour:
   Variables:
   - Name: Spawn Propability Multiplier
     v3Val: {x: 1, y: 0, z: 0}
+    colVal: {r: 0, g: 0, b: 0, a: 0}
     str: 
     mat: {fileID: 0}
     gameObj: {fileID: 0}
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    unityObj: {fileID: 0}
     helper: {x: 0, y: 5, z: 0}
+    additionalHelperRef: {fileID: 0}
     ValueType: 1
+    helpForFieldCommand: 0
+    displayOnScene: 0
+    allowTransformFollow: 0
+    FloatSwitch: 0
   - Name: Spawn Count Multiplier
     v3Val: {x: 1, y: 0, z: 0}
+    colVal: {r: 0, g: 0, b: 0, a: 0}
     str: 
     mat: {fileID: 0}
     gameObj: {fileID: 0}
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    unityObj: {fileID: 0}
     helper: {x: 0, y: 5, z: 0}
+    additionalHelperRef: {fileID: 0}
     ValueType: 1
+    helpForFieldCommand: 0
+    displayOnScene: 0
+    allowTransformFollow: 0
+    FloatSwitch: 0
   DoorsModificator: {fileID: 0}
   EraseWallModificator: {fileID: 0}
   CellsInstructions:
   - Title: Door Hole
     InstructionType: 1
-    TargetModification: {fileID: 11400000, guid: 7500e28d48a8ac44da90dfc8719e91ef,
-      type: 2}
+    TargetModification: {fileID: 11400000, guid: 7500e28d48a8ac44da90dfc8719e91ef, type: 2}
     Tags: Props
     InstructionArgument: 
+    Foldout: 1
     extraMod: {fileID: 0}
     extraPack: {fileID: 0}
   - Title: Clear Wall
     InstructionType: 3
-    TargetModification: {fileID: 11400000, guid: c5bd286613ebcb24c932c8d5e7f79f9b,
-      type: 2}
+    TargetModification: {fileID: 11400000, guid: c5bd286613ebcb24c932c8d5e7f79f9b, type: 2}
     Tags: 
     InstructionArgument: 
+    Foldout: 1
     extraMod: {fileID: 0}
     extraPack: {fileID: 0}
   RootPack: {fileID: 6324579637144589045}
+  UtilityModificators: []
   ModificatorPacks:
   - {fileID: 6324579637144589045}
   Ignores: []
   DontSpawnOn: 
+  SelfInjections: []
   disabledMods: []
+  OnSpawnProcessors: []
+  CustomPostEvents: []
   AddReflectionProbes: 1
-  MainReflectionSettings: {fileID: 11400000, guid: dabe448206028124294db7edb02eed3f,
-    type: 2}
+  MainReflectionSettings: {fileID: 11400000, guid: dabe448206028124294db7edb02eed3f, type: 2}
   AddMultipleProbes: 0
-  SmallerReflSettings: {fileID: 11400000, guid: 290a908b3df7c6a4a84c21c932841cde,
-    type: 2}
+  SmallerReflSettings: {fileID: 11400000, guid: 290a908b3df7c6a4a84c21c932841cde, type: 2}
   MiniReflSettings: {fileID: 11400000, guid: b243a7973537dbf4faacf7bbda74dada, type: 2}
   SmallerReflLowerSpaceThan: 6
-  AddLightProbes: 0
-  ProbesPerCell: 1
+  LimitSingleProbeSize: 0
   TriggerColliderGeneration: 0
   TriggerGenSettings:
+    TriggersLayer: 0
     ScaleupTriggers: 1
     FillHeight: 1
     MaxCellChecks: 32
@@ -2350,25 +2017,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Side WallR
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3440605482332267101}
-    - {fileID: 625102545485424846}
-    - {fileID: -555731757520276710}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   CheckedCellsMustBe: 2
@@ -2387,6 +2036,8 @@ MonoBehaviour:
     ld: 0
     d: 1
     rd: 0
+    UseAdvancedSetup: 0
+    AdvancedSetup: []
   quartRotor:
     q1: 1
     q2: 0
@@ -2405,6 +2056,16 @@ MonoBehaviour:
   GetNeightbourPos: 0
   GetNeightbourRot: 0
   GetNeightbourScale: 0
+  UseRestrictedDir: 0
+  CustomCellsCheck: 0
+  FullRotGet: 0
+  Check3DAngles: 0
+  RotationSpaceDisplay: 0
+  CheckPosit90: 1
+  CheckNeg90: 1
+  OverridePitchRotation: 1
+  InitPitchRotation: 0
+  NotCheckDefaultPitch: 0
 --- !u!114 &630083136306199679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2415,31 +2076,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c360632d4510a074baef619f3210b541, type: 3}
-  m_Name: SR_CellNeightbours-[FieldMod_Root]
+  m_Name: 'SR_CellNeightbours-[FieldMod_Root]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Wall Remover
-    SpawnerTag: 
-    StampPrefabID: -2
-    Parent: {fileID: -2461712295834115319}
-    Rules:
-    - {fileID: 630083136306199679}
-    - {fileID: -643779873604668597}
-    Mode: 0
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   CheckedCellsMustBe: 2
@@ -2458,6 +2102,8 @@ MonoBehaviour:
     ld: 0
     d: 0
     rd: 0
+    UseAdvancedSetup: 0
+    AdvancedSetup: []
   quartRotor:
     q1: 1
     q2: 1
@@ -2476,6 +2122,16 @@ MonoBehaviour:
   GetNeightbourPos: 0
   GetNeightbourRot: 0
   GetNeightbourScale: 0
+  UseRestrictedDir: 0
+  CustomCellsCheck: 0
+  FullRotGet: 0
+  Check3DAngles: 0
+  RotationSpaceDisplay: 0
+  CheckPosit90: 1
+  CheckNeg90: 1
+  OverridePitchRotation: 1
+  InitPitchRotation: 0
+  NotCheckDefaultPitch: 0
 --- !u!114 &779840107571392287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2486,37 +2142,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8bc77d951f142764987a7f4ca1cf8f61, type: 3}
-  m_Name: SR_SpawningPropability-[Floors]
+  m_Name: 'SR_SpawningPropability-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 4827424703780861843}
-    - {fileID: 6075250757095078002}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Propability: 1
   PropabilityMulVariable:
     name: 
+    requiredType: 1
+    Tooltip: 
 --- !u!114 &792113887592178536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2533,17 +2173,17 @@ MonoBehaviour:
   Enabled: 1
   ModTag: Wall
   DrawMeshAndBox: 0
+  Combine: 0
   RunEmittersIfContains: 0
   DrawSetupFor: 0
   OStamp: {fileID: 0}
   DrawObjectStamps: 1
   OMultiStamp: {fileID: 0}
   PrefabsList:
-  - Prefab: {fileID: 3736537001875968365, guid: 6e9ca6e15dc9ac04299ecd8fb39db12a,
-      type: 3}
+  - Prefab: {fileID: 3736537001875968365, guid: 6e9ca6e15dc9ac04299ecd8fb39db12a, type: 3}
+    MainCollider: {fileID: 0}
     subID: 0
-    _refMesh: {fileID: 4590582136181488267, guid: 37267773f6745a04b941595dcfdcf8f6,
-      type: 3}
+    _refMesh: {fileID: 4590582136181488267, guid: 37267773f6745a04b941595dcfdcf8f6, type: 3}
     _refCol: {fileID: 0}
   DrawMultiObjectStamps: 1
   Spawners:
@@ -2556,16 +2196,25 @@ MonoBehaviour:
     - {fileID: -5822670628294449985}
     Mode: 3
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 1
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
+  SubSpawners: []
   VariantOf: {fileID: 0}
   _editor_drawStamp: 1
   _editor_drawSpawners: 1
+  _editor_drawGlobalRules: 0
+  _editor_drawModPackRules: 0
   _editor_shareSelected: 0
   ParentPreset: {fileID: 11400000}
   ParentPack: {fileID: 6324579637144589045}
@@ -2579,7 +2228,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fff0b089eb95a004e8a37368755527e6, type: 3}
-  m_Name: SR_BoxPush-[Floors]
+  m_Name: 'SR_BoxPush-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
@@ -2617,32 +2266,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1780a36cb53c55428fa274638bcfb3e, type: 3}
-  m_Name: SR_RemoveSpawnsTool-[Stairs Support]
+  m_Name: 'SR_RemoveSpawnsTool-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: StairsBase
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 0}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Removing:
@@ -2654,6 +2285,16 @@ MonoBehaviour:
     RemoveWhen: 0
     UseSelfRotation: 1
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &1369300894710449780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2664,33 +2305,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1780a36cb53c55428fa274638bcfb3e, type: 3}
-  m_Name: SR_RemoveSpawnsTool-[Stairs Support]
+  m_Name: 'SR_RemoveSpawnsTool-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 4056245372219014767}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Removing:
@@ -2702,6 +2324,16 @@ MonoBehaviour:
     RemoveWhen: 1
     UseSelfRotation: 0
     DegreesTolerance: 67.9
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
   - AffectedTags: Ceil
     CheckMode: 0
     RemoveCount: 1
@@ -2710,6 +2342,16 @@ MonoBehaviour:
     RemoveWhen: 0
     UseSelfRotation: 1
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &1419856068444147240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2727,24 +2369,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Rest
-    SpawnerTag: 
-    StampPrefabID: 2
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 1419856068444147240}
-    - {fileID: -7918171731653049074}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Mode: 2
@@ -2754,6 +2379,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &1768934265878033103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2764,29 +2397,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9327e64f60ac33a4fa5e7efebb9176fb, type: 3}
-  m_Name: SR_GetCoords-[Floors]
+  m_Name: 'SR_GetCoords-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: OutDiagonals
-    SpawnerTag: 
-    StampPrefabID: 3
-    Parent: {fileID: -7225921568459938310}
-    Rules: []
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   GetFromTagged: 
@@ -2805,7 +2423,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -2820,31 +2440,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b7d2eb85d19a4da49a85b81a1cb59, type: 3}
-  m_Name: SR_RemoveSpawn-[Floors]
+  m_Name: 'SR_RemoveSpawn-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Mirrored
-    SpawnerTag: 
-    StampPrefabID: 4
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 2019786371093321064}
-    - {fileID: 6088724834996191648}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -2856,6 +2459,16 @@ MonoBehaviour:
     RemoveWhen: 0
     UseSelfRotation: 1
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &2128192433342841958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2866,32 +2479,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3401e8bda3cc91343b11bed2506f2b74, type: 3}
-  m_Name: SR_IfCellContainsTag-[Stairs Support]
+  m_Name: 'SR_IfCellContainsTag-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Side WallL
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: 2128192433342841958}
-    - {fileID: -5645092655504692312}
-    - {fileID: -1100599155525072650}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Tag: Stairs
@@ -2899,6 +2494,16 @@ MonoBehaviour:
   UseRotationsCheck: 0
   OnlyWithSameDirection: 0
   CompareOffsetsAngle: 181
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 1
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &3282872746913213513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2916,35 +2521,25 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: 45Line
-    SpawnerTag: 45
-    StampPrefabID: 5
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: 3282872746913213513}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Module: 2
   CornerMode: 0
   CornerMode45: 0
   SpawnOnEachSide: 0
+  UseYLevel: -1
   AutoRemoveOverlaps: 1
+  SetGhosts: 0
+  OverlapDetectMode: 0
+  Version2: 0
+  ScaleBounds: 0.99
   Padding: 1
   YawOffset: 45
   DirectOffset: {x: 0, y: 0, z: 0}
   OffsetMode: 0
   IgnoreOtherMods: 1
+  DontCheckAdditionals: 0
 --- !u!114 &3565068921727807036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2962,24 +2557,7 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: OutDiagonals
-    SpawnerTag: 
-    StampPrefabID: 3
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 0}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Mode: 2
@@ -2989,6 +2567,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &3992144091771559516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2999,42 +2585,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 893e62798003cfc4ba6de159ef003bf2, type: 3}
-  m_Name: SR_WallPlacer-[Wall]
+  m_Name: 'SR_WallPlacer-[Wall]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: ConnOut
-    SpawnerTag: Conn
-    StampPrefabID: 7
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: 3992144091771559516}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Module: 3
   CornerMode: 1
   CornerMode45: 0
   SpawnOnEachSide: 1
+  UseYLevel: -1
   AutoRemoveOverlaps: 1
+  SetGhosts: 0
+  OverlapDetectMode: 0
+  Version2: 0
+  ScaleBounds: 0.99
   Padding: 0
   YawOffset: 0
   DirectOffset: {x: -1.05, y: 0, z: -0.95}
   OffsetMode: 0
   IgnoreOtherMods: 1
+  DontCheckAdditionals: 0
 --- !u!114 &4056245372219014767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3045,33 +2621,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b7d2eb85d19a4da49a85b81a1cb59, type: 3}
-  m_Name: SR_RemoveSpawn-[Stairs Support]
+  m_Name: 'SR_RemoveSpawn-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 4056245372219014767}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -3083,6 +2640,16 @@ MonoBehaviour:
     RemoveWhen: 0
     UseSelfRotation: 1
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &4222651533796459175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3093,31 +2660,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9327e64f60ac33a4fa5e7efebb9176fb, type: 3}
-  m_Name: SR_GetCoords-[Stairs Support]
+  m_Name: 'SR_GetCoords-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Ceiling
-    SpawnerTag: 
-    StampPrefabID: 2
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -6726930609506613636}
-    - {fileID: 4222651533796459175}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   GetFromTagged: Stairs
@@ -3136,7 +2686,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -3151,36 +2703,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8bc77d951f142764987a7f4ca1cf8f61, type: 3}
-  m_Name: SR_SpawningPropability-[Floors]
+  m_Name: 'SR_SpawningPropability-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Propability: 1
   PropabilityMulVariable:
     name: 
+    requiredType: 1
+    Tooltip: 
 --- !u!114 &4825279887640054776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3191,31 +2728,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9327e64f60ac33a4fa5e7efebb9176fb, type: 3}
-  m_Name: SR_GetCoords-[Floors]
+  m_Name: 'SR_GetCoords-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   GetFromTagged: 
@@ -3234,7 +2754,9 @@ MonoBehaviour:
   MultiplyGetted: {x: 1, y: 1, z: 1}
   DontSpawnIfNoTagged: 0
   RemoveTagged: 0
+  TransformLikeChild: 0
   GetRandomIfMulti: 0
+  RunOnRepetition: 0
   HelperMode: 0
   _DrawOffsets: 1
   _DrawRandomization: 0
@@ -3249,30 +2771,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3630e2a4943f49b40967499fb48c07ee, type: 3}
-  m_Name: SR_FloorPlacer-[Floors]
+  m_Name: 'SR_FloorPlacer-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Mode: 0
@@ -3282,6 +2788,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 0
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &5140286578200998700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3298,29 +2812,27 @@ MonoBehaviour:
   Enabled: 1
   ModTag: Hole,Floor
   DrawMeshAndBox: 0
+  Combine: 0
   RunEmittersIfContains: 0
   DrawSetupFor: 0
   OStamp: {fileID: 0}
   DrawObjectStamps: 1
   OMultiStamp: {fileID: 0}
   PrefabsList:
-  - Prefab: {fileID: 6851366504142537742, guid: b6d2fa94b3de22c40ade81d6bb1d25c4,
-      type: 3}
+  - Prefab: {fileID: 6851366504142537742, guid: b6d2fa94b3de22c40ade81d6bb1d25c4, type: 3}
+    MainCollider: {fileID: 0}
     subID: 0
-    _refMesh: {fileID: 4086246002036221087, guid: 5195738d3a8c42446b64c255ed4012b3,
-      type: 3}
+    _refMesh: {fileID: 4086246002036221087, guid: 5195738d3a8c42446b64c255ed4012b3, type: 3}
     _refCol: {fileID: 0}
-  - Prefab: {fileID: 2756198708417838865, guid: 66526a3777e4aff45b973c2f33856615,
-      type: 3}
+  - Prefab: {fileID: 2756198708417838865, guid: 66526a3777e4aff45b973c2f33856615, type: 3}
+    MainCollider: {fileID: 0}
     subID: 0
-    _refMesh: {fileID: -2803590417530467795, guid: 076f2a6c93d4f1d44805937b1bc50250,
-      type: 3}
+    _refMesh: {fileID: -2803590417530467795, guid: 076f2a6c93d4f1d44805937b1bc50250, type: 3}
     _refCol: {fileID: 0}
-  - Prefab: {fileID: 6891281564843888448, guid: c6d65cef1ae43444098b7f0d6febd2da,
-      type: 3}
+  - Prefab: {fileID: 6891281564843888448, guid: c6d65cef1ae43444098b7f0d6febd2da, type: 3}
+    MainCollider: {fileID: 0}
     subID: 0
-    _refMesh: {fileID: 6936900749775983940, guid: 767ca928b0e3eea46bb6659f15b1f751,
-      type: 3}
+    _refMesh: {fileID: 6936900749775983940, guid: 767ca928b0e3eea46bb6659f15b1f751, type: 3}
     _refCol: {fileID: 0}
   DrawMultiObjectStamps: 1
   Spawners:
@@ -3336,13 +2848,19 @@ MonoBehaviour:
     - {fileID: 1369300894710449780}
     Mode: 3
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 1
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
   - Enabled: 1
     Name: Stairs Side WallL
     SpawnerTag: 
@@ -3354,13 +2872,19 @@ MonoBehaviour:
     - {fileID: -1100599155525072650}
     Mode: 3
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 1
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
   - Enabled: 1
     Name: Stairs Side WallR
     SpawnerTag: 
@@ -3372,13 +2896,19 @@ MonoBehaviour:
     - {fileID: -555731757520276710}
     Mode: 3
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 1
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
   - Enabled: 1
     Name: Stairs Ceiling
     SpawnerTag: 
@@ -3389,16 +2919,25 @@ MonoBehaviour:
     - {fileID: 4222651533796459175}
     Mode: 3
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 1
     Repeat: 1
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 1
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
+  SubSpawners: []
   VariantOf: {fileID: 0}
   _editor_drawStamp: 1
   _editor_drawSpawners: 1
+  _editor_drawGlobalRules: 0
+  _editor_drawModPackRules: 0
   _editor_shareSelected: 0
   ParentPreset: {fileID: 11400000}
   ParentPack: {fileID: 6324579637144589045}
@@ -3412,31 +2951,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a80a4eda1baa814cb0a342f0acfc697, type: 3}
-  m_Name: SR_LimitSpawnCount-[Floors]
+  m_Name: 'SR_LimitSpawnCount-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 0}
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Count:
@@ -3444,6 +2966,8 @@ MonoBehaviour:
     Max: 1
   CountMulVariable:
     name: 
+    requiredType: 1
+    Tooltip: 
   InheritFromCellsCount: 0
   RoomCellsDivBy:
     Min: 4
@@ -3458,30 +2982,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c360632d4510a074baef619f3210b541, type: 3}
-  m_Name: SR_CellNeightbours-[Floors]
+  m_Name: 'SR_CellNeightbours-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Mirrored
-    SpawnerTag: 
-    StampPrefabID: 4
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 6088724834996191648}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   CheckedCellsMustBe: 2
@@ -3500,6 +3008,8 @@ MonoBehaviour:
     ld: 0
     d: 1
     rd: 0
+    UseAdvancedSetup: 0
+    AdvancedSetup: []
   quartRotor:
     q1: 1
     q2: 1
@@ -3518,6 +3028,16 @@ MonoBehaviour:
   GetNeightbourPos: 0
   GetNeightbourRot: 0
   GetNeightbourScale: 0
+  UseRestrictedDir: 0
+  CustomCellsCheck: 0
+  FullRotGet: 0
+  Check3DAngles: 0
+  RotationSpaceDisplay: 0
+  CheckPosit90: 1
+  CheckNeg90: 1
+  OverridePitchRotation: 1
+  InitPitchRotation: 0
+  NotCheckDefaultPitch: 0
 --- !u!114 &6324579637144589045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3537,7 +3057,36 @@ MonoBehaviour:
   - {fileID: 5140286578200998700}
   ParentPreset: {fileID: 11400000}
   DisableWholePackage: 0
+  SeedMode: 0
+  CustomSeed: 0
   ModPackType: 0
+  TagForAllSpawners: 
+  CombineSpawns: 0
+  Variables: []
+  CallOnAllMod: {fileID: 0}
+  CallOnAllSpawners:
+    Enabled: 0
+    Name: 
+    SpawnerTag: 
+    StampPrefabID: 0
+    Parent: {fileID: 0}
+    Rules: []
+    Mode: 0
+    CellCheckMode: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
+    OnScalledGrid: 0
+    Repeat: 0
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
+    MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
+    ScaleAccess: 0
+    DisplayPreviewGUI: 0
+    IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
+  _EditorDisplayCallOnAll: 0
 --- !u!114 &6556174115637731427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3548,30 +3097,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00b1e822491683d4cb68bc3f73fd296e, type: 3}
-  m_Name: SR_RemoveOnRotations-[Tiled Walls]
+  m_Name: 'SR_RemoveOnRotations-[Tiled Walls]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: 45In
-    SpawnerTag: 45
-    StampPrefabID: 3
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: -811237903197673552}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   MustHaveTag: Wall
@@ -3597,35 +3130,25 @@ MonoBehaviour:
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: 45Out
-    SpawnerTag: 45
-    StampPrefabID: 4
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: 6590336416558619627}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
   Module: 2
   CornerMode: 0
   CornerMode45: 2
   SpawnOnEachSide: 0
+  UseYLevel: -1
   AutoRemoveOverlaps: 1
+  SetGhosts: 0
+  OverlapDetectMode: 0
+  Version2: 0
+  ScaleBounds: 0.99
   Padding: 1
   YawOffset: -90
   DirectOffset: {x: -1, y: 0, z: 0}
   OffsetMode: 0
   IgnoreOtherMods: 1
+  DontCheckAdditionals: 0
 --- !u!114 &6640594345500589535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3636,33 +3159,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b7d2eb85d19a4da49a85b81a1cb59, type: 3}
-  m_Name: SR_RemoveSpawn-[Stairs Support]
+  m_Name: 'SR_RemoveSpawn-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 0}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -3674,6 +3178,16 @@ MonoBehaviour:
     RemoveWhen: 1
     UseSelfRotation: 2
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &7168304688206593882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3684,30 +3198,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b7b7d2eb85d19a4da49a85b81a1cb59, type: 3}
-  m_Name: SR_RemoveSpawn-[Tiled Walls]
+  m_Name: 'SR_RemoveSpawn-[Tiled Walls]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: 45In
-    SpawnerTag: 45
-    StampPrefabID: 3
-    Parent: {fileID: 792113887592178536}
-    Rules:
-    - {fileID: -811237903197673552}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Remove:
@@ -3719,6 +3217,16 @@ MonoBehaviour:
     RemoveWhen: 0
     UseSelfRotation: 1
     DegreesTolerance: 45
+    checkSetup:
+      UseRotor: 1
+      Rotor: 0
+      UseCondition: 0
+      Condition: 0
+      ExtraString: 
+      ExtraValue: 0
+      ToCheck:
+      - {x: 0, y: 0, z: 0}
+      EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &7286666594220038078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3729,30 +3237,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3630e2a4943f49b40967499fb48c07ee, type: 3}
-  m_Name: SR_FloorPlacer-[Floors]
+  m_Name: 'SR_FloorPlacer-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: InDiagonals
-    SpawnerTag: 
-    StampPrefabID: 3
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 7286666594220038078}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Mode: 2
@@ -3762,6 +3254,14 @@ MonoBehaviour:
   OffsetMode: 0
   RotateBy90Only: 1
   V2: 1
+  Advanced: 0
+  SpawnOnCheck: 3
+  SpawnOnTag: 
+  CheckMode: 0
+  OutsideCondition: 2
+  OutsideOnTag: 
+  CheckOutMode: 0
+  NegateOutsideCheck: 0
 --- !u!114 &7300497322232363182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3772,30 +3272,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3401e8bda3cc91343b11bed2506f2b74, type: 3}
-  m_Name: SR_CellHaveTag-[Floors]
+  m_Name: 'SR_CellHaveTag-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: In
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 4827424703780861843}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   Tag: 45
@@ -3803,6 +3287,16 @@ MonoBehaviour:
   UseRotationsCheck: 0
   OnlyWithSameDirection: 0
   CompareOffsetsAngle: 181
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 1
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &7471429556636615677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3813,33 +3307,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4e1ad890abd17544af7cb11a6e3643e, type: 3}
-  m_Name: SR_SubSpawner-[Stairs Support]
+  m_Name: 'SR_SubSpawner-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 0
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 0}
-    - {fileID: 1369300894710449780}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   InheritCoords: 0
@@ -3853,13 +3328,19 @@ MonoBehaviour:
     - {fileID: -5032345683850072535}
     Mode: 0
     CellCheckMode: 0
-    GridScaling: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
     OnScalledGrid: 0
     Repeat: 0
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
     MultipleToSpawn: 0
+    UseGlobalRules: 0
+    UseParentPackageRules: 0
+    _wasEnablingGlobalRules: 0
     ScaleAccess: 0
     DisplayPreviewGUI: 0
     IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 0
 --- !u!114 &7515600187635443219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3870,37 +3351,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 838477471c0604240bfcce9916abaf30, type: 3}
-  m_Name: SR_PreventSpawns-[Stairs Support]
+  m_Name: 'SR_PreventSpawns-[Stairs Support]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: Stairs Base
-    SpawnerTag: Stairs
-    StampPrefabID: 0
-    Parent: {fileID: 5140286578200998700}
-    Rules:
-    - {fileID: -3422512150578586879}
-    - {fileID: -3503317135852278202}
-    - {fileID: 4056245372219014767}
-    - {fileID: 1369300894710449780}
-    - {fileID: 7515600187635443219}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 1
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   PreventSpawningForTagged: 
+  checkSetup:
+    UseRotor: 1
+    Rotor: 0
+    UseCondition: 0
+    Condition: 0
+    ExtraString: 
+    ExtraValue: 0
+    ToCheck:
+    - {x: 0, y: 0, z: 0}
+    EditorDisplayColor: {r: 0.4, g: 0.4, b: 1, a: 0.95}
 --- !u!114 &8413427710009006357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3911,30 +3382,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 226bc5f4badaab3438244b84b7cee058, type: 3}
-  m_Name: SR_Rotate-[Floors]
+  m_Name: 'SR_Rotate-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 0
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: OutDCorner
-    SpawnerTag: 
-    StampPrefabID: 1
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: -1464953855566879800}
-    Mode: 3
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 1
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 1
-    DisplayPreviewGUI: 1
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   GetRotationFromTagged: 
@@ -3954,30 +3409,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52cd8c20ccba310438ff1e20ded3f6bb, type: 3}
-  m_Name: SR_BoundCollisionOffset-[Floors]
+  m_Name: 'SR_BoundCollisionOffset-[Floors]'
   m_EditorClassIdentifier: 
   Logic: 0
   Negate: 0
   Global: 0
   Enabled: 1
   Ignore: 0
-  OwnerSpawner:
-    Enabled: 1
-    Name: 
-    SpawnerTag: 
-    StampPrefabID: 0
-    Parent: {fileID: -7225921568459938310}
-    Rules:
-    - {fileID: 8793549242458326408}
-    Mode: 0
-    CellCheckMode: 0
-    GridScaling: 0
-    OnScalledGrid: 0
-    Repeat: 0
-    MultipleToSpawn: 0
-    ScaleAccess: 0
-    DisplayPreviewGUI: 0
-    IsSubSpawner: 0
+  _editor_drawRule: 1
   CellAllow: 1
   AllConditionsMet: 1
   OverrideOffset: 0

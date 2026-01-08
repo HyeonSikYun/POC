@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 25b1fa3957978c8458406dc7cd54fdf8
+labels:
+- Dungeon
+- EasyDG
+- Model
+- Stone
+timeCreated: 1498273902
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 93859
+  packageName: Wood and Stone - Easy DG
+  packageVersion: 1.0
+  assetPath: Assets/Easy DG Assets 1 - Wood + Stone/Prefabs/Stone/Walls/Wall-Stone
+    (5).prefab
+  uploadId: 186598

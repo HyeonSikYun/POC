@@ -26,7 +26,7 @@ MonoBehaviour:
   _EditorFoldout: 0
   _EditorCollapse: 0
   Enabled: 1
-  ParentPlanner: {fileID: 5881015063806838307}
+  ParentPlanner: {fileID: 0}
   ParentNodesContainer: {fileID: 5881015063806838307}
   _editor_drawRule: 1
 --- !u!114 &11400000
@@ -76,7 +76,7 @@ MonoBehaviour:
   _EditorFoldout: 0
   _EditorCollapse: 0
   Enabled: 1
-  ParentPlanner: {fileID: 5881015063806838307}
+  ParentPlanner: {fileID: 0}
   ParentNodesContainer: {fileID: 5881015063806838307}
   _editor_drawRule: 1
 --- !u!114 &2890748103155600776
