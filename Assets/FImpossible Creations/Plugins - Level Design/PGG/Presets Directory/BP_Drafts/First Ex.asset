@@ -160,7 +160,7 @@ MonoBehaviour:
       _E_LatestCorrectPortRect:
         serializedVersion: 2
         x: 1686.0358
-        y: 825.6428
+        y: 799.6428
         width: 27
         height: 27
       PortType: 0
@@ -337,7 +337,7 @@ MonoBehaviour:
       _E_LatestCorrectPortRect:
         serializedVersion: 2
         x: 1686.0358
-        y: 845.6428
+        y: 799.6428
         width: 27
         height: 27
       PortType: 0
@@ -422,7 +422,7 @@ MonoBehaviour:
       _E_LatestCorrectPortRect:
         serializedVersion: 2
         x: 1686.0358
-        y: 865.6428
+        y: 799.6428
         width: 27
         height: 27
       PortType: 0
@@ -595,7 +595,7 @@ MonoBehaviour:
       _E_LatestCorrectPortRect:
         serializedVersion: 2
         x: 1686.0358
-        y: 885.6428
+        y: 799.6428
         width: 27
         height: 27
       PortType: 0
@@ -2216,7 +2216,7 @@ MonoBehaviour:
     _E_LatestCorrectPortRect:
       serializedVersion: 2
       x: 1700.1656
-      y: 506.21384
+      y: 480.21384
       width: 27
       height: 27
     PortType: 0
@@ -4894,7 +4894,7 @@ MonoBehaviour:
       _E_LatestCorrectPortRect:
         serializedVersion: 2
         x: 1687.3419
-        y: 651.3163
+        y: 625.3163
         width: 27
         height: 27
       PortType: 0
@@ -5071,7 +5071,7 @@ MonoBehaviour:
       _E_LatestCorrectPortRect:
         serializedVersion: 2
         x: 1687.3419
-        y: 671.3163
+        y: 625.3163
         width: 27
         height: 27
       PortType: 0
@@ -5156,7 +5156,7 @@ MonoBehaviour:
       _E_LatestCorrectPortRect:
         serializedVersion: 2
         x: 1687.3419
-        y: 691.3163
+        y: 625.3163
         width: 27
         height: 27
       PortType: 0
@@ -5329,7 +5329,7 @@ MonoBehaviour:
       _E_LatestCorrectPortRect:
         serializedVersion: 2
         x: 1687.3419
-        y: 711.3163
+        y: 625.3163
         width: 27
         height: 27
       PortType: 0

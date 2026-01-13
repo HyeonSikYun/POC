@@ -66,7 +66,5 @@ public class DoorTeleporter : MonoBehaviour
         {
             controller.enabled = true;
         }
-
-        Debug.Log($"워프 완료: {targetRoom.name}");
     }
 }

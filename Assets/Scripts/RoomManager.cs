@@ -26,7 +26,6 @@ public class RoomManager : MonoBehaviour
         if (roomToShow != null)
         {
             roomToShow.SetActive(true);
-            Debug.Log($"{roomToShow.name} È°¼ºÈ­");
         }
     }
 

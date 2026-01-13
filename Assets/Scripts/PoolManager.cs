@@ -8,14 +8,15 @@ public class PoolManager : MonoBehaviour
     [System.Serializable]
     public class Pool
     {
-        public string tag;              // 풀 식별용 태그
-        public GameObject prefab;       // 생성할 프리팹
-        public int size;                // 초기 풀 크기
-        public float lifetime;          // 자동 반환 시간 (0이면 수동 반환)
+        public string tag;
+        public GameObject prefab;
+        public int size;
+        public float lifetime;
     }
 
     public List<Pool> pools;
     private Dictionary<string, Queue<GameObject>> poolDictionary;
+    private Dictionary<string, List<GameObject>> activeObjects; // 활성 오브젝트 추적
 
     private void Awake()
     {
@@ -30,6 +31,7 @@ public class PoolManager : MonoBehaviour
         }
 
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
+        activeObjects = new Dictionary<string, List<GameObject>>();
 
         foreach (Pool pool in pools)
         {
@@ -43,6 +45,7 @@ public class PoolManager : MonoBehaviour
             }
 
             poolDictionary.Add(pool.tag, objectPool);
+            activeObjects.Add(pool.tag, new List<GameObject>());
         }
     }
 
@@ -58,18 +61,36 @@ public class PoolManager : MonoBehaviour
 
         if (poolDictionary[tag].Count > 0)
         {
+            // 풀에 사용 가능한 오브젝트가 있으면 가져오기
             objectToSpawn = poolDictionary[tag].Dequeue();
         }
         else
         {
-            // 풀이 부족하면 새로 생성
-            Pool pool = pools.Find(p => p.tag == tag);
-            objectToSpawn = Instantiate(pool.prefab, transform);
+            // 풀이 비었으면 가장 오래된 활성 오브젝트 재사용
+            if (activeObjects[tag].Count > 0)
+            {
+                objectToSpawn = activeObjects[tag][0]; // 가장 오래된 것
+                activeObjects[tag].RemoveAt(0);
+                Debug.Log($"<color=yellow>{tag} 풀 부족! 기존 오브젝트 재사용</color>");
+            }
+            else
+            {
+                // 그래도 없으면 새로 생성 (마지막 수단)
+                Pool pool = pools.Find(p => p.tag == tag);
+                Debug.LogWarning($"<color=red>{tag} 풀 부족! 새 오브젝트 생성 - 풀 사이즈를 늘리세요!</color>");
+                objectToSpawn = Instantiate(pool.prefab, transform);
+            }
         }
 
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
         objectToSpawn.SetActive(true);
+
+        // 활성 오브젝트 리스트에 추가
+        if (!activeObjects[tag].Contains(objectToSpawn))
+        {
+            activeObjects[tag].Add(objectToSpawn);
+        }
 
         // IPooledObject 인터페이스가 있으면 OnObjectSpawn 호출
         IPooledObject pooledObj = objectToSpawn.GetComponent<IPooledObject>();
@@ -105,6 +126,12 @@ public class PoolManager : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
+        // 활성 오브젝트 리스트에서 제거
+        if (activeObjects[tag].Contains(obj))
+        {
+            activeObjects[tag].Remove(obj);
+        }
+
         obj.SetActive(false);
         poolDictionary[tag].Enqueue(obj);
     }
@@ -114,7 +141,7 @@ public class PoolManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         // 오브젝트가 아직 활성화되어 있을 때만 반환
-        if (obj.activeInHierarchy)
+        if (obj != null && obj.activeInHierarchy)
         {
             ReturnToPool(tag, obj);
         }
