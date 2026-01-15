@@ -801,7 +801,7 @@ MonoBehaviour:
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
     _EditorDisplaySpawnerHeader: 1
-  - Enabled: 1
+  - Enabled: 0
     Name: Wall_Straight_A_00_Prefab-Copy
     SpawnerTag: 
     StampPrefabID: 1
@@ -825,7 +825,7 @@ MonoBehaviour:
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
     _EditorDisplaySpawnerHeader: 1
-  - Enabled: 1
+  - Enabled: 0
     Name: Wall_Straight_A_00_Prefab-Copy
     SpawnerTag: 
     StampPrefabID: 1
@@ -855,7 +855,7 @@ MonoBehaviour:
   _editor_drawSpawners: 1
   _editor_drawGlobalRules: 0
   _editor_drawModPackRules: 0
-  _editor_shareSelected: 3
+  _editor_shareSelected: 2
   ParentPreset: {fileID: 0}
   ParentPack: {fileID: -6657147841931054589}
 --- !u!114 &-1864296676911127143
@@ -1258,7 +1258,7 @@ MonoBehaviour:
   Randomize: 0
   GetOffsetFromTagged: 
   CheckMode: 0
-  Offset: {x: 0, y: -0.99, z: -1.02}
+  Offset: {x: 0, y: -0.99, z: -1.61}
   OffsetMode: 0
   RandomOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &1569458035047513948
@@ -1717,7 +1717,7 @@ MonoBehaviour:
   Randomize: 0
   GetOffsetFromTagged: 
   CheckMode: 0
-  Offset: {x: 0, y: -1, z: -1.01}
+  Offset: {x: 0, y: -1, z: -1.61}
   OffsetMode: 0
   RandomOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &7897566879792497561

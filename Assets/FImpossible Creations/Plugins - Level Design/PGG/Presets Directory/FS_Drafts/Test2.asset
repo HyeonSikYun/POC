@@ -1423,7 +1423,7 @@ MonoBehaviour:
   ScaleBounds: 0.99
   Padding: 0
   YawOffset: 270
-  DirectOffset: {x: 0, y: 0, z: 0}
+  DirectOffset: {x: -0.15, y: 0, z: 0}
   OffsetMode: 1
   IgnoreOtherMods: 1
   DontCheckAdditionals: 0
