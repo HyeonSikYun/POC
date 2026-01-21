@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
@@ -17,14 +18,21 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     public float attackCooldown = 2f; // 공격 쿨타임
     public int maxHealth = 100;
 
+    [Header("죽음 애니메이션 설정")]
+    public float deathAnimationDuration = 3f; // 죽는 애니메이션 길이
+
     [Header("디버그")]
     public bool showGizmos = true;
 
     private NavMeshAgent agent;
     private Animator animator;
+    private Collider zombieCollider; // 콜라이더 참조
     private int currentHealth;
     private float lastAttackTime;
     private bool isDead = false;
+
+    // 이벤트: 좀비가 죽었을 때
+    public event Action<GameObject> onZombieDeath;
 
     // 애니메이션 파라미터 해시
     private static readonly int IsRun = Animator.StringToHash("isRun");
@@ -35,6 +43,7 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        zombieCollider = GetComponent<Collider>(); // Collider 참조 저장
 
         // NavMeshAgent 비활성화 (스폰 시 활성화)
         if (agent != null)
@@ -63,9 +72,17 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         isDead = false;
         lastAttackTime = 0f;
 
+        // Collider 활성화
+        if (zombieCollider != null)
+        {
+            zombieCollider.enabled = true;
+        }
+
         if (animator != null)
         {
             animator.SetBool(IsRun, false);
+            // 죽음 애니메이션 상태 초기화
+            animator.ResetTrigger(Zombie1Die);
         }
 
         // NavMeshAgent 활성화 및 초기화
@@ -129,8 +146,6 @@ public class ZombieAI : MonoBehaviour, IPooledObject
             Idle();
         }
     }
-
-    // ZombieAI.cs의 ChasePlayer() 메서드를 수정
 
     private void ChasePlayer()
     {
@@ -203,7 +218,7 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         if (isDead) return;
 
         currentHealth -= damage;
-        Debug.Log($"좀비 체력: {currentHealth}/{maxHealth}");
+        Debug.Log($"<color=yellow>좀비 체력: {currentHealth}/{maxHealth}</color>");
 
         if (currentHealth <= 0)
         {
@@ -216,23 +231,43 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         if (isDead) return;
 
         isDead = true;
-        agent.isStopped = true;
+
+        // NavMeshAgent 정지 및 비활성화
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+            agent.enabled = false; // 완전히 비활성화
+        }
+
+        // Collider 비활성화 (죽은 좀비를 더 이상 맞출 수 없음)
+        if (zombieCollider != null)
+        {
+            zombieCollider.enabled = false;
+        }
+
+        // 애니메이션 정지 및 죽음 애니메이션 재생
         animator.SetBool(IsRun, false);
         animator.SetTrigger(Zombie1Die);
 
+        Debug.Log($"<color=red>좀비 사망! {gameObject.name}</color>");
+
         // 죽은 후 풀로 반환 (애니메이션 재생 시간 고려)
-        Invoke(nameof(ReturnToPool), 3f);
+        Invoke(nameof(ReturnToPool), deathAnimationDuration);
     }
 
     private void ReturnToPool()
     {
-        // 풀로 반환 (PoolManager가 어떤 태그로 관리하는지에 따라 수정)
+        // 풀로 반환
         PoolManager.Instance.ReturnToPool("Zombie", gameObject);
+        Debug.Log($"<color=cyan>좀비 풀로 반환: {gameObject.name}</color>");
     }
 
     // 애니메이션 이벤트에서 호출 (공격 모션 중간에)
     public void DealDamageToPlayer()
     {
+        if (player == null) return;
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if (distanceToPlayer <= attackRange)

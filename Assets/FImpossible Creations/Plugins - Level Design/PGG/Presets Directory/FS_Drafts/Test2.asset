@@ -1,5 +1,30 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9030834030088324436
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bc77d951f142764987a7f4ca1cf8f61, type: 3}
+  m_Name: 'SR_SpawningPropability-[Props]'
+  m_EditorClassIdentifier: AD_FimpPGG::FIMSpace.Generating.Rules.Count.SR_SpawningPropability
+  Logic: 0
+  Negate: 0
+  Global: 0
+  Enabled: 1
+  Ignore: 0
+  _editor_drawRule: 1
+  CellAllow: 1
+  AllConditionsMet: 1
+  Propability: 0.101
+  PropabilityMulVariable:
+    name: 
+    requiredType: 1
+    Tooltip: 
 --- !u!114 &-8685678839599255547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,7 +111,7 @@ MonoBehaviour:
   _editor_drawRule: 1
   CellAllow: 0
   AllConditionsMet: 1
-  Propability: 0.091
+  Propability: 0
   PropabilityMulVariable:
     name: 
     requiredType: 1
@@ -308,7 +333,7 @@ MonoBehaviour:
   TagForAllSpawners: 
   CombineSpawns: 0
   Variables: []
-  CallOnAllMod: {fileID: 0}
+  CallOnAllMod: {fileID: 377118844884869244}
   CallOnAllSpawners:
     Enabled: 0
     Name: 
@@ -355,21 +380,11 @@ MonoBehaviour:
   DrawObjectStamps: 1
   OMultiStamp: {fileID: 0}
   PrefabsList:
-  - Prefab: {fileID: 919132149155446097, guid: b5075d63e76a84f4ca558bc32c9f7dc2, type: 3}
-    MainCollider: {fileID: 0}
+  - Prefab: {fileID: 6660184903045082040, guid: 970a0e0414fa8be4695cbe8c3d95afd7, type: 3}
+    MainCollider: {fileID: 3664342262985111976, guid: 970a0e0414fa8be4695cbe8c3d95afd7, type: 3}
     subID: 0
-    _refMesh: {fileID: -3942633656405313522, guid: b5075d63e76a84f4ca558bc32c9f7dc2, type: 3}
-    _refCol: {fileID: 0}
-  - Prefab: {fileID: 919132149155446097, guid: 5101c1bbbe5b5e5428397740db6fcce7, type: 3}
-    MainCollider: {fileID: 0}
-    subID: 0
-    _refMesh: {fileID: 481422624860575589, guid: 5101c1bbbe5b5e5428397740db6fcce7, type: 3}
-    _refCol: {fileID: 0}
-  - Prefab: {fileID: 919132149155446097, guid: c7de909e388176043bf22a725f849849, type: 3}
-    MainCollider: {fileID: 0}
-    subID: 0
-    _refMesh: {fileID: -1674268716328342803, guid: b9538157ad1c50c469efb0324afddf45, type: 3}
-    _refCol: {fileID: 0}
+    _refMesh: {fileID: -9095675524861101362, guid: 885eac34fd0d577439e6670a7ca3777e, type: 3}
+    _refCol: {fileID: 3664342262985111976, guid: 970a0e0414fa8be4695cbe8c3d95afd7, type: 3}
   DrawMultiObjectStamps: 1
   Spawners:
   - Enabled: 1
@@ -395,13 +410,35 @@ MonoBehaviour:
     DisplayPreviewGUI: 1
     IsSubSpawner: 0
     _EditorDisplaySpawnerHeader: 1
+  - Enabled: 1
+    Name: (P) Characters_Zombie_SuitMan_1
+    SpawnerTag: 
+    StampPrefabID: 0
+    Parent: {fileID: -6564387551439423642}
+    Rules:
+    - {fileID: -9030834030088324436}
+    Mode: 0
+    CellCheckMode: 0
+    _Editor_SpawnerAdvancedOptionsFoldout: 0
+    OnScalledGrid: 0
+    Repeat: 1
+    DontInheritRotations: 0
+    SwitchSpawnedToStatic: 0
+    MultipleToSpawn: 0
+    UseGlobalRules: 1
+    UseParentPackageRules: 1
+    _wasEnablingGlobalRules: 1
+    ScaleAccess: 1
+    DisplayPreviewGUI: 1
+    IsSubSpawner: 0
+    _EditorDisplaySpawnerHeader: 1
   SubSpawners: []
   VariantOf: {fileID: 0}
   _editor_drawStamp: 1
   _editor_drawSpawners: 1
   _editor_drawGlobalRules: 0
   _editor_drawModPackRules: 0
-  _editor_shareSelected: 0
+  _editor_shareSelected: 1
   ParentPreset: {fileID: 11400000}
   ParentPack: {fileID: -6657147841931054589}
 --- !u!114 &-5941396887936832630
@@ -903,6 +940,40 @@ MonoBehaviour:
   MaxDegreesSteps: {x: 1, y: 1, z: 1}
   LocalRotation: 0
   OverrideRotation: 1
+--- !u!114 &377118844884869244
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 671fd9c659a53a04eb310656f11c9125, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AD_FimpPGG::FIMSpace.Generating.FieldModification
+  TemporaryContainer: {fileID: 0}
+  Enabled: 1
+  ModTag: 
+  DrawMeshAndBox: 0
+  Combine: 0
+  RunEmittersIfContains: 0
+  DrawSetupFor: 0
+  OStamp: {fileID: 0}
+  DrawObjectStamps: 1
+  OMultiStamp: {fileID: 0}
+  PrefabsList: []
+  DrawMultiObjectStamps: 1
+  Spawners: []
+  SubSpawners: []
+  VariantOf: {fileID: 0}
+  _editor_drawStamp: 1
+  _editor_drawSpawners: 1
+  _editor_drawGlobalRules: 0
+  _editor_drawModPackRules: 0
+  _editor_shareSelected: 0
+  ParentPreset: {fileID: 11400000}
+  ParentPack: {fileID: -6657147841931054589}
 --- !u!114 &474476574513504797
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -14,6 +14,7 @@ public class GunController : MonoBehaviour
     public float fireRate = 0.1f; // 연사 속도
     public float bulletSpeed = 100f; // 총알 속도
     public float bulletMaxDistance = 100f; // 총알 최대 사거리
+    public int damage = 50; // 총기 데미지 (강화 시스템용)
 
     [Header("탄피 설정")]
     public float shellEjectForce = 175f;
@@ -91,6 +92,17 @@ public class GunController : MonoBehaviour
 
             // 충돌 이펙트
             EffectManager.Instance.PlayHitEffect(hit.point, hit.normal);
+
+            // 좀비 데미지 처리
+            if (hit.collider.CompareTag("Enemy"))
+            {
+                ZombieAI zombie = hit.collider.GetComponent<ZombieAI>();
+                if (zombie != null)
+                {
+                    zombie.TakeDamage(damage);
+                    Debug.Log($"<color=red>좀비 피격! 데미지: {damage}</color>");
+                }
+            }
         }
         else
         {
@@ -106,6 +118,7 @@ public class GunController : MonoBehaviour
         // 탄피 배출
         SpawnShell();
     }
+
     private void SpawnShell()
     {
         GameObject shell = PoolManager.Instance.SpawnFromPool("Shell", shellPoint.position, Quaternion.identity);

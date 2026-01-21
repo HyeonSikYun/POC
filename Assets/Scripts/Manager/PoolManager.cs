@@ -118,9 +118,9 @@ public class PoolManager : MonoBehaviour
             return;
         }
 
-        // Rigidbody가 있으면 속도 초기화
+        // Rigidbody가 있으면 속도 초기화 (Kinematic 체크 추가)
         Rigidbody rb = obj.GetComponent<Rigidbody>();
-        if (rb != null)
+        if (rb != null && !rb.isKinematic) // isKinematic 체크 추가!
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;

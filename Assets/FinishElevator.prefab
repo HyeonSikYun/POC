@@ -169,11 +169,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097beb0195c5165449e2a6ed3ca94d79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElevatorManager
+  currentType: 1
   leftDoor: {fileID: 6665847000286803064}
   rightDoor: {fileID: 8630999785126573904}
-  teleportDestination: {fileID: 0}
-  playerTransform: {fileID: 0}
   fadeCanvasGroup: {fileID: 0}
+  playerTransform: {fileID: 0}
+  restAreaWaitTime: 10
   doorSpeed: 2
   fadeSpeed: 1
   doorTriggerObject: {fileID: 0}

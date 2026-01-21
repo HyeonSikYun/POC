@@ -1418,11 +1418,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZombieAI
   player: {fileID: 0}
-  detectionRange: 10
+  detectionRange: 5
   attackRange: 2
   moveSpeed: 3.5
   attackCooldown: 2
   maxHealth: 100
+  deathAnimationDuration: 3
   showGizmos: 1
 --- !u!136 &3664342262985111976
 CapsuleCollider:
