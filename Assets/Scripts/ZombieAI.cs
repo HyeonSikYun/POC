@@ -2,15 +2,15 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-// 1. 상태 인터페이스 정의
+// 1. 상태 인터페이스
 public interface IZombieState
 {
-    void Enter(ZombieAI zombie);   // 상태 진입 시 1회 실행
-    void Execute(ZombieAI zombie); // Update에서 계속 실행
-    void Exit(ZombieAI zombie);    // 상태 종료 시 1회 실행
+    void Enter(ZombieAI zombie);
+    void Execute(ZombieAI zombie);
+    void Exit(ZombieAI zombie);
 }
 
-// 2. ZombieAI (Context) 클래스
+// 2. ZombieAI (Context)
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 public class ZombieAI : MonoBehaviour, IPooledObject
@@ -25,6 +25,7 @@ public class ZombieAI : MonoBehaviour, IPooledObject
 
     [Header("전투 설정")]
     public float attackCooldown = 2f;
+    public float attackDelay = 0.5f; // [추가] 공격 애니메이션 시작 후 데미지 들어가는 시간 (타이밍 조절용)
     public int maxHealth = 100;
     public int currentHealth;
 
@@ -34,16 +35,19 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     [Header("디버그")]
     public bool showGizmos = true;
 
-    // 컴포넌트 참조 (상태 클래스들이 접근할 수 있도록 public 혹은 프로퍼티로)
+    // 외부에서 접근 가능한 isDead 변수
+    public bool isDead = false;
+
+    // 컴포넌트 참조
     public NavMeshAgent Agent { get; private set; }
     public Animator Anim { get; private set; }
     public Collider Col { get; private set; }
-    public float LastAttackTime { get; set; } // 공격 쿨타임 계산용
+    public float LastAttackTime { get; set; }
 
-    // 상태 관리 변수
+    // 상태 관리
     private IZombieState currentState;
 
-    // 애니메이션 해시 (성능 최적화)
+    // 애니메이션 해시
     public readonly int hashIsRun = Animator.StringToHash("isRun");
     public readonly int hashAtk = Animator.StringToHash("zombie1Atk");
     public readonly int hashDie = Animator.StringToHash("zombie1Die");
@@ -54,7 +58,7 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         Anim = GetComponent<Animator>();
         Col = GetComponent<Collider>();
 
-        if (Agent != null) Agent.enabled = false; // 초기화 전 비활성화
+        if (Agent != null) Agent.enabled = false;
     }
 
     private void Start()
@@ -70,7 +74,6 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         }
     }
 
-    // --- 상태 패턴 핵심 메서드 ---
     public void ChangeState(IZombieState newState)
     {
         if (currentState != null)
@@ -81,12 +84,12 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         currentState = newState;
         currentState.Enter(this);
     }
-    // ---------------------------
 
     public void OnObjectSpawn()
     {
         currentHealth = maxHealth;
-        LastAttackTime = -attackCooldown; // 스폰 직후 바로 공격 가능하게
+        LastAttackTime = -attackCooldown;
+        isDead = false;
 
         if (Col != null) Col.enabled = true;
         if (Anim != null)
@@ -96,12 +99,9 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         }
 
         FindPlayer();
-
-        // 주의: 여기서 바로 IdleState로 가지 않음 (Initialize가 호출될 때 함)
         currentState = null;
     }
 
-    // Spawner에서 호출
     public void Initialize(Vector3 spawnPosition)
     {
         transform.position = spawnPosition;
@@ -113,8 +113,6 @@ public class ZombieAI : MonoBehaviour, IPooledObject
             {
                 Agent.Warp(hit.position);
                 Agent.speed = moveSpeed;
-
-                // 초기 상태 설정
                 ChangeState(new IdleState());
             }
             else
@@ -126,24 +124,42 @@ public class ZombieAI : MonoBehaviour, IPooledObject
 
     public void TakeDamage(int damage)
     {
-        if (currentState is DeadState) return;
+        if (isDead || currentState is DeadState) return;
 
         currentHealth -= damage;
+
         if (currentHealth <= 0)
         {
             ChangeState(new DeadState());
         }
     }
 
-    // 공격 애니메이션 이벤트에서 호출
+    // [추가] 딜레이를 주는 코루틴 (AttackState에서 호출함)
+    public IEnumerator DealDamageWithDelay(float delay)
+    {
+        // 설정한 시간만큼 대기
+        yield return new WaitForSeconds(delay);
+
+        // 대기 후 실제로 데미지 함수 호출
+        DealDamageToPlayer();
+    }
+
+    // 실제 데미지 처리 함수
     public void DealDamageToPlayer()
     {
-        if (player == null) return;
-        float dist = Vector3.Distance(transform.position, player.position);
-        if (dist <= attackRange)
+        if (player == null || isDead) return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        // 공격 범위 + 오차 허용
+        if (distanceToPlayer <= attackRange + 0.5f)
         {
-            Debug.Log("플레이어 피격 처리!");
-            // player.GetComponent<PlayerHealth>()?.TakeDamage(10);
+            PlayerController pc = player.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                pc.TakeDamage(10); // 데미지 수치
+                Debug.Log("플레이어 피격 성공! (딜레이 적용됨)");
+            }
         }
     }
 
@@ -172,11 +188,8 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     }
 }
 
-// =========================================================
-// 3. 구체적인 상태 클래스들 (파일 분리해도 됨)
-// =========================================================
+// ================= 상태 클래스들 =================
 
-// [대기 상태]
 public class IdleState : IZombieState
 {
     public void Enter(ZombieAI zombie)
@@ -188,10 +201,8 @@ public class IdleState : IZombieState
     public void Execute(ZombieAI zombie)
     {
         if (zombie.player == null) return;
-
         float dist = Vector3.Distance(zombie.transform.position, zombie.player.position);
 
-        // 감지 범위 안에 들어오면 추적 상태로 전환
         if (dist <= zombie.detectionRange)
         {
             zombie.ChangeState(new ChaseState());
@@ -201,8 +212,6 @@ public class IdleState : IZombieState
     public void Exit(ZombieAI zombie) { }
 }
 
-// [추적 상태]
-// [추적 상태]
 public class ChaseState : IZombieState
 {
     public void Enter(ZombieAI zombie)
@@ -217,36 +226,21 @@ public class ChaseState : IZombieState
 
     public void Execute(ZombieAI zombie)
     {
-        // 플레이어가 사라졌거나 죽었으면 대기 상태로 복귀
         if (zombie.player == null)
         {
             zombie.ChangeState(new IdleState());
             return;
         }
-
         if (!zombie.Agent.isOnNavMesh) return;
 
         float dist = Vector3.Distance(zombie.transform.position, zombie.player.position);
 
-        // 공격 범위 안에 들어오면 공격 상태로 전환
         if (dist <= zombie.attackRange)
         {
             zombie.ChangeState(new AttackState());
             return;
         }
 
-        // =========================================================
-        // [수정됨] 거리가 멀어지면 포기하는 코드를 삭제했습니다.
-        // 이제 좀비는 플레이어가 공격 범위에 들어올 때까지 영원히 따라갑니다.
-        // =========================================================
-        /* if (dist > zombie.detectionRange * 1.5f) 
-        {
-            zombie.ChangeState(new IdleState());
-            return;
-        }
-        */
-
-        // 계속 플레이어 위치로 이동
         zombie.Agent.SetDestination(zombie.player.position);
     }
 
@@ -257,7 +251,6 @@ public class ChaseState : IZombieState
     }
 }
 
-// [공격 상태]
 public class AttackState : IZombieState
 {
     public void Enter(ZombieAI zombie)
@@ -274,44 +267,40 @@ public class AttackState : IZombieState
             return;
         }
 
-        // 플레이어 바라보기 (회전)
         Vector3 dir = (zombie.player.position - zombie.transform.position).normalized;
         dir.y = 0;
         if (dir != Vector3.zero)
         {
-            zombie.transform.rotation = Quaternion.Slerp(
-                zombie.transform.rotation,
-                Quaternion.LookRotation(dir),
-                Time.deltaTime * 5f
-            );
+            zombie.transform.rotation = Quaternion.Slerp(zombie.transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 5f);
         }
 
         float dist = Vector3.Distance(zombie.transform.position, zombie.player.position);
-
-        // 플레이어가 공격 범위를 벗어나면 다시 추적
         if (dist > zombie.attackRange)
         {
             zombie.ChangeState(new ChaseState());
             return;
         }
 
-        // 쿨타임 체크 후 공격
+        // 공격 쿨타임 체크
         if (Time.time >= zombie.LastAttackTime + zombie.attackCooldown)
         {
             zombie.Anim.SetTrigger(zombie.hashAtk);
             zombie.LastAttackTime = Time.time;
+
+            // [핵심 수정] 애니메이션 이벤트 대신 코루틴으로 딜레이 공격 실행
+            zombie.StartCoroutine(zombie.DealDamageWithDelay(zombie.attackDelay));
         }
     }
 
     public void Exit(ZombieAI zombie) { }
 }
 
-// [사망 상태]
 public class DeadState : IZombieState
 {
     public void Enter(ZombieAI zombie)
     {
-        // Agent 끄기
+        zombie.isDead = true;
+
         if (zombie.Agent.enabled)
         {
             zombie.Agent.isStopped = true;
@@ -319,23 +308,15 @@ public class DeadState : IZombieState
             zombie.Agent.enabled = false;
         }
 
-        // 콜라이더 끄기
         if (zombie.Col != null) zombie.Col.enabled = false;
 
-        // 애니메이션
         zombie.Anim.SetBool(zombie.hashIsRun, false);
         zombie.Anim.SetTrigger(zombie.hashDie);
 
-        // 죽음 처리 (Despawn 예약)
-        // 코루틴은 MonoBehaviour인 ZombieAI에서 실행해야 함
         zombie.StartCoroutine(DespawnRoutine(zombie));
     }
 
-    public void Execute(ZombieAI zombie)
-    {
-        // 죽었으니 아무것도 안 함
-    }
-
+    public void Execute(ZombieAI zombie) { }
     public void Exit(ZombieAI zombie) { }
 
     private IEnumerator DespawnRoutine(ZombieAI zombie)
