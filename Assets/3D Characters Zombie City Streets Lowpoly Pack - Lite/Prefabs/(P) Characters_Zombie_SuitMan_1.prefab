@@ -1422,9 +1422,16 @@ MonoBehaviour:
   attackRange: 2
   moveSpeed: 3.5
   attackCooldown: 2
+  attackDelay: 0.5
   maxHealth: 100
+  currentHealth: 0
   deathAnimationDuration: 3
+  bioSamplePrefab: {fileID: 16345909985125488, guid: d8ca85adf363af342834cb3969bbbbb5, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 128
   showGizmos: 1
+  isDead: 0
 --- !u!136 &3664342262985111976
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -16,8 +16,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GunController gunController;
 
     [Header("Push Prevention")]
-    [SerializeField] private float maxPushForce = 2f; // 최대 밀림 힘
-    [SerializeField] private LayerMask pushableLayer; // 밀 수 있는 레이어 (좀비 등)
+    [SerializeField] private float maxPushForce = 2f;
+    [SerializeField] private LayerMask pushableLayer;
 
     private float verticalVelocity;
     private float gravity = -9.81f;
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 rotationTarget;
     private Animator anim;
     private CharacterController charCon;
-    private Vector3 pushForce = Vector3.zero; // 누적된 밀림 힘
+    private Vector3 pushForce = Vector3.zero;
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -52,7 +52,6 @@ public class PlayerController : MonoBehaviour
             gunController = GetComponentInChildren<GunController>();
         }
 
-        // [추가] 체력 초기화 및 UI 갱신
         currentHealth = maxHealth;
         if (UIManager.Instance != null)
         {
@@ -65,15 +64,23 @@ public class PlayerController : MonoBehaviour
         UpdateGunState();
         ApplyGravity();
         UpdateMovement();
-        ApplyPushForce(); // 밀림 힘 적용
+        ApplyPushForce();
     }
 
-    // [추가] 데미지 처리 함수 (좀비가 호출함)
+    // [추가] 강화 상점에서 호출할 체력 회복 함수
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+
+        if (UIManager.Instance != null)
+            UIManager.Instance.UpdateHealth(currentHealth);
+    }
+
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
 
-        // UI 갱신
         if (UIManager.Instance != null)
         {
             UIManager.Instance.UpdateHealth(currentHealth);
@@ -82,7 +89,6 @@ public class PlayerController : MonoBehaviour
         if (currentHealth <= 0)
         {
             Debug.Log("플레이어 사망!");
-            // 여기에 게임 오버 로직 추가 (예: GameManager.Instance.GameOver())
         }
     }
 
@@ -100,7 +106,6 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyPushForce()
     {
-        // 밀림 힘을 감쇠시키면서 적용
         if (pushForce.magnitude > 0.01f)
         {
             charCon.Move(pushForce * Time.deltaTime);
@@ -108,18 +113,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // CharacterController의 OnControllerColliderHit으로 충돌 처리
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        // 좀비와 충돌했을 때
         if (hit.gameObject.CompareTag("Enemy") || hit.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            // 밀림 방향 계산 (좀비 -> 플레이어)
             Vector3 pushDir = transform.position - hit.transform.position;
-            pushDir.y = 0; // Y축 밀림 방지
+            pushDir.y = 0;
             pushDir = pushDir.normalized;
 
-            // 현재 밀림 힘에 추가 (최대값 제한)
             pushForce += pushDir * maxPushForce;
             pushForce = Vector3.ClampMagnitude(pushForce, maxPushForce);
         }

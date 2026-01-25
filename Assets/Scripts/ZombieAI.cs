@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-// 1. 상태 인터페이스
 public interface IZombieState
 {
     void Enter(ZombieAI zombie);
@@ -10,7 +9,6 @@ public interface IZombieState
     void Exit(ZombieAI zombie);
 }
 
-// 2. ZombieAI (Context)
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
 public class ZombieAI : MonoBehaviour, IPooledObject
@@ -25,29 +23,30 @@ public class ZombieAI : MonoBehaviour, IPooledObject
 
     [Header("전투 설정")]
     public float attackCooldown = 2f;
-    public float attackDelay = 0.5f; // [추가] 공격 애니메이션 시작 후 데미지 들어가는 시간 (타이밍 조절용)
+    public float attackDelay = 0.5f;
     public int maxHealth = 100;
     public int currentHealth;
 
     [Header("죽음 설정")]
     public float deathAnimationDuration = 3f;
 
+    [Header("드랍 아이템")]
+    public GameObject bioSamplePrefab; // 죽을 때 떨어질 재화 프리팹
+    [Tooltip("아이템이 떨어질 바닥 레이어를 선택하세요 (Default, Ground, Wall 등)")]
+    public LayerMask groundLayer; // [추가] 바닥 감지용 레이어
+
     [Header("디버그")]
     public bool showGizmos = true;
 
-    // 외부에서 접근 가능한 isDead 변수
     public bool isDead = false;
 
-    // 컴포넌트 참조
     public NavMeshAgent Agent { get; private set; }
     public Animator Anim { get; private set; }
     public Collider Col { get; private set; }
     public float LastAttackTime { get; set; }
 
-    // 상태 관리
     private IZombieState currentState;
 
-    // 애니메이션 해시
     public readonly int hashIsRun = Animator.StringToHash("isRun");
     public readonly int hashAtk = Animator.StringToHash("zombie1Atk");
     public readonly int hashDie = Animator.StringToHash("zombie1Die");
@@ -134,37 +133,60 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         }
     }
 
-    // [추가] 딜레이를 주는 코루틴 (AttackState에서 호출함)
     public IEnumerator DealDamageWithDelay(float delay)
     {
-        // 설정한 시간만큼 대기
         yield return new WaitForSeconds(delay);
-
-        // 대기 후 실제로 데미지 함수 호출
         DealDamageToPlayer();
     }
 
-    // 실제 데미지 처리 함수
     public void DealDamageToPlayer()
     {
         if (player == null || isDead) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // 공격 범위 + 오차 허용
         if (distanceToPlayer <= attackRange + 0.5f)
         {
             PlayerController pc = player.GetComponent<PlayerController>();
             if (pc != null)
             {
-                pc.TakeDamage(10); // 데미지 수치
+                pc.TakeDamage(10);
                 Debug.Log("플레이어 피격 성공! (딜레이 적용됨)");
             }
         }
     }
 
+    // [추가] 바닥 위치를 정확히 찾아서 아이템을 드랍하는 함수
+    private void DropItem()
+    {
+        if (bioSamplePrefab == null) return;
+
+        Vector3 spawnPos = transform.position; // 기본값: 현재 좀비 위치
+
+        // 좀비의 배꼽 정도 위치(위쪽 1.0f)에서 아래로 레이저를 쏨
+        Vector3 rayOrigin = transform.position + Vector3.up * 1.0f;
+        RaycastHit hit;
+
+        // 아래로 2.0f 거리만큼 쏴서 groundLayer에 닿는지 확인
+        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, 2.0f, groundLayer))
+        {
+            // 바닥을 찾았으면, 바닥 위치(hit.point)에서 살짝 위(0.1f)에 생성
+            spawnPos = hit.point + Vector3.up * 0.1f;
+        }
+        else
+        {
+            // 바닥을 못 찾았으면(공중에 있거나 등), 현재 위치에서 살짝 위
+            spawnPos += Vector3.up * 0.1f;
+        }
+
+        Instantiate(bioSamplePrefab, spawnPos, Quaternion.identity);
+    }
+
     public void Despawn()
     {
+        // [수정] 단순 생성이 아니라 DropItem 함수를 통해 안전하게 생성
+        DropItem();
+
         if (Agent != null && Agent.enabled) Agent.enabled = false;
         PoolManager.Instance.ReturnToPool("Zombie", gameObject);
     }
@@ -281,13 +303,10 @@ public class AttackState : IZombieState
             return;
         }
 
-        // 공격 쿨타임 체크
         if (Time.time >= zombie.LastAttackTime + zombie.attackCooldown)
         {
             zombie.Anim.SetTrigger(zombie.hashAtk);
             zombie.LastAttackTime = Time.time;
-
-            // [핵심 수정] 애니메이션 이벤트 대신 코루틴으로 딜레이 공격 실행
             zombie.StartCoroutine(zombie.DealDamageWithDelay(zombie.attackDelay));
         }
     }

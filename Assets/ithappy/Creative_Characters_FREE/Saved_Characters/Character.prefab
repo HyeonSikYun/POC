@@ -2435,6 +2435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 917e9c38fc107264f844a6ad629bca54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  maxHealth: 100
   speed: 7
   isPc: 1
   hasGun: 1

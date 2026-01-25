@@ -16,139 +16,143 @@ public class PoolManager : MonoBehaviour
 
     public List<Pool> pools;
     private Dictionary<string, Queue<GameObject>> poolDictionary;
-    private Dictionary<string, List<GameObject>> activeObjects; // 활성 오브젝트 추적
+    private Dictionary<string, List<GameObject>> activeObjects; // 활성화된 오브젝트 관리
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance == null) { Instance = this; DontDestroyOnLoad(gameObject); }
+        else { Destroy(gameObject); return; }
 
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
         activeObjects = new Dictionary<string, List<GameObject>>();
 
+        InitializePools();
+    }
+
+    private void InitializePools()
+    {
         foreach (Pool pool in pools)
         {
             Queue<GameObject> objectPool = new Queue<GameObject>();
-
             for (int i = 0; i < pool.size; i++)
             {
-                GameObject obj = Instantiate(pool.prefab, transform);
-                obj.SetActive(false);
-                objectPool.Enqueue(obj);
+                CreateNewObject(pool, objectPool);
             }
-
             poolDictionary.Add(pool.tag, objectPool);
             activeObjects.Add(pool.tag, new List<GameObject>());
         }
     }
 
+    private GameObject CreateNewObject(Pool pool, Queue<GameObject> queue = null)
+    {
+        if (pool.prefab == null) return null;
+
+        GameObject obj = Instantiate(pool.prefab, transform);
+        obj.SetActive(false);
+        if (queue != null) queue.Enqueue(obj);
+        return obj;
+    }
+
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
-        if (!poolDictionary.ContainsKey(tag))
+        if (!poolDictionary.ContainsKey(tag)) return null;
+
+        GameObject objectToSpawn = null;
+        Queue<GameObject> poolQueue = poolDictionary[tag];
+
+        // 1. 대기열에서 꺼내기 (파괴된 객체는 버림)
+        while (poolQueue.Count > 0)
         {
-            Debug.LogWarning($"Pool with tag {tag} doesn't exist.");
-            return null;
+            objectToSpawn = poolQueue.Dequeue();
+            if (objectToSpawn != null) break;
         }
 
-        GameObject objectToSpawn;
-
-        if (poolDictionary[tag].Count > 0)
+        // 2. 대기열이 비었으면?
+        if (objectToSpawn == null)
         {
-            // 풀에 사용 가능한 오브젝트가 있으면 가져오기
-            objectToSpawn = poolDictionary[tag].Dequeue();
-        }
-        else
-        {
-            // 풀이 비었으면 가장 오래된 활성 오브젝트 재사용
-            if (activeObjects[tag].Count > 0)
+            // -> 활성 리스트에서 죽은(null) 객체 정리
+            if (activeObjects.ContainsKey(tag))
             {
-                objectToSpawn = activeObjects[tag][0]; // 가장 오래된 것
-                activeObjects[tag].RemoveAt(0);
-                Debug.Log($"<color=yellow>{tag} 풀 부족! 기존 오브젝트 재사용</color>");
+                activeObjects[tag].RemoveAll(item => item == null);
             }
-            else
-            {
-                // 그래도 없으면 새로 생성 (마지막 수단)
-                Pool pool = pools.Find(p => p.tag == tag);
-                Debug.LogWarning($"<color=red>{tag} 풀 부족! 새 오브젝트 생성 - 풀 사이즈를 늘리세요!</color>");
-                objectToSpawn = Instantiate(pool.prefab, transform);
-            }
+
+            // -> 그래도 없으면 새로 생성 (풀 확장)
+            Pool pool = pools.Find(p => p.tag == tag);
+            objectToSpawn = CreateNewObject(pool);
+            Debug.LogWarning($"<color=yellow>{tag} 풀 고갈 -> 추가 생성됨 (Pool Size를 늘리는 것을 권장합니다)</color>");
         }
 
+        // 3. 배치 및 활성화
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
         objectToSpawn.SetActive(true);
+        objectToSpawn.transform.SetParent(transform); // 부모를 PoolManager로 고정 (맵 삭제 시 보호)
 
-        // 활성 오브젝트 리스트에 추가
-        if (!activeObjects[tag].Contains(objectToSpawn))
+        // 4. 활성 목록에 등록
+        if (activeObjects.ContainsKey(tag))
         {
-            activeObjects[tag].Add(objectToSpawn);
+            if (!activeObjects[tag].Contains(objectToSpawn))
+            {
+                activeObjects[tag].Add(objectToSpawn);
+            }
         }
 
-        // IPooledObject 인터페이스가 있으면 OnObjectSpawn 호출
+        // 5. 인터페이스 호출
         IPooledObject pooledObj = objectToSpawn.GetComponent<IPooledObject>();
-        if (pooledObj != null)
-        {
-            pooledObj.OnObjectSpawn();
-        }
+        if (pooledObj != null) pooledObj.OnObjectSpawn();
 
-        // lifetime이 설정되어 있으면 자동 반환
-        Pool poolInfo = pools.Find(p => p.tag == tag);
-        if (poolInfo != null && poolInfo.lifetime > 0)
-        {
-            StartCoroutine(ReturnToPoolAfterDelay(objectToSpawn, tag, poolInfo.lifetime));
-        }
+        // 6. ZombieAI 초기화 호출 (필수)
+        ZombieAI zombie = objectToSpawn.GetComponent<ZombieAI>();
+        if (zombie != null) zombie.Initialize(position);
 
         return objectToSpawn;
     }
 
     public void ReturnToPool(string tag, GameObject obj)
     {
-        if (!poolDictionary.ContainsKey(tag))
-        {
-            Debug.LogWarning($"Pool with tag {tag} doesn't exist.");
-            Destroy(obj);
-            return;
-        }
+        if (obj == null) return;
+        if (!poolDictionary.ContainsKey(tag)) { Destroy(obj); return; }
 
-        // Rigidbody가 있으면 속도 초기화 (Kinematic 체크 추가)
         Rigidbody rb = obj.GetComponent<Rigidbody>();
-        if (rb != null && !rb.isKinematic) // isKinematic 체크 추가!
-        {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
+        if (rb != null && !rb.isKinematic) { rb.linearVelocity = Vector3.zero; rb.angularVelocity = Vector3.zero; }
 
-        // 활성 오브젝트 리스트에서 제거
-        if (activeObjects[tag].Contains(obj))
+        // 활성 목록에서 제거
+        if (activeObjects.ContainsKey(tag))
         {
             activeObjects[tag].Remove(obj);
         }
 
         obj.SetActive(false);
+        obj.transform.SetParent(transform);
         poolDictionary[tag].Enqueue(obj);
     }
 
-    private System.Collections.IEnumerator ReturnToPoolAfterDelay(GameObject obj, string tag, float delay)
+    // [핵심 추가] 맵 이동 시 모든 몬스터를 강제로 풀로 복귀시키는 함수
+    public void ReturnAllActiveObjects()
     {
-        yield return new WaitForSeconds(delay);
-
-        // 오브젝트가 아직 활성화되어 있을 때만 반환
-        if (obj != null && obj.activeInHierarchy)
+        foreach (var key in activeObjects.Keys)
         {
-            ReturnToPool(tag, obj);
+            // 리스트를 복사해서 순회 (중간에 Remove가 일어나므로)
+            List<GameObject> list = new List<GameObject>(activeObjects[key]);
+            foreach (var obj in list)
+            {
+                if (obj != null && obj.activeInHierarchy)
+                {
+                    // 즉시 반환 처리
+                    obj.SetActive(false);
+                    obj.transform.SetParent(transform);
+
+                    if (poolDictionary.ContainsKey(key))
+                        poolDictionary[key].Enqueue(obj);
+                }
+            }
+            // 리스트 초기화
+            activeObjects[key].Clear();
         }
+        Debug.Log("모든 활성 오브젝트가 풀로 반환되었습니다.");
     }
 }
 
-// 풀링된 오브젝트가 스폰될 때 초기화가 필요하면 이 인터페이스 구현
 public interface IPooledObject
 {
     void OnObjectSpawn();

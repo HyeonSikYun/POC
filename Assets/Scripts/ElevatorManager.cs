@@ -22,7 +22,7 @@ public class ElevatorManager : MonoBehaviour
     [Header("설정")]
     [SerializeField] private float restAreaWaitTime = 10f;
     [SerializeField] private float doorSpeed = 2f;
-    [SerializeField] private float fadeSpeed = 2f; // 페이드 속도
+    [SerializeField] private float fadeSpeed = 2f;
 
     [Header("트리거")]
     [SerializeField] private GameObject doorTriggerObject;
@@ -35,6 +35,9 @@ public class ElevatorManager : MonoBehaviour
     private bool isProcessing = false;
     private bool isPlayerInside = false;
     private Transform currentDestination;
+
+    // 잠금 상태 (기본값 false)
+    private bool isLocked = false;
 
     public static ElevatorManager RestAreaInstance;
 
@@ -53,8 +56,36 @@ public class ElevatorManager : MonoBehaviour
         if (currentType == ElevatorType.Normal) FindDestination("StartPoint");
         else if (currentType == ElevatorType.Finish) FindDestination("RestAreaSpawnPoint");
 
-        // RestArea만 닫혀있고, 나머지는 열린 상태로 시작
-        if (currentType != ElevatorType.RestArea) StartCoroutine(OpenDoorsImmediate());
+        // [핵심 수정] 엘리베이터 타입에 따른 초기 문 상태 설정
+        if (currentType == ElevatorType.Normal)
+        {
+            // 일반 엘리베이터(시작방)는 처음부터 열려있음
+            StartCoroutine(OpenDoorsImmediate());
+        }
+        else if (currentType == ElevatorType.Finish)
+        {
+            // 피니쉬 엘리베이터는 닫혀있고 + 잠긴 상태로 시작
+            LockDoor();
+        }
+        // RestArea는 닫혀있는 상태로 시작 (잠금은 아님, 트리거로 열림)
+    }
+
+    // ====================================================
+    // 외부 제어 함수 (GameManager에서 호출)
+    // ====================================================
+    public void LockDoor()
+    {
+        isLocked = true;
+        // 문이 열려있다면 즉시 닫음
+        if (doorsOpen) StartCoroutine(CloseDoors());
+    }
+
+    public void UnlockDoor()
+    {
+        Debug.Log("엘리베이터 잠금 해제! 문을 엽니다.");
+        isLocked = false;
+        // 잠금 해제되면 자동으로 문 열기 (플레이어가 타야 하니까)
+        StartCoroutine(OpenDoors());
     }
 
     // ====================================================
@@ -65,14 +96,11 @@ public class ElevatorManager : MonoBehaviour
         isProcessing = true;
         Debug.Log("1. [Finish] 문 닫기 시작");
 
-        // 1. 문 닫기 (완료될 때까지 대기)
         yield return StartCoroutine(CloseDoors());
 
-        // 2. 페이드 아웃 (완료될 때까지 대기 - 화면 암전)
         Debug.Log("2. [Finish] 페이드 아웃 시작");
         yield return StartCoroutine(FadeOut());
 
-        // 3. 이동 (화면이 깜깜해진 상태에서 이동)
         if (currentDestination)
         {
             TeleportPlayer(currentDestination);
@@ -83,16 +111,14 @@ public class ElevatorManager : MonoBehaviour
             Debug.LogError("!!! 목적지(RestAreaSpawnPoint)가 없습니다!");
         }
 
-        // 4. RestArea 로직으로 연결 (Finish 엘리베이터의 역할은 끝)
         if (currentType == ElevatorType.Finish)
         {
-            // Finish 엘리베이터는 곧 파괴되므로, RestArea 엘리베이터에게 "도착 처리해줘"라고 넘김
             if (RestAreaInstance)
             {
                 RestAreaInstance.StartCoroutine(RestAreaInstance.RestAreaArrivalSequence());
             }
         }
-        else // Normal 타입이면 그냥 도착 처리
+        else
         {
             yield return new WaitForSeconds(0.5f);
             yield return StartCoroutine(FadeIn());
@@ -102,64 +128,46 @@ public class ElevatorManager : MonoBehaviour
     }
 
     // ====================================================
-    // 2. RestArea 도착 처리 (RestAreaInstance에서 실행됨)
+    // 2. RestArea 도착 처리
     // ====================================================
-    // [RestArea] 플레이어가 도착했을 때 호출됨 (Finish 엘리베이터에 의해 호출됨)
     public IEnumerator RestAreaArrivalSequence()
     {
         isProcessing = true;
-
-        // ================================================================
-        // [수정됨] 이동 완료 후 잠시 암전 상태 유지 (1초 대기)
-        // 이 시간이 지나야 페이드 인이 시작됩니다.
-        // ================================================================
         yield return new WaitForSeconds(1.0f);
 
-        // 1. 페이드 인 (이제 화면이 밝아짐)
         Debug.Log("4. [RestArea] 페이드 인 시작");
         yield return StartCoroutine(FadeIn());
 
-        // 2. 맵 재생성
         Debug.Log("5. [RestArea] 맵 재생성 및 대기");
         if (GameManager.Instance) GameManager.Instance.RegenerateMap();
 
-        // 3. 대기 (RestArea에서 머무는 시간)
-        // 위에서 1초를 썼으므로, 총 대기 시간을 맞추고 싶다면 (restAreaWaitTime - 1.0f)를 해도 됨
         yield return new WaitForSeconds(restAreaWaitTime);
 
-        // 4. 새로운 맵의 StartPoint 찾기
         FindNewStartPoint();
 
-        // 5. 문 열기 (나가세요)
         Debug.Log("6. [RestArea] 문 열림");
         yield return StartCoroutine(OpenDoors());
 
-        isProcessing = false; // 플레이어 조작 가능
+        isProcessing = false;
     }
 
     // ====================================================
-    // 3. RestArea 퇴장 (즉시 이동 - 페이드 없음)
+    // 3. RestArea 퇴장
     // ====================================================
     IEnumerator ExitRestAreaSequence()
     {
         isProcessing = true;
         Debug.Log("7. [RestArea] 퇴장 -> 즉시 이동");
 
-        // [요청사항] 페이드 아웃/인 없이 즉시 이동
-
-        // 1. 목적지 확인 (없으면 재검색)
         if (!currentDestination) FindNewStartPoint();
 
-        // 2. 즉시 텔레포트
         if (currentDestination)
         {
             TeleportPlayer(currentDestination);
         }
 
-        // 3. 문은 뒤에서 알아서 닫히게 함 (기다리지 않음)
         StartCoroutine(CloseDoors());
 
-        // 4. 상태 초기화
         isProcessing = false;
         doorsOpen = false;
 
@@ -167,7 +175,7 @@ public class ElevatorManager : MonoBehaviour
     }
 
     // ====================================================
-    // 유틸리티 및 설정
+    // 유틸리티
     // ====================================================
     void InitializeDoors()
     {
@@ -211,7 +219,6 @@ public class ElevatorManager : MonoBehaviour
             Transform sp = GameManager.Instance.GetStartRoomSpawnPoint();
             if (sp) currentDestination = sp;
         }
-        // 못 찾았으면 이름으로 검색
         if (!currentDestination) FindDestination("StartPoint");
     }
 
@@ -220,8 +227,15 @@ public class ElevatorManager : MonoBehaviour
         if (currentType != ElevatorType.RestArea && doorTriggerObject)
         {
             var dt = GetOrAddTrigger(doorTriggerObject);
-            dt.onPlayerEnter = () => { if (!isProcessing && !doorsOpen) StartCoroutine(OpenDoors()); };
-            dt.onPlayerExit = () => { if (!isProcessing && doorsOpen && !isPlayerInside) StartCoroutine(CloseDoors()); };
+            // [수정] 잠겨있으면(isLocked) 트리거에 닿아도 문이 안 열림
+            dt.onPlayerEnter = () => {
+                if (!isProcessing && !doorsOpen && !isLocked)
+                    StartCoroutine(OpenDoors());
+            };
+            dt.onPlayerExit = () => {
+                if (!isProcessing && doorsOpen && !isPlayerInside)
+                    StartCoroutine(CloseDoors());
+            };
         }
 
         if (insideTriggerObject)
@@ -237,7 +251,6 @@ public class ElevatorManager : MonoBehaviour
             it.onPlayerExit = () =>
             {
                 isPlayerInside = false;
-                // RestArea에서 나가는 순간 즉시 발동
                 if (!isProcessing && currentType == ElevatorType.RestArea)
                     StartCoroutine(ExitRestAreaSequence());
             };
@@ -299,7 +312,7 @@ public class ElevatorManager : MonoBehaviour
             fadeCanvasGroup.alpha = t;
             yield return null;
         }
-        fadeCanvasGroup.alpha = 1; // 확실하게 1로 고정
+        fadeCanvasGroup.alpha = 1;
     }
 
     IEnumerator FadeIn()
@@ -312,7 +325,7 @@ public class ElevatorManager : MonoBehaviour
             fadeCanvasGroup.alpha = t;
             yield return null;
         }
-        fadeCanvasGroup.alpha = 0; // 확실하게 0으로 고정
+        fadeCanvasGroup.alpha = 0;
         fadeCanvasGroup.blocksRaycasts = false;
     }
 
