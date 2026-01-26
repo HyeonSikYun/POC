@@ -19,6 +19,11 @@ public class ElevatorManager : MonoBehaviour
     [SerializeField] private CanvasGroup fadeCanvasGroup;
     [SerializeField] private Transform playerTransform;
 
+    [Header("시각 효과")]
+    [SerializeField] private Light statusLight;
+    [SerializeField] private Color lockedColor = Color.red;
+    [SerializeField] private Color unlockedColor = Color.green;
+
     [Header("설정")]
     [SerializeField] private float restAreaWaitTime = 10f;
     [SerializeField] private float doorSpeed = 2f;
@@ -28,16 +33,16 @@ public class ElevatorManager : MonoBehaviour
     [SerializeField] private GameObject doorTriggerObject;
     [SerializeField] private GameObject insideTriggerObject;
 
-    // 내부 변수
     private Vector3 leftDoorClosedPos, leftDoorOpenPos;
     private Vector3 rightDoorClosedPos, rightDoorOpenPos;
     private bool doorsOpen = false;
     private bool isProcessing = false;
     private bool isPlayerInside = false;
     private Transform currentDestination;
-
-    // 잠금 상태 (기본값 false)
     private bool isLocked = false;
+
+    // 타이머 중복 실행 방지 변수
+    private bool isRestTimerStarted = false;
 
     public static ElevatorManager RestAreaInstance;
 
@@ -48,75 +53,129 @@ public class ElevatorManager : MonoBehaviour
 
     void Start()
     {
-        InitializeDoors();
+        CalculateDoorPositions();
         FindComponents();
         SetupTriggers();
 
-        // 목적지 초기화
-        if (currentType == ElevatorType.Normal) FindDestination("StartPoint");
-        else if (currentType == ElevatorType.Finish) FindDestination("RestAreaSpawnPoint");
+        if (currentType == ElevatorType.Finish) FindDestination("RestAreaSpawnPoint");
 
-        // [핵심 수정] 엘리베이터 타입에 따른 초기 문 상태 설정
-        if (currentType == ElevatorType.Normal)
+        // 초기 상태 설정
+        if (currentType == ElevatorType.Finish)
         {
-            // 일반 엘리베이터(시작방)는 처음부터 열려있음
-            StartCoroutine(OpenDoorsImmediate());
-        }
-        else if (currentType == ElevatorType.Finish)
-        {
-            // 피니쉬 엘리베이터는 닫혀있고 + 잠긴 상태로 시작
+            CloseDoorsImmediate();
             LockDoor();
         }
-        // RestArea는 닫혀있는 상태로 시작 (잠금은 아님, 트리거로 열림)
+        else if (currentType == ElevatorType.RestArea)
+        {
+            CloseDoorsImmediate();
+            LockDoor();
+            isRestTimerStarted = false;
+        }
     }
 
     // ====================================================
-    // 외부 제어 함수 (GameManager에서 호출)
+    // 휴식방 10초 대기 시퀀스
     // ====================================================
-    public void LockDoor()
+    IEnumerator RestAreaAutoOpenSequence()
     {
-        isLocked = true;
-        // 문이 열려있다면 즉시 닫음
-        if (doorsOpen) StartCoroutine(CloseDoors());
+        isRestTimerStarted = true;
+        isProcessing = true;
+
+        UpdateLightColor(true);
+
+        yield return new WaitForSeconds(0.5f);
+        if (fadeCanvasGroup) StartCoroutine(FadeIn());
+
+        Debug.Log($"[RestArea] 플레이어 확인됨. 맵 생성 대기 중... ({restAreaWaitTime}초)");
+
+        yield return new WaitForSeconds(restAreaWaitTime);
+
+        Debug.Log("[RestArea] 대기 끝! 문을 엽니다.");
+        UnlockDoor();
+        isProcessing = false;
     }
 
-    public void UnlockDoor()
+    // ====================================================
+    // 트리거 설정 (순간이동 감지 강화)
+    // ====================================================
+    void SetupTriggers()
     {
-        Debug.Log("엘리베이터 잠금 해제! 문을 엽니다.");
-        isLocked = false;
-        // 잠금 해제되면 자동으로 문 열기 (플레이어가 타야 하니까)
-        StartCoroutine(OpenDoors());
+        // 1. 외부 문 열기
+        if (doorTriggerObject)
+        {
+            var dt = GetOrAddTrigger(doorTriggerObject);
+            dt.onPlayerEnter = () => {
+                if (currentType != ElevatorType.RestArea && !isProcessing && !doorsOpen && !isLocked)
+                    StartCoroutine(OpenDoors());
+            };
+            dt.onPlayerExit = () => {
+                if (!isProcessing && doorsOpen && !isPlayerInside) StartCoroutine(CloseDoors());
+            };
+        }
+
+        // 2. 내부 탑승 (Enter + Stay 모두 사용)
+        if (insideTriggerObject)
+        {
+            var it = GetOrAddTrigger(insideTriggerObject);
+
+            // 공통 감지 로직 함수
+            System.Action onPlayerDetected = () =>
+            {
+                isPlayerInside = true;
+
+                // (A) 일반/피니쉬: 타면 출발
+                if (!isProcessing && doorsOpen && currentType != ElevatorType.RestArea)
+                {
+                    StartCoroutine(DepartSequence());
+                }
+
+                // (B) 레스트룸: 플레이어 감지 시 타이머 시작
+                // !isRestTimerStarted 체크 덕분에 계속 머물러도 한 번만 실행됨
+                if (currentType == ElevatorType.RestArea && !isRestTimerStarted)
+                {
+                    StartCoroutine(RestAreaAutoOpenSequence());
+                }
+            };
+
+            // Enter와 Stay 둘 다 연결 (순간이동 시 Enter가 안 먹힐 때 Stay가 잡아줌)
+            it.onPlayerEnter = onPlayerDetected;
+            it.onPlayerStay = onPlayerDetected;
+
+            it.onPlayerExit = () => {
+                isPlayerInside = false;
+                if (!isProcessing && currentType == ElevatorType.RestArea && doorsOpen)
+                {
+                    StartCoroutine(ExitRestAreaSequence());
+                }
+            };
+        }
     }
 
-    // ====================================================
-    // 1. 출발 시퀀스 (Finish -> RestArea)
-    // ====================================================
+    // ... (기본 함수들: CloseDoorsImmediate, LockDoor, UnlockDoor 등등 기존 유지) ...
+
+    private void CloseDoorsImmediate()
+    {
+        doorsOpen = false;
+        if (leftDoor) leftDoor.localPosition = leftDoorClosedPos;
+        if (rightDoor) rightDoor.localPosition = rightDoorClosedPos;
+    }
+
+    public void LockDoor() { isLocked = true; UpdateLightColor(true); if (doorsOpen) StartCoroutine(CloseDoors()); }
+    public void UnlockDoor() { isLocked = false; UpdateLightColor(false); StartCoroutine(OpenDoors()); }
+    private void UpdateLightColor(bool locked) { if (statusLight != null) statusLight.color = locked ? lockedColor : unlockedColor; }
+
     IEnumerator DepartSequence()
     {
         isProcessing = true;
-        Debug.Log("1. [Finish] 문 닫기 시작");
-
         yield return StartCoroutine(CloseDoors());
-
-        Debug.Log("2. [Finish] 페이드 아웃 시작");
         yield return StartCoroutine(FadeOut());
 
-        if (currentDestination)
-        {
-            TeleportPlayer(currentDestination);
-            Debug.Log($"3. [Finish] 이동 완료: {currentDestination.name}");
-        }
-        else
-        {
-            Debug.LogError("!!! 목적지(RestAreaSpawnPoint)가 없습니다!");
-        }
+        if (currentDestination) TeleportPlayer(currentDestination);
 
         if (currentType == ElevatorType.Finish)
         {
-            if (RestAreaInstance)
-            {
-                RestAreaInstance.StartCoroutine(RestAreaInstance.RestAreaArrivalSequence());
-            }
+            // 다음 맵 생성 요청
+            if (GameManager.Instance) GameManager.Instance.LoadNextLevel();
         }
         else
         {
@@ -128,206 +187,40 @@ public class ElevatorManager : MonoBehaviour
     }
 
     // ====================================================
-    // 2. RestArea 도착 처리
-    // ====================================================
-    public IEnumerator RestAreaArrivalSequence()
-    {
-        isProcessing = true;
-        yield return new WaitForSeconds(1.0f);
-
-        Debug.Log("4. [RestArea] 페이드 인 시작");
-        yield return StartCoroutine(FadeIn());
-
-        Debug.Log("5. [RestArea] 맵 재생성 및 대기");
-        if (GameManager.Instance) GameManager.Instance.RegenerateMap();
-
-        yield return new WaitForSeconds(restAreaWaitTime);
-
-        FindNewStartPoint();
-
-        Debug.Log("6. [RestArea] 문 열림");
-        yield return StartCoroutine(OpenDoors());
-
-        isProcessing = false;
-    }
-
-    // ====================================================
-    // 3. RestArea 퇴장
+    // [중요] 레스트룸 나가는 시퀀스 수정
     // ====================================================
     IEnumerator ExitRestAreaSequence()
     {
         isProcessing = true;
-        Debug.Log("7. [RestArea] 퇴장 -> 즉시 이동");
 
-        if (!currentDestination) FindNewStartPoint();
+        FindNewStartPoint();
+        if (currentDestination) TeleportPlayer(currentDestination);
 
-        if (currentDestination)
-        {
-            TeleportPlayer(currentDestination);
-        }
+        StartCoroutine(CloseDoors()); // 문 닫고
 
-        StartCoroutine(CloseDoors());
+        // [핵심 수정] 다음 층에서 다시 왔을 때 타이머가 돌도록 변수 초기화!
+        isRestTimerStarted = false;
+        LockDoor(); // 다시 잠금 상태(빨간불)로 변경
 
         isProcessing = false;
         doorsOpen = false;
-
         yield return null;
     }
 
-    // ====================================================
     // 유틸리티
-    // ====================================================
-    void InitializeDoors()
-    {
-        if (leftDoor)
-        {
-            leftDoorClosedPos = leftDoor.localPosition;
-            leftDoorOpenPos = leftDoorClosedPos + new Vector3(0, 0, -0.66f);
-        }
-        if (rightDoor)
-        {
-            rightDoorClosedPos = rightDoor.localPosition;
-            rightDoorOpenPos = rightDoorClosedPos + new Vector3(0, 0, 0.66f);
-        }
-    }
+    void CalculateDoorPositions() { if (leftDoor) { leftDoorClosedPos = leftDoor.localPosition; leftDoorOpenPos = leftDoorClosedPos + new Vector3(0, 0, -0.66f); } if (rightDoor) { rightDoorClosedPos = rightDoor.localPosition; rightDoorOpenPos = rightDoorClosedPos + new Vector3(0, 0, 0.66f); } }
+    void FindComponents() { if (!playerTransform) { GameObject p = GameObject.FindGameObjectWithTag("Player"); if (p) playerTransform = p.transform; } if (!fadeCanvasGroup) { GameObject c = GameObject.Find("FadeCanvas"); if (c) fadeCanvasGroup = c.GetComponent<CanvasGroup>(); if (!fadeCanvasGroup) fadeCanvasGroup = GetComponentInChildren<CanvasGroup>(); } if (!statusLight) statusLight = GetComponentInChildren<Light>(); }
+    void FindDestination(string name) { GameObject go = GameObject.Find(name); if (go) currentDestination = go.transform; }
+    void FindNewStartPoint() { if (GameManager.Instance) { Transform sp = GameManager.Instance.GetStartRoomSpawnPoint(); if (sp) currentDestination = sp; } if (!currentDestination) FindDestination("StartPoint"); }
 
-    void FindComponents()
-    {
-        if (!playerTransform)
-        {
-            GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p) playerTransform = p.transform;
-        }
-        if (!fadeCanvasGroup)
-        {
-            GameObject canvasObj = GameObject.Find("FadeCanvas");
-            if (canvasObj) fadeCanvasGroup = canvasObj.GetComponent<CanvasGroup>();
-            if (!fadeCanvasGroup) fadeCanvasGroup = GetComponentInChildren<CanvasGroup>();
-        }
-    }
+    // [수정됨] Stay 지원 트리거 가져오기
+    ElevatorTrigger GetOrAddTrigger(GameObject obj) { var t = obj.GetComponent<ElevatorTrigger>(); if (!t) t = obj.AddComponent<ElevatorTrigger>(); return t; }
 
-    void FindDestination(string name)
-    {
-        GameObject go = GameObject.Find(name);
-        if (go) currentDestination = go.transform;
-    }
-
-    void FindNewStartPoint()
-    {
-        if (GameManager.Instance)
-        {
-            Transform sp = GameManager.Instance.GetStartRoomSpawnPoint();
-            if (sp) currentDestination = sp;
-        }
-        if (!currentDestination) FindDestination("StartPoint");
-    }
-
-    void SetupTriggers()
-    {
-        if (currentType != ElevatorType.RestArea && doorTriggerObject)
-        {
-            var dt = GetOrAddTrigger(doorTriggerObject);
-            // [수정] 잠겨있으면(isLocked) 트리거에 닿아도 문이 안 열림
-            dt.onPlayerEnter = () => {
-                if (!isProcessing && !doorsOpen && !isLocked)
-                    StartCoroutine(OpenDoors());
-            };
-            dt.onPlayerExit = () => {
-                if (!isProcessing && doorsOpen && !isPlayerInside)
-                    StartCoroutine(CloseDoors());
-            };
-        }
-
-        if (insideTriggerObject)
-        {
-            var it = GetOrAddTrigger(insideTriggerObject);
-            it.onPlayerEnter = () =>
-            {
-                isPlayerInside = true;
-                if (!isProcessing && doorsOpen && currentType != ElevatorType.RestArea)
-                    StartCoroutine(DepartSequence());
-            };
-
-            it.onPlayerExit = () =>
-            {
-                isPlayerInside = false;
-                if (!isProcessing && currentType == ElevatorType.RestArea)
-                    StartCoroutine(ExitRestAreaSequence());
-            };
-        }
-    }
-
-    ElevatorTrigger GetOrAddTrigger(GameObject obj)
-    {
-        var t = obj.GetComponent<ElevatorTrigger>();
-        if (!t) t = obj.AddComponent<ElevatorTrigger>();
-        return t;
-    }
-
-    void TeleportPlayer(Transform target)
-    {
-        if (!playerTransform) return;
-        CharacterController cc = playerTransform.GetComponent<CharacterController>();
-        if (cc) cc.enabled = false;
-        playerTransform.position = target.position;
-        playerTransform.rotation = target.rotation;
-        if (cc) cc.enabled = true;
-    }
-
-    IEnumerator MoveDoors(bool open)
-    {
-        float t = 0;
-        Vector3 lStart = leftDoor ? leftDoor.localPosition : Vector3.zero;
-        Vector3 rStart = rightDoor ? rightDoor.localPosition : Vector3.zero;
-        Vector3 lEnd = open ? leftDoorOpenPos : leftDoorClosedPos;
-        Vector3 rEnd = open ? rightDoorOpenPos : rightDoorClosedPos;
-
-        while (t < 1)
-        {
-            t += Time.deltaTime * doorSpeed;
-            if (leftDoor) leftDoor.localPosition = Vector3.Lerp(lStart, lEnd, t);
-            if (rightDoor) rightDoor.localPosition = Vector3.Lerp(rStart, rEnd, t);
-            yield return null;
-        }
-        doorsOpen = open;
-    }
+    void TeleportPlayer(Transform target) { if (!playerTransform) return; CharacterController cc = playerTransform.GetComponent<CharacterController>(); if (cc) cc.enabled = false; playerTransform.position = target.position; playerTransform.rotation = target.rotation; if (cc) cc.enabled = true; }
+    IEnumerator MoveDoors(bool open) { float t = 0; Vector3 lStart = leftDoor ? leftDoor.localPosition : Vector3.zero; Vector3 rStart = rightDoor ? rightDoor.localPosition : Vector3.zero; Vector3 lEnd = open ? leftDoorOpenPos : leftDoorClosedPos; Vector3 rEnd = open ? rightDoorOpenPos : rightDoorClosedPos; while (t < 1) { t += Time.deltaTime * doorSpeed; if (leftDoor) leftDoor.localPosition = Vector3.Lerp(lStart, lEnd, t); if (rightDoor) rightDoor.localPosition = Vector3.Lerp(rStart, rEnd, t); yield return null; } doorsOpen = open; }
     IEnumerator OpenDoors() { return MoveDoors(true); }
     IEnumerator CloseDoors() { return MoveDoors(false); }
-    IEnumerator OpenDoorsImmediate()
-    {
-        if (leftDoor) leftDoor.localPosition = leftDoorOpenPos;
-        if (rightDoor) rightDoor.localPosition = rightDoorOpenPos;
-        doorsOpen = true;
-        yield return null;
-    }
-
-    IEnumerator FadeOut()
-    {
-        if (!fadeCanvasGroup) yield break;
-        fadeCanvasGroup.blocksRaycasts = true;
-        float t = fadeCanvasGroup.alpha;
-        while (t < 1)
-        {
-            t += Time.deltaTime * fadeSpeed;
-            fadeCanvasGroup.alpha = t;
-            yield return null;
-        }
-        fadeCanvasGroup.alpha = 1;
-    }
-
-    IEnumerator FadeIn()
-    {
-        if (!fadeCanvasGroup) yield break;
-        float t = fadeCanvasGroup.alpha;
-        while (t > 0)
-        {
-            t -= Time.deltaTime * fadeSpeed;
-            fadeCanvasGroup.alpha = t;
-            yield return null;
-        }
-        fadeCanvasGroup.alpha = 0;
-        fadeCanvasGroup.blocksRaycasts = false;
-    }
-
+    IEnumerator FadeOut() { if (!fadeCanvasGroup) yield break; fadeCanvasGroup.blocksRaycasts = true; float t = fadeCanvasGroup.alpha; while (t < 1) { t += Time.deltaTime * fadeSpeed; fadeCanvasGroup.alpha = t; yield return null; } fadeCanvasGroup.alpha = 1; }
+    IEnumerator FadeIn() { if (!fadeCanvasGroup) yield break; float t = fadeCanvasGroup.alpha; while (t > 0) { t -= Time.deltaTime * fadeSpeed; fadeCanvasGroup.alpha = t; yield return null; } fadeCanvasGroup.alpha = 0; fadeCanvasGroup.blocksRaycasts = false; }
     public void SetType(ElevatorType type) => currentType = type;
 }

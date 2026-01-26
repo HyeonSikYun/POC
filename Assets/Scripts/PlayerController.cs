@@ -201,7 +201,7 @@ public class PlayerController : MonoBehaviour
             if (lookPos != Vector3.zero)
             {
                 var rotation = Quaternion.LookRotation(lookPos);
-                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.15f);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.05f);
             }
         }
         else
