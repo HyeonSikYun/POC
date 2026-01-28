@@ -90,6 +90,8 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         LastAttackTime = -attackCooldown;
         isDead = false;
 
+        Anim.SetLayerWeight(1, 1f);
+
         if (Col != null) Col.enabled = true;
         if (Anim != null)
         {
@@ -319,6 +321,10 @@ public class DeadState : IZombieState
     public void Enter(ZombieAI zombie)
     {
         zombie.isDead = true;
+
+        // [핵심] 상체 레이어(인덱스 1)의 가중치를 0으로 만듭니다.
+        // 이렇게 하면 상체 레이어가 무시되고, Base Layer의 죽는 애니메이션이 전신에 적용됩니다.
+        zombie.Anim.SetLayerWeight(1, 0f);
 
         if (zombie.Agent.enabled)
         {
