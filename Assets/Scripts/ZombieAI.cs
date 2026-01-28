@@ -279,8 +279,8 @@ public class AttackState : IZombieState
 {
     public void Enter(ZombieAI zombie)
     {
-        if (zombie.Agent.isOnNavMesh) zombie.Agent.isStopped = true;
-        zombie.Anim.SetBool(zombie.hashIsRun, false);
+        // [수정] 들어오자마자 무조건 멈추는 코드 삭제
+        // 거리 판단은 Execute에서 실시간으로 합니다.
     }
 
     public void Execute(ZombieAI zombie)
@@ -291,20 +291,52 @@ public class AttackState : IZombieState
             return;
         }
 
+        float dist = Vector3.Distance(zombie.transform.position, zombie.player.position);
+
+        // [핵심 로직] "공격 사거리 안쪽"이지만 "딱 붙지 않았을 때"의 이동 처리
+        // 예: 공격 사거리(2m)보다 안쪽이지만, 1.2m보다는 멀면 -> 조금 더 다가감 (무빙샷)
+        // 1.2m보다 가까우면 -> 멈춤 (스탠딩샷)
+
+        float stopDistance = 1.5f; // 공격 사거리보다 약간 짧게 설정
+
+        if (dist > stopDistance)
+        {
+            // 1. 거리가 좀 있으면 -> 움직이면서 공격
+            if (zombie.Agent.isOnNavMesh)
+            {
+                zombie.Agent.isStopped = false;
+                zombie.Agent.SetDestination(zombie.player.position);
+            }
+            zombie.Anim.SetBool(zombie.hashIsRun, true); // 하체: 달리기 / 상체: 공격
+        }
+        else
+        {
+            // 2. 충분히 가까우면 -> 멈춰서 공격
+            if (zombie.Agent.isOnNavMesh)
+            {
+                zombie.Agent.isStopped = true;
+                zombie.Agent.ResetPath(); // 미끄러짐 방지
+            }
+            zombie.Anim.SetBool(zombie.hashIsRun, false); // 하체: 대기 / 상체: 공격
+        }
+
+        // [회전] 항상 플레이어를 바라봄
         Vector3 dir = (zombie.player.position - zombie.transform.position).normalized;
         dir.y = 0;
         if (dir != Vector3.zero)
         {
-            zombie.transform.rotation = Quaternion.Slerp(zombie.transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 5f);
+            zombie.transform.rotation = Quaternion.Slerp(zombie.transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 10f);
         }
 
-        float dist = Vector3.Distance(zombie.transform.position, zombie.player.position);
-        if (dist > zombie.attackRange)
+        // [상태 전환] 거리가 공격 사거리를 완전히 벗어나면 추적 상태로
+        // 0.5f의 여유를 둬서 경계선에서 상태가 왔다갔다 하는 것 방지
+        if (dist > zombie.attackRange + 0.5f)
         {
             zombie.ChangeState(new ChaseState());
             return;
         }
 
+        // [공격 실행]
         if (Time.time >= zombie.LastAttackTime + zombie.attackCooldown)
         {
             zombie.Anim.SetTrigger(zombie.hashAtk);
@@ -313,7 +345,12 @@ public class AttackState : IZombieState
         }
     }
 
-    public void Exit(ZombieAI zombie) { }
+    public void Exit(ZombieAI zombie)
+    {
+        // 상태를 나갈 때는 다시 움직일 수 있게 풀어줌
+        if (zombie.Agent.isOnNavMesh) zombie.Agent.isStopped = false;
+        zombie.Anim.SetBool(zombie.hashIsRun, false);
+    }
 }
 
 public class DeadState : IZombieState
