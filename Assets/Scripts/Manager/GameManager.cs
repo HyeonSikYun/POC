@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     [Header("몬스터 스포너")]
     public AutoRoomSpawnerSetup autoSpawnerSetup;
+    public DynamicZombieSpawner dynamicSpawner;
 
     [Header("NavMesh")]
     public RuntimeNavMeshBaker navMeshBaker;
@@ -77,6 +78,8 @@ public class GameManager : MonoBehaviour
 
         if (UIManager.Instance != null) UIManager.Instance.UpdateFloor(currentFloor);
 
+        if (dynamicSpawner != null) dynamicSpawner.StopSpawning();
+
         if (buildPlanner != null) buildPlanner.ClearGenerated();
         CleanupObjectsForNextLevel();
 
@@ -97,6 +100,15 @@ public class GameManager : MonoBehaviour
         PlaceGenerators();
 
         if (autoSpawnerSetup != null) autoSpawnerSetup.SetupSpawners();
+
+        if (dynamicSpawner != null)
+        {
+            // 튜토리얼 층(-9)이 아닐 때만 작동
+            if (currentFloor != -9)
+            {
+                dynamicSpawner.StartSpawning();
+            }
+        }
 
         Debug.Log($"=== {currentFloor}층 로딩 완료 ===");
     }
