@@ -62,6 +62,7 @@ public class ZombieAI : MonoBehaviour, IPooledObject
 
     private void Start()
     {
+        HideMyself();
         FindPlayer();
     }
 
@@ -71,6 +72,12 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         {
             currentState.Execute(this);
         }
+    }
+
+    private void HideMyself()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (var r in renderers) r.enabled = false;
     }
 
     public void ChangeState(IZombieState newState)
@@ -86,13 +93,20 @@ public class ZombieAI : MonoBehaviour, IPooledObject
 
     public void OnObjectSpawn()
     {
+        HideMyself();
+
         currentHealth = maxHealth;
         LastAttackTime = -attackCooldown;
         isDead = false;
 
         Anim.SetLayerWeight(1, 1f);
 
-        if (Col != null) Col.enabled = true;
+        if (Col != null)
+        {
+            Col.enabled = true;
+            Col.isTrigger = false;
+        }
+            
         if (Anim != null)
         {
             Anim.Rebind();
@@ -359,8 +373,7 @@ public class DeadState : IZombieState
     {
         zombie.isDead = true;
 
-        // [핵심] 상체 레이어(인덱스 1)의 가중치를 0으로 만듭니다.
-        // 이렇게 하면 상체 레이어가 무시되고, Base Layer의 죽는 애니메이션이 전신에 적용됩니다.
+        // [이전 코드] 상체 레이어 힘 빼기 (서서 죽는 문제 해결용)
         zombie.Anim.SetLayerWeight(1, 0f);
 
         if (zombie.Agent.enabled)
@@ -370,7 +383,13 @@ public class DeadState : IZombieState
             zombie.Agent.enabled = false;
         }
 
-        if (zombie.Col != null) zombie.Col.enabled = false;
+        // [핵심 수정] Collider를 끄지 마세요! (끄면 손전등이 못 찾아서 투명해짐)
+        // 대신 Trigger로 바꿔서 플레이어가 밟지 않고 지나갈 수 있게 합니다.
+        if (zombie.Col != null)
+        {
+            // zombie.Col.enabled = false;  <-- 이 줄이 문제였음 (삭제)
+            zombie.Col.isTrigger = true; // <-- 이렇게 변경 (감지는 되되, 길막은 안 함)
+        }
 
         zombie.Anim.SetBool(zombie.hashIsRun, false);
         zombie.Anim.SetTrigger(zombie.hashDie);
