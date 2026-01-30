@@ -2,15 +2,8 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] AudioSource musicSource;
+    [SerializeField] AudioSource SFXSource;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

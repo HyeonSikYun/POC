@@ -153,11 +153,27 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateMouseAim()
     {
+        // [수정 전] 물리 레이캐스트 (바닥을 찍음 -> 오차 발생)
+        /*
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(mouseLook);
         if (Physics.Raycast(ray, out hit))
         {
             rotationTarget = hit.point;
+        }
+        */
+
+        // [수정 후] 수학적 평면 사용 (플레이어 높이를 기준으로 좌표 계산)
+        Ray ray = Camera.main.ScreenPointToRay(mouseLook);
+
+        // 플레이어의 현재 높이(transform.position.y)에 수평면(Vector3.up)을 생성합니다.
+        Plane playerPlane = new Plane(Vector3.up, transform.position);
+        float distance = 0f;
+
+        // 레이가 이 평면과 만나는 지점을 구합니다.
+        if (playerPlane.Raycast(ray, out distance))
+        {
+            rotationTarget = ray.GetPoint(distance);
         }
     }
 

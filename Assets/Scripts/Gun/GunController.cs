@@ -179,22 +179,47 @@ public class GunController : MonoBehaviour
             UIManager.Instance.UpdateAmmo(currentAmmo, currentWeapon.maxAmmo);
         }
 
+        // 1. [핵심] 마우스가 가리키는 정확한 월드 좌표 계산 (총구 높이 기준)
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        // 총구(spawn)의 높이에 맞는 가상의 평면 생성
+        Plane gunPlane = new Plane(Vector3.up, spawn.position);
+        float distance;
+        Vector3 targetPoint = Vector3.zero;
+
+        if (gunPlane.Raycast(ray, out distance))
+        {
+            targetPoint = ray.GetPoint(distance);
+        }
+
+        // 2. 발사 방향 벡터 계산 (목표지점 - 총구위치)
+        Vector3 fireDirection = (targetPoint - spawn.position).normalized;
+
+        // (옵션) 높이차 무시하고 수평으로만 쏘려면 아래 주석 해제
+        // fireDirection.y = 0; fireDirection.Normalize();
+
+
         if (currentWeapon.useProjectile)
         {
-            GameObject projectileObj = PoolManager.Instance.SpawnFromPool(currentWeapon.projectilePoolTag, spawn.position, spawn.rotation);
+            // [수정] 총구 회전을 발사 방향으로 잠시 맞춤 (로켓 등이 엉뚱하게 나가는 것 방지)
+            Quaternion fireRotation = Quaternion.LookRotation(fireDirection);
+
+            GameObject projectileObj = PoolManager.Instance.SpawnFromPool(currentWeapon.projectilePoolTag, spawn.position, fireRotation);
             if (projectileObj != null)
             {
                 Projectile proj = projectileObj.GetComponent<Projectile>();
                 if (proj != null)
                 {
                     proj.damage = currentWeapon.damage;
-                    proj.Launch(spawn.forward);
+                    // [수정] spawn.forward 대신 계산된 fireDirection 전달
+                    proj.Launch(fireDirection);
                 }
             }
         }
         else
         {
-            FireRaycast();
+            // [수정] Raycast 발사 시 계산된 방향 전달
+            FireRaycast(fireDirection);
         }
 
         if (currentWeapon.ejectShell) SpawnShell();
@@ -205,9 +230,10 @@ public class GunController : MonoBehaviour
         }
     }
 
-    private void FireRaycast()
+    // [수정] 매개변수로 direction을 받도록 변경
+    private void FireRaycast(Vector3 direction)
     {
-        Vector3 direction = spawn.forward;
+        // [수정] spawn.forward 대신 전달받은 direction 사용
         Ray ray = new Ray(spawn.position, direction);
         RaycastHit hit;
         Vector3 endPoint;
