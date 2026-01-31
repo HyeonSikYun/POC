@@ -11,6 +11,8 @@ public class TutorialManager : MonoBehaviour
     public string msgLoot = "바이오 캡슐을 획득하세요.";
     public string msgUpgrade = "[TAB] 키를 눌러 강화하세요.";
     public string msgEscape = "보안 해제. 다음 구역으로 이동하십시오.";
+    public string msgGenerator = "발전기를 가동하여 엘리베이터 전력을 공급하세요.";
+    public string msgFinalGoal = "목표 갱신: 최상층(지상)으로 탈출하십시오.";
 
     [Header("오브젝트 연결")]
     public GameObject gunItem;         // 바닥에 떨어진 총 아이템
@@ -106,6 +108,33 @@ public class TutorialManager : MonoBehaviour
             UpdateText(msgEscape);
             if (exitDoor != null) exitDoor.OpenDoor();
         }
+    }
+
+    public void OnPlayerEnterGeneratorRoom()
+    {
+        // 5단계(문 열림) 상태에서만 반응
+        if (currentStep == 5)
+        {
+            currentStep = 6;
+            UpdateText(msgGenerator); // "발전기를 가동하세요" 출력
+        }
+    }
+
+    // [추가] 발전기가 켜졌을 때 (TutorialElevator에서 호출)
+    public void OnTutorialGeneratorActivated()
+    {
+        if (currentStep == 6)
+        {
+            currentStep = 7; // 완료 상태
+            // 텍스트 숨기기
+            UpdateText(msgFinalGoal);
+        }
+    }
+
+    // [추가] 엘리베이터 타고 올라갈 때 (최종 목표 안내)
+    public void ShowFinalGoalMessage()
+    {
+        UpdateText(msgFinalGoal);
     }
 
     private void UpdateText(string msg)

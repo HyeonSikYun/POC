@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
 
     [Header("튜토리얼 UI")]
     public TextMeshProUGUI tutorialText;
+    public GameObject tutorialUIGroup;
 
     // [추가됨] 발전기 관련 UI
     [Header("발전기 UI")]
@@ -64,17 +65,22 @@ public class UIManager : MonoBehaviour
 
     public void ShowTutorialText(string message)
     {
+        // 1. 그룹 전체(패널+텍스트)를 켭니다.
+        if (tutorialUIGroup != null)
+            tutorialUIGroup.SetActive(true);
+
+        // 2. 텍스트 내용을 바꿉니다.
         if (tutorialText != null)
         {
             tutorialText.text = message;
-            tutorialText.gameObject.SetActive(true);
         }
     }
 
     public void HideTutorialText()
     {
-        if (tutorialText != null)
-            tutorialText.gameObject.SetActive(false);
+        // [핵심] 텍스트만 끄는 게 아니라, 그룹 전체를 꺼서 패널도 사라지게 합니다.
+        if (tutorialUIGroup != null)
+            tutorialUIGroup.SetActive(false);
     }
 
     // --- 기존 UI 함수들 (그대로 유지) ---

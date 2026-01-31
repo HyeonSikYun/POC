@@ -68,6 +68,14 @@ public class TutorialElevator : MonoBehaviour
         isLocked = false;
         if (statusLight) statusLight.color = unlockedColor;
 
+        // =========================================================
+        // [추가] 발전기 켜짐 -> 튜토리얼 매니저에게 알려서 텍스트 끄기
+        // =========================================================
+        if (TutorialManager.Instance != null)
+        {
+            TutorialManager.Instance.OnTutorialGeneratorActivated();
+        }
+
         StartCoroutine(MoveDoors(true));
     }
 
@@ -85,6 +93,8 @@ public class TutorialElevator : MonoBehaviour
     private IEnumerator TransportSequence()
     {
         isMoving = true;
+
+        if (UIManager.Instance != null) UIManager.Instance.HideTutorialText();
 
         // 1. 문 닫기
         yield return StartCoroutine(MoveDoors(false));
