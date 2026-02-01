@@ -41,6 +41,9 @@ public class GameManager : MonoBehaviour
     private int requiredGenerators = 0;
     private int activatedGenerators = 0;
 
+    [Header("시야 차단 설정")]
+    public LayerMask hideLayerMask;
+
     // UI 변수들
     public int bioSamples = 8;
     public int upgradeCost = 10;
@@ -108,6 +111,15 @@ public class GameManager : MonoBehaviour
     private IEnumerator LoadLevelSequence()
     {
         currentFloor++;
+
+        Camera mainCam = Camera.main;
+        if (mainCam != null && currentFloor != -9) // 튜토리얼 아닐 때만
+        {
+            // 현재 마스크에서 숨길 레이어를 뺍니다 (Map, Wall 등 숨김)
+            mainCam.cullingMask &= ~hideLayerMask;
+            Debug.Log("[GameManager] 로딩 시작: 맵 레이어를 미리 숨겼습니다.");
+        }
+
         currentSeed = GenerateValidSeed();
         UnityEngine.Random.InitState(currentSeed); // 유니티 랜덤 엔진에 시드 주입
         Debug.Log($"=== [맵 생성] 적용된 시드: {currentSeed} ===");
@@ -136,6 +148,17 @@ public class GameManager : MonoBehaviour
 
         PlaceFinishRoomElevator();
         PlaceGenerators();
+
+        ElevatorManager[] elevators = FindObjectsOfType<ElevatorManager>();
+        foreach (var elev in elevators)
+        {
+            if (elev.currentType == ElevatorManager.ElevatorType.RestArea)
+            {
+                Debug.Log("[GameManager] 맵 생성 완료 -> RestArea 엘리베이터 초기화 명령!");
+                elev.Initialize();
+                // ↑ 이 함수가 실행되면서 문이 잠기고, 시야 차단(Culling Mask)이 적용됩니다.
+            }
+        }
 
         if (autoSpawnerSetup != null) autoSpawnerSetup.SetupSpawners();
 

@@ -33,6 +33,13 @@ public class ElevatorManager : MonoBehaviour
     [SerializeField] private GameObject doorTriggerObject;
     [SerializeField] private GameObject insideTriggerObject;
 
+    [Header("심리스 연출 설정")]
+    // [설정] 안 보이게 가릴 레이어들을 선택하세요 (Map, Wall, Default 등)
+    public LayerMask hideLayerMask;
+    private int originalCullingMask;
+    private Camera mainCam;
+    private bool isViewLocked = false;
+
     private Vector3 leftDoorClosedPos, leftDoorOpenPos;
     private Vector3 rightDoorClosedPos, rightDoorOpenPos;
     private bool doorsOpen = false;
@@ -49,50 +56,186 @@ public class ElevatorManager : MonoBehaviour
     void Awake()
     {
         if (currentType == ElevatorType.RestArea) RestAreaInstance = this;
-    }
-
-    void Start()
-    {
+        // [필수] 위치 계산은 여기서 해야 0,0,0 이동 버그가 없습니다.
         CalculateDoorPositions();
         FindComponents();
-        SetupTriggers();
+    }
 
-        if (currentType == ElevatorType.Finish) FindDestination("RestAreaSpawnPoint");
-
-        // 초기 상태 설정
-        if (currentType == ElevatorType.Finish)
+    // =========================================================
+    // [해결] Start 함수 부활! (단, 조건부 실행)
+    // =========================================================
+    void Start()
+    {
+        // "레스트룸 엘리베이터"는 GameManager가 타이밍 맞춰서 Initialize() 해줄 때까지 대기합니다.
+        // 하지만 "피니쉬/일반 엘리베이터"는 태어나자마자 스스로 준비해야 트리거가 작동합니다.
+        if (currentType != ElevatorType.RestArea)
         {
-            CloseDoorsImmediate();
-            LockDoor();
-        }
-        else if (currentType == ElevatorType.RestArea)
-        {
-            CloseDoorsImmediate();
-            LockDoor();
-            isRestTimerStarted = false;
+            Initialize();
         }
     }
+    void Update()
+    {
+        // 만약 시야가 잠겨야 하는 상황(isViewLocked)이라면?
+        if (isViewLocked && mainCam != null)
+        {
+            // 다른 누군가(GameManager 등)가 맵을 보이게 바꿔도, 다시 즉시 숨겨버립니다.
+            mainCam.cullingMask &= ~hideLayerMask;
+        }
+    }
+    public void Initialize()
+    {
+        InitializeRoutine();
+    }
+
+    private void InitializeRoutine()
+    {
+        // 공통 필수 초기화 (카메라 찾기 등)
+        mainCam = Camera.main;
+        FindComponents();
+
+        // ---------------------------------------------------------
+        // A. 레스트룸 엘리베이터 전용 로직 (시야 가리기 포함)
+        // ---------------------------------------------------------
+        if (currentType == ElevatorType.RestArea)
+        {
+            // 튜토리얼(-9)이 아닐 때만 실행
+            if (GameManager.Instance.currentFloor != -9)
+            {
+                CloseDoorsImmediate();
+                LockDoor();
+
+                if (fadeCanvasGroup != null)
+                {
+                    // "어? 화면이 어둡네? (피니쉬 엘베 타고 왔구나)" -> 밝혀주자!
+                    if (fadeCanvasGroup.alpha > 0.1f)
+                    {
+                        StartCoroutine(FadeIn());
+                    }
+                    // 화면이 이미 밝다면(튜토리얼에서 옴)? -> 아무것도 안 함 (자연스럽게 연결)
+                }
+
+                // [시야 차단 로직] 레스트룸일 때만 작동!
+                // 혹시 GameManager가 놓쳤을 경우를 대비한 이중 안전장치
+                if (mainCam != null)
+                {
+                    isViewLocked = true;
+                    mainCam.cullingMask &= ~hideLayerMask;
+                }
+
+                StartCoroutine(RestAreaAutoOpenSequence());
+            }
+            else
+            {
+                CloseDoorsImmediate();
+                // 튜토리얼이면 맵 다 보여주기
+                if (mainCam != null) mainCam.cullingMask = -1;
+            }
+        }
+        // ---------------------------------------------------------
+        // B. 피니쉬 엘리베이터 전용 로직 (시야 안 건드림)
+        // ---------------------------------------------------------
+        else if (currentType == ElevatorType.Finish)
+        {
+            FindDestination("RestAreaSpawnPoint");
+            CloseDoorsImmediate();
+            LockDoor();
+
+            // 피니쉬 엘리베이터는 무조건 맵이 다 보여야 합니다.
+            if (mainCam != null) mainCam.cullingMask = -1;
+        }
+
+        // [중요] 주석 해제! 이걸 해야 플레이어가 탔는지 감시를 시작합니다.
+        SetupTriggers();
+    }
+
+    //void Start()
+    //{
+    //    CalculateDoorPositions();
+    //    FindComponents();
+
+    //    mainCam = Camera.main;
+    //    if (mainCam != null) originalCullingMask = mainCam.cullingMask;
+
+    //    // [핵심 수정] 튜토리얼(-9층)이 아닐 때만 "엘리베이터 납치/대기" 로직을 실행합니다.
+    //    // 튜토리얼에서는 플레이어가 방 안의 PlayerSpawnPoint에서 걸어서 시작해야 하니까요.
+    //    if (currentType == ElevatorType.RestArea)
+    //    {
+    //        if (GameManager.Instance != null && GameManager.Instance.currentFloor == -9)
+    //        {
+    //            // [튜토리얼 층인 경우]
+    //            // 아무것도 안 함. (플레이어 납치 X, 시야 차단 X)
+    //            // 그냥 맵에 배치된 상태 그대로 대기. (나중에 플레이어가 걸어서 타거나 하겠죠)
+    //            Debug.Log("[Elevator] 튜토리얼 층입니다. 레스트룸 시퀀스를 건너뜁니다.");
+    //        }
+    //        else
+    //        {
+    //            // [본 게임(-8층 이상)인 경우]
+    //            // 1. 위치를 StartPoint로 강제 이동 (플레이어 포함)
+    //            MoveElevatorToStartPoint();
+
+    //            // 2. 바깥 세상(맵) 안 보이게 가리기
+    //            if (mainCam != null)
+    //            {
+    //                mainCam.cullingMask = originalCullingMask & ~hideLayerMask;
+    //            }
+
+    //            // 3. 문 닫고 잠금
+    //            CloseDoorsImmediate();
+    //            LockDoor();
+    //            isRestTimerStarted = false;
+    //        }
+    //    }
+    //    else if (currentType == ElevatorType.Finish)
+    //    {
+    //        FindDestination("RestAreaSpawnPoint");
+    //        CloseDoorsImmediate();
+    //        LockDoor();
+    //    }
+
+    //    SetupTriggers();
+    //}
 
     // ====================================================
     // 휴식방 10초 대기 시퀀스
     // ====================================================
     IEnumerator RestAreaAutoOpenSequence()
     {
-        isRestTimerStarted = true;
         isProcessing = true;
-
         UpdateLightColor(true);
 
-        yield return new WaitForSeconds(0.5f);
-        if (fadeCanvasGroup) StartCoroutine(FadeIn());
-
-        Debug.Log($"[RestArea] 플레이어 확인됨. 맵 생성 대기 중... ({restAreaWaitTime}초)");
-
+        // 10초 대기
         yield return new WaitForSeconds(restAreaWaitTime);
+        isViewLocked = false;
+        // [중요] 문 열기 직전에 바깥 세상 복구!
+        if (mainCam != null)
+        {
+            mainCam.cullingMask = -1;
+        }
 
-        Debug.Log("[RestArea] 대기 끝! 문을 엽니다.");
+        Debug.Log("[RestArea] 대기 완료! 문을 엽니다.");
         UnlockDoor();
         isProcessing = false;
+    }
+
+    void MoveElevatorToStartPoint()
+    {
+        if (GameManager.Instance == null) return;
+        Transform targetSpot = GameManager.Instance.GetStartRoomSpawnPoint();
+
+        if (targetSpot != null)
+        {
+            transform.position = targetSpot.position;
+            transform.rotation = targetSpot.rotation;
+
+            // 플레이어도 같이 있다면 위치 보정 (혹시 모르니)
+            if (playerTransform != null)
+            {
+                // 플레이어를 엘리베이터 내부 중심으로 이동 (살짝 위로)
+                playerTransform.position = transform.position + Vector3.up * 0.1f;
+                playerTransform.rotation = transform.rotation;
+                Physics.SyncTransforms(); // 물리 위치 즉시 갱신
+            }
+        }
     }
 
     // ====================================================
@@ -100,11 +243,12 @@ public class ElevatorManager : MonoBehaviour
     // ====================================================
     void SetupTriggers()
     {
-        // 1. 외부 문 열기
+        // 1. 외부 문 열기 버튼/영역
         if (doorTriggerObject)
         {
             var dt = GetOrAddTrigger(doorTriggerObject);
             dt.onPlayerEnter = () => {
+                // 레스트룸이거나 이미 처리중이면 무시
                 if (currentType != ElevatorType.RestArea && !isProcessing && !doorsOpen && !isLocked)
                     StartCoroutine(OpenDoors());
             };
@@ -113,43 +257,41 @@ public class ElevatorManager : MonoBehaviour
             };
         }
 
-        // 2. 내부 탑승 (Enter + Stay 모두 사용)
+        // 2. 내부 탑승 감지
         if (insideTriggerObject)
         {
             var it = GetOrAddTrigger(insideTriggerObject);
 
-            // 공통 감지 로직 함수
             System.Action onPlayerDetected = () =>
             {
                 isPlayerInside = true;
 
-                // (A) 일반/피니쉬: 타면 출발
+                // (A) 피니쉬/일반 엘리베이터: 타면 다음 층으로 이동 출발
                 if (!isProcessing && doorsOpen && currentType != ElevatorType.RestArea)
                 {
                     StartCoroutine(DepartSequence());
                 }
 
-                // (B) 레스트룸: 플레이어 감지 시 타이머 시작
-                // !isRestTimerStarted 체크 덕분에 계속 머물러도 한 번만 실행됨
-                if (currentType == ElevatorType.RestArea && !isRestTimerStarted)
-                {
-                    StartCoroutine(RestAreaAutoOpenSequence());
-                }
+                // (B) 레스트룸: 플레이어가 안에 있어도 아무것도 안 함 
+                // (이미 Start에서 AutoSequence를 돌렸기 때문)
             };
 
-            // Enter와 Stay 둘 다 연결 (순간이동 시 Enter가 안 먹힐 때 Stay가 잡아줌)
             it.onPlayerEnter = onPlayerDetected;
             it.onPlayerStay = onPlayerDetected;
 
             it.onPlayerExit = () => {
                 isPlayerInside = false;
+
+                // 레스트룸에서 밖으로 나가면? -> 문 닫기
                 if (!isProcessing && currentType == ElevatorType.RestArea && doorsOpen)
                 {
-                    StartCoroutine(ExitRestAreaSequence());
+                    StartCoroutine(CloseDoors());
                 }
             };
         }
     }
+
+
 
     // ... (기본 함수들: CloseDoorsImmediate, LockDoor, UnlockDoor 등등 기존 유지) ...
 
