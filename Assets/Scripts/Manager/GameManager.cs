@@ -49,9 +49,14 @@ public class GameManager : MonoBehaviour
     public float globalAmmoMultiplier = 1.0f;      // 전체 탄약 배율
     public float globalMoveSpeedMultiplier = 1.0f; // 이동 속도 배율
 
+    [Header("강화 비용 설정")]
+    public int costHeal = 10;      // 고정
+    public int costDamage = 10;    // 증가함
+    public int costAmmo = 10;      // 증가함
+    public int costSpeed = 10;     // 증가함
+
     // UI 변수들
     public int bioSamples = 8;
-    public int upgradeCost = 10;
     public bool isUpgradeMenuOpen = false;
 
     private void Awake()
@@ -253,6 +258,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public float GetZombieHP_Multiplier()
+    {
+        // -8층부터 좀비가 나오니까, -8층을 기준(0단계)으로 잡습니다.
+        int startFloor = -8;
+
+        // 현재 층이 -9층(튜토리얼)이면 강화 없음 (1.0배)
+        if (currentFloor < startFloor) return 1.0f;
+
+        // 진행도: -8층=0, -7층=1, -6층=2 ...
+        int levelProgress = currentFloor - startFloor;
+
+        // 배율 공식: 1.0 + (층수 * 0.2) 
+        // 예: -8층(1.0배), -7층(1.2배), -6층(1.4배)...
+        float multiplier = 1.0f + (levelProgress * 0.2f);
+
+        return multiplier;
+    }
+
     // --- 유틸리티 및 기존 유지 함수들 ---
     private void PlaceFinishRoomElevator()
     {
@@ -305,16 +328,42 @@ public class GameManager : MonoBehaviour
 
     private void ShuffleArray<T>(T[] array) { for (int i = array.Length - 1; i > 0; i--) { int j = Random.Range(0, i + 1); T temp = array[i]; array[i] = array[j]; array[j] = temp; } }
     private void SetCursorType(bool isGameCursor) { if (isGameCursor && crosshairTexture != null) Cursor.SetCursor(crosshairTexture, cursorHotspot, CursorMode.Auto); else Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); Cursor.visible = true; Cursor.lockState = CursorLockMode.None; }
-    private void ToggleUpgradeMenu() { isUpgradeMenuOpen = !isUpgradeMenuOpen; if (UIManager.Instance != null) UIManager.Instance.ShowUpgradePanel(isUpgradeMenuOpen); if (isUpgradeMenuOpen) { Time.timeScale = 0f; SetCursorType(false); } else { Time.timeScale = 1f; SetCursorType(true); } }
+    private void ToggleUpgradeMenu()
+    {
+        isUpgradeMenuOpen = !isUpgradeMenuOpen;
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowUpgradePanel(isUpgradeMenuOpen);
+
+            // [추가] 메뉴를 열 때마다 가격 텍스트가 최신인지 확실히 갱신
+            if (isUpgradeMenuOpen)
+            {
+                UIManager.Instance.UpdateUpgradePrices(costHeal, costDamage, costAmmo, costSpeed);
+            }
+        }
+
+        if (isUpgradeMenuOpen) { Time.timeScale = 0f; SetCursorType(false); }
+        else { Time.timeScale = 1f; SetCursorType(true); }
+    }
     public void AddBioSample(int amount) { bioSamples += amount; if (UIManager.Instance != null) UIManager.Instance.UpdateBioSample(bioSamples); }
     // [수정] 버튼 4개에 대응하는 강화 로직
     // [수정된 함수] GameManager.cs 안에 덮어씌우세요
     public void UpgradeStat(string type)
     {
-        // 1. 재화 부족 확인
-        if (bioSamples < upgradeCost)
+        // 1. 현재 선택한 항목의 가격 확인
+        int currentCost = 0;
+        switch (type)
         {
-            Debug.Log("샘플이 부족합니다!");
+            case "HP": currentCost = costHeal; break;
+            case "Damage": currentCost = costDamage; break;
+            case "Ammo": currentCost = costAmmo; break;
+            case "Speed": currentCost = costSpeed; break;
+        }
+
+        // 2. 재화 부족 확인
+        if (bioSamples < currentCost)
+        {
+            Debug.Log($"샘플이 부족합니다! (필요: {currentCost}, 보유: {bioSamples})");
             return;
         }
 
@@ -324,13 +373,13 @@ public class GameManager : MonoBehaviour
 
         switch (type)
         {
-            // 1. 체력 회복 (Heal)
+            // 1. 체력 회복
             case "HP":
                 if (player != null)
                 {
                     if (player.IsHealthFull())
                     {
-                        Debug.Log("체력이 이미 최대입니다! (강화 실패)");
+                        Debug.Log("체력이 이미 최대입니다!");
                         isSuccess = false;
                     }
                     else
@@ -342,34 +391,51 @@ public class GameManager : MonoBehaviour
                 }
                 break;
 
-            // 2. 전체 공격력 증가 (Damage Up)
+            // 2. 전체 공격력 증가
             case "Damage":
-                globalDamageMultiplier += 0.1f; // +10%
+                globalDamageMultiplier += 0.1f;
                 Debug.Log($"?? 전체 공격력 증가! (현재 {globalDamageMultiplier * 100}%)");
                 isSuccess = true;
                 break;
 
-            // 3. 전체 탄약 증가 (Ammo Up)
+            // 3. 전체 탄약 증가
             case "Ammo":
-                globalAmmoMultiplier += 0.2f; // +20%
+                globalAmmoMultiplier += 0.2f;
                 Debug.Log($"?? 전체 탄약량 증가! (현재 {globalAmmoMultiplier * 100}%)");
                 if (gun != null) gun.RefreshAmmoUI();
                 isSuccess = true;
                 break;
 
-            // 4. 이동 속도 증가 (Speed Up)
+            // 4. 이동 속도 증가
             case "Speed":
-                globalMoveSpeedMultiplier += 0.05f; // +5%
+                globalMoveSpeedMultiplier += 0.05f;
                 Debug.Log($"? 이동 속도 증가! (현재 {globalMoveSpeedMultiplier * 100}%)");
                 isSuccess = true;
                 break;
         }
 
-        // 성공 시 재화 차감
+        // 3. 성공 처리: 재화 차감 및 가격 인상
         if (isSuccess)
         {
-            bioSamples -= upgradeCost;
-            if (UIManager.Instance != null) UIManager.Instance.UpdateBioSample(bioSamples);
+            bioSamples -= currentCost; // 해당 비용만큼 차감
+
+            // [핵심] 가격 인상 (HP 제외)
+            switch (type)
+            {
+                case "Damage": costDamage += 2; break;
+                case "Ammo": costAmmo += 2; break;
+                case "Speed": costSpeed += 2; break;
+                    // HP는 가격 유지
+            }
+
+            // UI 갱신 (보유 샘플 및 가격 텍스트)
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.UpdateBioSample(bioSamples);
+                // 가격이 올랐으니 텍스트 갱신
+                UIManager.Instance.UpdateUpgradePrices(costHeal, costDamage, costAmmo, costSpeed);
+            }
+
             if (TutorialManager.Instance != null) TutorialManager.Instance.OnUpgradeCompleted();
         }
     }

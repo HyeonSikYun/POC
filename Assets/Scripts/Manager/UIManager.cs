@@ -30,6 +30,12 @@ public class UIManager : MonoBehaviour
     [Header("업그레이드 패널")]
     public GameObject upgradePanel;
 
+    [Header("강화 메뉴 텍스트")]
+    public TMPro.TextMeshProUGUI txtHealCost;
+    public TMPro.TextMeshProUGUI txtDamageCost;
+    public TMPro.TextMeshProUGUI txtAmmoCost;
+    public TMPro.TextMeshProUGUI txtSpeedCost;
+
     private void Awake()
     {
         if (Instance == null) { Instance = this; }
@@ -106,4 +112,19 @@ public class UIManager : MonoBehaviour
     public void UpdateWeaponName(string name) { if (weaponNameText != null) weaponNameText.text = name; }
     public void UpdateAmmo(int current, int max) { if (ammoText != null) ammoText.text = $"{current} / {max}"; }
     public void ShowReloading(bool isReloading) { if (reloadingObject != null) reloadingObject.SetActive(isReloading); }
+
+    public void UpdateUpgradePrices(int heal, int dmg, int ammo, int spd)
+    {
+        if (txtHealCost != null)
+            txtHealCost.text = $"체력 회복\n필요 샘플 : {heal}";
+
+        if (txtDamageCost != null)
+            txtDamageCost.text = $"공격력 강화\n필요 샘플 : {dmg}";
+
+        if (txtAmmoCost != null)
+            txtAmmoCost.text = $"탄약 확장\n필요 샘플 : {ammo}";
+
+        if (txtSpeedCost != null)
+            txtSpeedCost.text = $"속도 증가\n필요 샘플 : {spd}";
+    }
 }

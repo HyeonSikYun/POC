@@ -24,7 +24,8 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     [Header("전투 설정")]
     public float attackCooldown = 2f;
     public float attackDelay = 0.5f;
-    public int maxHealth = 100;
+    public int defaultMaxHealth = 100;
+    public int maxHealth;
     public int currentHealth;
 
     [Header("죽음 설정")]
@@ -103,6 +104,17 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     public void OnObjectSpawn()
     {
         HideMyself();
+
+        float multiplier = 1.0f;
+        if (GameManager.Instance != null)
+        {
+            multiplier = GameManager.Instance.GetZombieHP_Multiplier();
+        }
+
+        // [핵심 수정] 
+        // 잘못된 예: maxHealth = maxHealth * multiplier; (X -> 계속 누적됨)
+        // 올바른 예: maxHealth = defaultMaxHealth * multiplier; (O -> 항상 원본 기준)
+        maxHealth = Mathf.RoundToInt(defaultMaxHealth * multiplier);
 
         currentHealth = maxHealth;
         LastAttackTime = -attackCooldown;
