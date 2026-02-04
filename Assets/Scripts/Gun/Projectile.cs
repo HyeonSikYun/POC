@@ -76,6 +76,7 @@ public class Projectile : MonoBehaviour
         if (explosionEffect != null)
         {
             Instantiate(explosionEffect, position, Quaternion.LookRotation(normal));
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.explosion, 0.1f);
         }
 
         // 범위 데미지 처리

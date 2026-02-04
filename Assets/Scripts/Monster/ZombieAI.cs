@@ -43,6 +43,9 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     [Tooltip("아이템이 떨어질 바닥 레이어를 선택하세요 (Default, Ground, Wall 등)")]
     public LayerMask groundLayer; // [추가] 바닥 감지용 레이어
 
+    [Header("사운드 설정")]
+    public AudioSource audioSource;
+
     [Header("디버그")]
     public bool showGizmos = true;
 
@@ -171,6 +174,8 @@ public class ZombieAI : MonoBehaviour, IPooledObject
             StopCoroutine("HitFlashRoutine");
             StartCoroutine("HitFlashRoutine");
         }
+
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.gunHit);
 
         // 체력 감소
         currentHealth -= damage;
@@ -302,6 +307,10 @@ public class ChaseState : IZombieState
             zombie.Agent.speed = zombie.moveSpeed;
         }
         zombie.Anim.SetBool(zombie.hashIsRun, true);
+
+        zombie.audioSource.clip = SoundManager.Instance.zombieChase;
+        zombie.audioSource.loop = true; // 쫓아오는 동안 계속 소리나게 Loop 켜기
+        zombie.audioSource.Play();
     }
 
     public void Execute(ZombieAI zombie)
@@ -414,6 +423,12 @@ public class DeadState : IZombieState
     public void Enter(ZombieAI zombie)
     {
         zombie.isDead = true;
+
+        if (zombie.audioSource != null)
+        {
+            zombie.audioSource.Stop();
+            zombie.audioSource.loop = false; // 루프 해제
+        }
 
         // [이전 코드] 상체 레이어 힘 빼기 (서서 죽는 문제 해결용)
         zombie.Anim.SetLayerWeight(1, 0f);

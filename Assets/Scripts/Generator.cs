@@ -35,6 +35,7 @@ public class Generator : MonoBehaviour
             // 시간이 다 차면 발동
             if (currentHoldTime >= holdDuration)
             {
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.generateOn);
                 Activate();
             }
         }

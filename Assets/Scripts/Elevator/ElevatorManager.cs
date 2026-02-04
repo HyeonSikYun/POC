@@ -203,8 +203,16 @@ public class ElevatorManager : MonoBehaviour
         isProcessing = true;
         UpdateLightColor(true);
 
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayBGM(SoundManager.Instance.elevatorAmbience);
+        }
+
         // 10초 대기
         yield return new WaitForSeconds(restAreaWaitTime);
+
+        //if (SoundManager.Instance != null) SoundManager.Instance.StopBGM();
+
         isViewLocked = false;
         // [중요] 문 열기 직전에 바깥 세상 복구!
         if (mainCam != null)
@@ -213,6 +221,12 @@ public class ElevatorManager : MonoBehaviour
         }
 
         Debug.Log("[RestArea] 대기 완료! 문을 엽니다.");
+
+        if (SoundManager.Instance != null)
+        {
+            // mainBgm 대신 원하는 다른 배경음이 있다면 그걸로 바꾸셔도 됩니다.
+            SoundManager.Instance.PlayBGM(SoundManager.Instance.mainBgm);
+        }
         UnlockDoor();
         isProcessing = false;
     }
@@ -360,7 +374,11 @@ public class ElevatorManager : MonoBehaviour
 
     void TeleportPlayer(Transform target) { if (!playerTransform) return; CharacterController cc = playerTransform.GetComponent<CharacterController>(); if (cc) cc.enabled = false; playerTransform.position = target.position; playerTransform.rotation = target.rotation; if (cc) cc.enabled = true; }
     IEnumerator MoveDoors(bool open) { float t = 0; Vector3 lStart = leftDoor ? leftDoor.localPosition : Vector3.zero; Vector3 rStart = rightDoor ? rightDoor.localPosition : Vector3.zero; Vector3 lEnd = open ? leftDoorOpenPos : leftDoorClosedPos; Vector3 rEnd = open ? rightDoorOpenPos : rightDoorClosedPos; while (t < 1) { t += Time.deltaTime * doorSpeed; if (leftDoor) leftDoor.localPosition = Vector3.Lerp(lStart, lEnd, t); if (rightDoor) rightDoor.localPosition = Vector3.Lerp(rStart, rEnd, t); yield return null; } doorsOpen = open; }
-    IEnumerator OpenDoors() { return MoveDoors(true); }
+    IEnumerator OpenDoors() 
+    {
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.elevatorDing);
+        return MoveDoors(true); 
+    }
     IEnumerator CloseDoors() { return MoveDoors(false); }
     IEnumerator FadeOut() { if (!fadeCanvasGroup) yield break; fadeCanvasGroup.blocksRaycasts = true; float t = fadeCanvasGroup.alpha; while (t < 1) { t += Time.deltaTime * fadeSpeed; fadeCanvasGroup.alpha = t; yield return null; } fadeCanvasGroup.alpha = 1; }
     IEnumerator FadeIn() { if (!fadeCanvasGroup) yield break; float t = fadeCanvasGroup.alpha; while (t > 0) { t -= Time.deltaTime * fadeSpeed; fadeCanvasGroup.alpha = t; yield return null; } fadeCanvasGroup.alpha = 0; fadeCanvasGroup.blocksRaycasts = false; }

@@ -428,6 +428,7 @@ public class GameManager : MonoBehaviour
                     {
                         player.Heal(30);
                         Debug.Log("?? 체력 회복 완료!");
+                        SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
                         isSuccess = true;
                     }
                 }
@@ -437,6 +438,7 @@ public class GameManager : MonoBehaviour
             case "Damage":
                 globalDamageMultiplier += 0.1f;
                 Debug.Log($"?? 전체 공격력 증가! (현재 {globalDamageMultiplier * 100}%)");
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
                 isSuccess = true;
                 break;
 
@@ -444,6 +446,7 @@ public class GameManager : MonoBehaviour
             case "Ammo":
                 globalAmmoMultiplier += 0.2f;
                 Debug.Log($"?? 전체 탄약량 증가! (현재 {globalAmmoMultiplier * 100}%)");
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
                 if (gun != null) gun.RefreshAmmoUI();
                 isSuccess = true;
                 break;
@@ -452,6 +455,7 @@ public class GameManager : MonoBehaviour
             case "Speed":
                 globalMoveSpeedMultiplier += 0.05f;
                 Debug.Log($"? 이동 속도 증가! (현재 {globalMoveSpeedMultiplier * 100}%)");
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
                 isSuccess = true;
                 break;
         }
@@ -493,6 +497,7 @@ public class GameManager : MonoBehaviour
     public void OnClickResume()
     {
         if (isPaused) TogglePauseMenu();
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
     }
 
     // 2. 옵션 버튼용
@@ -503,6 +508,7 @@ public class GameManager : MonoBehaviour
             // 옵션 패널이 꺼져있으면 켜고, 켜져있으면 끔 (토글)
             bool isActive = UIManager.Instance.settingsPanel.activeSelf;
             UIManager.Instance.ShowSettingsPanel(!isActive);
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
         }
     }
 
@@ -510,6 +516,7 @@ public class GameManager : MonoBehaviour
     public void OnClickQuit()
     {
         Debug.Log("게임 종료!");
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
         Application.Quit(); // 빌드된 게임에서만 작동 (에디터에선 반응 X)
     }
 }

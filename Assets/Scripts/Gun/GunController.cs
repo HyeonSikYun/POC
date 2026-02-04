@@ -4,10 +4,18 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
+public enum WeaponType
+{
+    Rifle,
+    Bazooka,
+    FlameThrower
+}
+
 [System.Serializable]
 public class WeaponStats
 {
     public string weaponName;
+    public WeaponType type;
     public int maxAmmo = 30;
     public float fireRate = 0.1f;
     public int damage = 50;
@@ -41,10 +49,13 @@ public class GunController : MonoBehaviour
     [Header("필수 할당")]
     public Transform spawn;
     public Transform shellPoint;
-    public float reloadTime = 2f;
+    public float reloadTime = 3f;
 
     private PlayerController playerController;
     private Coroutine shootCoroutine;
+
+    [Header("오디오 소스 연결")]
+    public AudioSource gunAudioSource;
 
     private void Start()
     {
@@ -133,6 +144,13 @@ public class GunController : MonoBehaviour
         if (context.started)
         {
             isHoldingTrigger = true;
+
+            if (currentWeapon.type == WeaponType.FlameThrower)
+            {
+                gunAudioSource.clip = SoundManager.Instance.flameThrower;
+                gunAudioSource.loop = true; // 반복 재생 ON
+                gunAudioSource.Play();
+            }
             if (currentWeapon.useParticle && currentWeapon.weaponParticle != null)
             {
                 currentWeapon.weaponParticle.Play();
@@ -150,6 +168,12 @@ public class GunController : MonoBehaviour
         else if (context.canceled)
         {
             isHoldingTrigger = false;
+
+            if (currentWeapon.type == WeaponType.FlameThrower)
+            {
+                gunAudioSource.Stop();
+                gunAudioSource.loop = false;
+            }
             if (currentWeapon.useParticle && currentWeapon.weaponParticle != null)
             {
                 currentWeapon.weaponParticle.Stop();
@@ -205,6 +229,7 @@ public class GunController : MonoBehaviour
             Quaternion fireRotation = Quaternion.LookRotation(fireDirection);
 
             GameObject projectileObj = PoolManager.Instance.SpawnFromPool(currentWeapon.projectilePoolTag, spawn.position, fireRotation);
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.Bazooka,0.1f);
             if (projectileObj != null)
             {
                 Projectile proj = projectileObj.GetComponent<Projectile>();
@@ -219,6 +244,10 @@ public class GunController : MonoBehaviour
         else
         {
             FireRaycast(fireDirection);
+            if (currentWeapon.type == WeaponType.Rifle)
+            {
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.Rifle,0.1f);
+            }
         }
 
         if (currentWeapon.ejectShell) SpawnShell();
@@ -299,10 +328,17 @@ public class GunController : MonoBehaviour
         if (shootCoroutine != null) StopCoroutine(shootCoroutine);
         if (currentWeapon.weaponParticle != null) currentWeapon.weaponParticle.Stop();
 
+        if (gunAudioSource.isPlaying && currentWeapon.type == WeaponType.FlameThrower)
+        {
+            gunAudioSource.Stop();
+            gunAudioSource.loop = false;
+        }
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowReloading(true);
         }
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.reload);
 
         yield return new WaitForSeconds(reloadTime);
 

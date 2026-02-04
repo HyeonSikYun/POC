@@ -19,6 +19,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxPushForce = 2f;
     [SerializeField] private LayerMask pushableLayer;
 
+    [Header("Sound")]
+    public float stepRate = 0.4f;   // 발소리 간격 (0.4초마다)
+    private float nextStepTime = 0f; // 다음 발소리 시간
+
     private float verticalVelocity;
     private float gravity = -9.81f;
     private Vector2 move, mouseLook, joystickLook;
@@ -69,6 +73,29 @@ public class PlayerController : MonoBehaviour
         ApplyGravity();
         UpdateMovement();
         ApplyPushForce();
+
+        HandleFootstep();
+    }
+
+    private void HandleFootstep()
+    {
+        // 1. 플레이어가 땅에 있고 (점프 중 아님)
+        // 2. 이동 입력이 있고 (움직이는 중)
+        // 3. 소리 쿨타임이 지났으면
+        if (charCon.isGrounded && move.magnitude > 0.1f && Time.time >= nextStepTime)
+        {
+            if (SoundManager.Instance != null)
+            {
+                // 약간의 피치 변화를 주어 자연스럽게 (선택사항)
+                // SoundManager.Instance.PlaySFX(SoundManager.Instance.footStep);
+
+                // 만약 피치 조절 없이 그냥 재생하려면:
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.footStep);
+            }
+
+            // 다음 발소리 시간 예약
+            nextStepTime = Time.time + stepRate;
+        }
     }
 
     public void AcquireGun()

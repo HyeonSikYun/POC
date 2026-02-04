@@ -20,6 +20,7 @@ public class TutorialGunPickup : MonoBehaviour
             {
                 // 1. 플레이어 손에 총 쥐어주기
                 player.AcquireGun();
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.gunPickup);
 
                 // 2. 매니저에게 "총 먹었어!" 알림 (다음 단계로 진행)
                 if (TutorialManager.Instance != null)
