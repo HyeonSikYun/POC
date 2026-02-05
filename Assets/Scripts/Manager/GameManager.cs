@@ -120,11 +120,13 @@ public class GameManager : MonoBehaviour
         {
             Time.timeScale = 0f; // 시간 정지
             SetCursorType(false); // 마우스 보이기
+            SoundManager.Instance.PauseAllGameSounds();
         }
         else
         {
             Time.timeScale = 1f; // 시간 재개
             SetCursorType(true);  // 마우스 숨기고 게임 모드
+            SoundManager.Instance.ResumeAllGameSounds();
         }
     }
 
@@ -497,7 +499,7 @@ public class GameManager : MonoBehaviour
     public void OnClickResume()
     {
         if (isPaused) TogglePauseMenu();
-        SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
+        SoundManager.Instance.PlayUISFX(SoundManager.Instance.btnClick);
     }
 
     // 2. 옵션 버튼용
@@ -508,7 +510,7 @@ public class GameManager : MonoBehaviour
             // 옵션 패널이 꺼져있으면 켜고, 켜져있으면 끔 (토글)
             bool isActive = UIManager.Instance.settingsPanel.activeSelf;
             UIManager.Instance.ShowSettingsPanel(!isActive);
-            SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
+            SoundManager.Instance.PlayUISFX(SoundManager.Instance.btnClick);
         }
     }
 
@@ -516,7 +518,7 @@ public class GameManager : MonoBehaviour
     public void OnClickQuit()
     {
         Debug.Log("게임 종료!");
-        SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
+        SoundManager.Instance.PlayUISFX(SoundManager.Instance.btnClick);
         Application.Quit(); // 빌드된 게임에서만 작동 (에디터에선 반응 X)
     }
 }
