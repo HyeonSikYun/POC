@@ -76,44 +76,39 @@ public class GraphicSettings : MonoBehaviour
     void InitResolution()
     {
         resolutions = Screen.resolutions;
-        filteredResolutions = new List<Resolution>();
 
+        // 중복 제거를 위해 기존 리스트 초기화
         resolutionDropdown.ClearOptions();
 
-        // [Unity 6 수정] .value는 double이므로 (float)로 강제 형변환 필수!
-        currentRefreshRate = (float)Screen.currentResolution.refreshRateRatio.value;
-
-        int currentResIndex = 0;
         List<string> options = new List<string>();
+        int currentResIndex = 0;
+
+        // [핵심 수정] HashSet을 사용하여 "가로x세로"가 이미 등록되었는지 확인 (중복 제거)
+        HashSet<string> addedResolutions = new HashSet<string>();
+        filteredResolutions = new List<Resolution>();
 
         for (int i = 0; i < resolutions.Length; i++)
         {
-            // [Unity 6 수정] 비교할 때도 (float)로 변환해서 비교
-            float resolutionRate = (float)resolutions[i].refreshRateRatio.value;
+            // 1. 해상도 문자열 생성 (예: "1920 x 1080")
+            string option = resolutions[i].width + " x " + resolutions[i].height;
 
-            // 주사율이 같은 것만 필터링 (Mathf.Approximately는 실수 비교 오차를 줄여줌)
-            if (Mathf.Approximately(resolutionRate, currentRefreshRate))
-            {
-                filteredResolutions.Add(resolutions[i]);
-            }
-        }
+            // 2. 이미 등록된 해상도라면 건너뜀 (주사율만 다른 경우 무시)
+            if (addedResolutions.Contains(option)) continue;
 
-        // 필터링 된 게 없으면 그냥 다 넣기
-        if (filteredResolutions.Count == 0) filteredResolutions.AddRange(resolutions);
-
-        for (int i = 0; i < filteredResolutions.Count; i++)
-        {
-            // 드롭다운에 표시될 텍스트 (예: 1920 x 1080)
-            string option = filteredResolutions[i].width + " x " + filteredResolutions[i].height;
+            // 3. 새로 발견한 해상도라면 목록에 추가
+            addedResolutions.Add(option);
             options.Add(option);
+            filteredResolutions.Add(resolutions[i]);
 
-            if (filteredResolutions[i].width == Screen.width &&
-                filteredResolutions[i].height == Screen.height)
+            // 4. 현재 내 화면 크기와 같다면 인덱스 저장
+            if (resolutions[i].width == Screen.width &&
+                resolutions[i].height == Screen.height)
             {
-                currentResIndex = i;
+                currentResIndex = filteredResolutions.Count - 1; // 방금 추가한 게 현재 해상도
             }
         }
 
+        // 드롭다운에 옵션 추가 및 현재값 선택
         resolutionDropdown.AddOptions(options);
         resolutionDropdown.value = PlayerPrefs.GetInt("ResolutionIndex", currentResIndex);
         resolutionDropdown.RefreshShownValue();
