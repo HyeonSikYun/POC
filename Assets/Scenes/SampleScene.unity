@@ -18783,6 +18783,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d4b056a15a8fb8f4a89cb062762a19e1, type: 3}
+--- !u!198 &1847020000 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 6331989917726702437, guid: 115171d5c2576624c9f40f2ed83322fc, type: 3}
+  m_PrefabInstance: {fileID: 260564768876626660}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1849219997
 GameObject:
   m_ObjectHideFlags: 0
@@ -20731,6 +20736,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Respawn
       objectReference: {fileID: 0}
+    - target: {fileID: 5089847360710572805, guid: 115171d5c2576624c9f40f2ed83322fc, type: 3}
+      propertyPath: speedLineEffect
+      value: 
+      objectReference: {fileID: 1847020000}
     - target: {fileID: 5089847360710572805, guid: 115171d5c2576624c9f40f2ed83322fc, type: 3}
       propertyPath: hideLayerMask.m_Bits
       value: 704

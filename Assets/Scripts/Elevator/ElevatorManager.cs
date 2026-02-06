@@ -30,12 +30,20 @@ public class ElevatorManager : MonoBehaviour
     [SerializeField] private float fadeSpeed = 2f;
 
     [Header("흔들림 효과 (이동 연출)")]
-    [SerializeField] private float shakeIntensity = 0.05f; // 흔들리는 세기 (0.02 ~ 0.1 추천)
-    [SerializeField] private float shakeSpeed = 1.0f;      // (사용 안 함, 랜덤 진동 사용)
+    [SerializeField] private float shakeIntensity = 0.05f; // 흔들림 강도
+    // [추가됨] 흔들리는 시간 (예: 0.5초 ~ 1.5초 동안 흔들림)
+    [SerializeField] private float shakeDurationMin = 0.5f;
+    [SerializeField] private float shakeDurationMax = 1.5f;
+    // [추가됨] 멈춰있는 시간 (예: 1.0초 ~ 3.0초 동안 조용함)
+    [SerializeField] private float idleDurationMin = 1.0f;
+    [SerializeField] private float idleDurationMax = 3.0f;
 
     [Header("트리거")]
     [SerializeField] private GameObject doorTriggerObject;
     [SerializeField] private GameObject insideTriggerObject;
+
+    [Header("상승 연출")]
+    [SerializeField] private ParticleSystem speedLineEffect;
 
     [Header("심리스 연출 설정")]
     public LayerMask hideLayerMask;
@@ -144,39 +152,77 @@ public class ElevatorManager : MonoBehaviour
     }
 
     // ====================================================
-    // [수정됨] 휴식방 10초 대기 + 흔들림 연출 시퀀스
+    // [수정됨] 간헐적 흔들림 (덜커덩... 조용... 덜커덩)
     // ====================================================
     IEnumerator RestAreaAutoOpenSequence()
     {
         isProcessing = true;
         UpdateLightColor(true);
 
-        // 1. 소리 재생 (웅~ 하는 엘리베이터 이동음)
+        if (speedLineEffect != null) speedLineEffect.Play();
+
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlayBGM(SoundManager.Instance.elevatorAmbience);
         }
 
-        // 2. [핵심] 흔들림 효과 시작
-        Vector3 originalPosition = transform.position; // 흔들리기 전 원래 위치 저장
-        float timer = 0f;
+        Vector3 originalPosition = transform.position;
+        float totalTimer = 0f;
 
-        // "restAreaWaitTime" 동안 루프를 돌면서 매 프레임 위치를 랜덤하게 흔듭니다.
-        while (timer < restAreaWaitTime)
+        // 상태 변수: 지금 흔들리는 중인가?
+        bool isShaking = false;
+        // 다음 상태로 바뀔 때까지 남은 시간
+        float nextStateTimer = 0f;
+
+        // 전체 대기 시간(restAreaWaitTime) 동안 반복
+        while (totalTimer < restAreaWaitTime)
         {
-            timer += Time.deltaTime;
+            float dt = Time.deltaTime;
+            totalTimer += dt;
+            nextStateTimer -= dt;
 
-            // 랜덤한 방향(Sphere) * 세기(Intensity)만큼 원래 위치에서 벗어나게 함
-            // 이러면 덜덜덜 거리는 효과가 납니다.
-            transform.position = originalPosition + (Random.insideUnitSphere * shakeIntensity);
+            // 1. 상태 전환 타이밍이 되었나요?
+            if (nextStateTimer <= 0f)
+            {
+                // 상태 뒤집기 (흔들림 <-> 멈춤)
+                isShaking = !isShaking;
 
-            yield return null; // 한 프레임 대기
+                if (isShaking)
+                {
+                    // 흔들림 시작! (지속 시간 랜덤 설정)
+                    nextStateTimer = Random.Range(shakeDurationMin, shakeDurationMax);
+
+                    // (선택 사항) 덜커덩 소리를 여기서 재생하면 더 리얼합니다.
+                    // SoundManager.Instance.PlaySFX(rattleSound); 
+                }
+                else
+                {
+                    // 멈춤 시작! (지속 시간 랜덤 설정)
+                    nextStateTimer = Random.Range(idleDurationMin, idleDurationMax);
+                    // 멈출 때는 위치를 즉시 원상복구
+                    transform.position = originalPosition;
+                }
+            }
+
+            // 2. 현재 상태에 따른 행동
+            if (isShaking)
+            {
+                // 덜덜 떨기
+                transform.position = originalPosition + (Random.insideUnitSphere * shakeIntensity);
+            }
+            else
+            {
+                // 가만히 있기 (혹시 모르니 위치 고정)
+                transform.position = originalPosition;
+            }
+
+            yield return null;
         }
-
-        // 3. 흔들림 종료: 위치 원상복구 (중요! 안 하면 문 위치가 틀어짐)
+        if (speedLineEffect != null) speedLineEffect.Stop();
+        // 끝났으면 위치 완벽 복구
         transform.position = originalPosition;
 
-        // 4. 대기 끝! 맵 보여주기
+        // 맵 보여주기
         isViewLocked = false;
         if (mainCam != null)
         {
@@ -187,7 +233,6 @@ public class ElevatorManager : MonoBehaviour
 
         if (SoundManager.Instance != null)
         {
-            // 도착했으니 메인 BGM으로 변경 (또는 띵~ 소리 후 변경)
             SoundManager.Instance.PlayBGM(SoundManager.Instance.mainBgm);
         }
 
@@ -195,9 +240,9 @@ public class ElevatorManager : MonoBehaviour
         isProcessing = false;
     }
 
-    // ... (이하 나머지 함수들은 수정 없음, 그대로 유지) ...
-
-    // (편의를 위해 아래 내용도 그대로 두셔도 되고, 기존 파일에서 안 건드렸다면 복사 안 해도 됩니다)
+    // ====================================================
+    // 나머지 함수들 (유지)
+    // ====================================================
     void SetupTriggers()
     {
         if (doorTriggerObject)
