@@ -179,6 +179,7 @@ public class ZombieAI : MonoBehaviour, IPooledObject
 
         // 체력 감소
         currentHealth -= damage;
+        GameManager.Instance.ShowDamagePopup(transform.position, damage);
         if (currentHealth <= 0)
         {
             ChangeState(new DeadState());

@@ -150,23 +150,27 @@ public class UIManager : MonoBehaviour
     public void ShowUpgradePanel(bool show) { if (upgradePanel != null) upgradePanel.SetActive(show); }
 
     // [수정] 가격 업데이트 함수 ({0} 문제 해결)
-    public void UpdateUpgradePrices(int heal, int dmg, int ammo, int spd)
+    // [수정됨] 가격(Cost)과 증가량(Value)을 모두 받아서 표시
+    public void UpdateUpgradePrices(int healCost, int dmgCost, int ammoCost, int spdCost,
+                                    int dmgVal, int ammoVal, float spdVal)
     {
-        // 1. LanguageManager가 없으면 그냥 리턴 (에러 방지)
         if (LanguageManager.Instance == null) return;
 
-        // 2. {0} 자리에 실제 가격을 넣어서 완성된 문장으로 만듦
+        // 체력: {0} = 가격 (최대 체력 100 설명은 텍스트 자체에 포함됨)
         string healFmt = LanguageManager.Instance.GetText("Upgrade_Heal");
-        if (txtHealCost != null) txtHealCost.text = string.Format(healFmt, heal);
+        if (txtHealCost != null) txtHealCost.text = string.Format(healFmt, healCost);
 
+        // 데미지: {0} = 가격, {1} = 증가량
         string dmgFmt = LanguageManager.Instance.GetText("Upgrade_Damage");
-        if (txtDamageCost != null) txtDamageCost.text = string.Format(dmgFmt, dmg);
+        if (txtDamageCost != null) txtDamageCost.text = string.Format(dmgFmt, dmgCost, dmgVal);
 
+        // 탄약: {0} = 가격, {1} = 증가량
         string ammoFmt = LanguageManager.Instance.GetText("Upgrade_Ammo");
-        if (txtAmmoCost != null) txtAmmoCost.text = string.Format(ammoFmt, ammo);
+        if (txtAmmoCost != null) txtAmmoCost.text = string.Format(ammoFmt, ammoCost, ammoVal);
 
+        // 속도: {0} = 가격, {1} = 증가량 (소수점이 길어질 수 있으니 F1 포맷 사용 추천)
         string speedFmt = LanguageManager.Instance.GetText("Upgrade_Speed");
-        if (txtSpeedCost != null) txtSpeedCost.text = string.Format(speedFmt, spd);
+        if (txtSpeedCost != null) txtSpeedCost.text = string.Format(speedFmt, spdCost, spdVal.ToString("F1"));
     }
 
     public void UpdateFloor(int floorIndex) { if (floorText == null) return; string floorString = floorIndex < 0 ? $"B{Mathf.Abs(floorIndex)}" : (floorIndex == 0 ? "Lobby" : $"{floorIndex}F"); floorText.text = floorString; }

@@ -36,6 +36,9 @@ public class GameManager : MonoBehaviour
     public LayerMask wallLayer;
     private GameObject currentFinishElevator;
 
+    [Header("UI / 이펙트 프리팹")]
+    public GameObject damagePopupPrefab;
+
     [Header("게임 상태")]
     public int currentFloor = -9;
     public bool isMapGenerated = false;
@@ -57,6 +60,11 @@ public class GameManager : MonoBehaviour
     public int costDamage = 10;    // 증가함
     public int costAmmo = 10;      // 증가함
     public int costSpeed = 10;     // 증가함
+
+    [Header("강화 증가량 설정")]
+    public float damageUpgradeVal = 0.1f; // 1회 강화 시 10% 증가
+    public float ammoUpgradeVal = 0.2f;   // 1회 강화 시 20% 증가
+    public float speedUpgradeVal = 0.05f; // 1회 강화 시 0.05 증가
 
     // UI 변수들
     public int bioSamples = 8;
@@ -100,7 +108,7 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.UpdateFloor(currentFloor);
             UIManager.Instance.UpdateBioSample(bioSamples);
             // 가격표를 미리 갱신해둬야 탭 눌렀을 때 숫자가 제대로 나옵니다.
-            UIManager.Instance.UpdateUpgradePrices(costHeal, costDamage, costAmmo, costSpeed);
+            UpdateUIPrices();
         }
 
         if (isRetry)
@@ -128,6 +136,22 @@ public class GameManager : MonoBehaviour
         else
         {
             StartCoroutine(LoadLevelSequence());
+        }
+    }
+
+    private void UpdateUIPrices()
+    {
+        if (UIManager.Instance != null)
+        {
+            // 공격력/탄약은 %단위(int)로 변환해서 전달 (0.1 -> 10)
+            int dmgDisplay = (int)(damageUpgradeVal * 100);
+            int ammoDisplay = (int)(ammoUpgradeVal * 100);
+            int speedDisplay = (int)(speedUpgradeVal * 100);
+
+            UIManager.Instance.UpdateUpgradePrices(
+                costHeal, costDamage, costAmmo, costSpeed,
+                dmgDisplay, ammoDisplay, speedDisplay
+            );
         }
     }
     //private void Start()
@@ -651,7 +675,7 @@ public class GameManager : MonoBehaviour
             // [추가] 메뉴를 열 때마다 가격 텍스트가 최신인지 확실히 갱신
             if (isUpgradeMenuOpen)
             {
-                UIManager.Instance.UpdateUpgradePrices(costHeal, costDamage, costAmmo, costSpeed);
+                UpdateUIPrices();
             }
         }
 
@@ -707,25 +731,23 @@ public class GameManager : MonoBehaviour
 
             // 2. 전체 공격력 증가
             case "Damage":
-                globalDamageMultiplier += 0.1f;
-                Debug.Log($"?? 전체 공격력 증가! (현재 {globalDamageMultiplier * 100}%)");
+                globalDamageMultiplier += damageUpgradeVal; // 변수 사용
+                Debug.Log($"전체 공격력 증가! (+{damageUpgradeVal * 100}%)");
                 SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
                 isSuccess = true;
                 break;
 
-            // 3. 전체 탄약 증가
             case "Ammo":
-                globalAmmoMultiplier += 0.2f;
-                Debug.Log($"?? 전체 탄약량 증가! (현재 {globalAmmoMultiplier * 100}%)");
+                globalAmmoMultiplier += ammoUpgradeVal; // 변수 사용
+                Debug.Log($"전체 탄약량 증가! (+{ammoUpgradeVal * 100}%)");
                 SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
                 if (gun != null) gun.RefreshAmmoUI();
                 isSuccess = true;
                 break;
 
-            // 4. 이동 속도 증가
             case "Speed":
-                globalMoveSpeedMultiplier += 0.05f;
-                Debug.Log($"? 이동 속도 증가! (현재 {globalMoveSpeedMultiplier * 100}%)");
+                globalMoveSpeedMultiplier += speedUpgradeVal; // 변수 사용
+                Debug.Log($"이동 속도 증가! (+{speedUpgradeVal * 100}%)");
                 SoundManager.Instance.PlaySFX(SoundManager.Instance.btnClick);
                 isSuccess = true;
                 break;
@@ -750,7 +772,7 @@ public class GameManager : MonoBehaviour
             {
                 UIManager.Instance.UpdateBioSample(bioSamples);
                 // 가격이 올랐으니 텍스트 갱신
-                UIManager.Instance.UpdateUpgradePrices(costHeal, costDamage, costAmmo, costSpeed);
+                UpdateUIPrices();
             }
 
             if (TutorialManager.Instance != null) TutorialManager.Instance.OnUpgradeCompleted();
@@ -815,6 +837,28 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.ShowQuitConfirmPanel(false);
             UIManager.Instance.ShowPausePanel(true); // 복귀
             SoundManager.Instance.PlayUISFX(SoundManager.Instance.btnClick);
+        }
+    }
+
+    public void ShowDamagePopup(Vector3 position, int damage)
+    {
+        if (damagePopupPrefab != null)
+        {
+            // 좀비 머리 위쯤에 뜨게 y축 + 1.5f
+            Vector3 spawnPos = position + new Vector3(0, 1.5f, 0);
+
+            // 약간 랜덤한 위치에 뜨게 해서 숫자가 겹치지 않게 함
+            spawnPos.x += Random.Range(-0.3f, 0.3f);
+            spawnPos.z += Random.Range(-0.3f, 0.3f);
+
+            GameObject popup = Instantiate(damagePopupPrefab, spawnPos, Quaternion.identity);
+
+            // 텍스트 설정
+            DamagePopup damageScript = popup.GetComponent<DamagePopup>();
+            if (damageScript != null)
+            {
+                damageScript.Setup(damage);
+            }
         }
     }
 }

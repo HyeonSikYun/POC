@@ -74,10 +74,19 @@ public class LanguageManager : MonoBehaviour
     // 언어 데이터 등록
     void InitLocalizationData()
     {
-        localizedData.Add("Upgrade_Heal", new string[] { "체력 회복\n필요 샘플: {0}", "Heal \nCost: {0}" });
-        localizedData.Add("Upgrade_Damage", new string[] { "공격력 강화\n필요 샘플: {0}", "Damage\nCost: {0}" });
-        localizedData.Add("Upgrade_Ammo", new string[] { "탄약 확장\n필요 샘플: {0}", "Ammo \nCost: {0}" });
-        localizedData.Add("Upgrade_Speed", new string[] { "속도 증가\n필요 샘플: {0}", "Speed \nCost: {0}" });
+        localizedData.Add("Upgrade_Heal", new string[] { "체력 회복 (최대 100)\n필요 샘플: {0}", "Heal (Max 100)\nCost: {0}" });
+        // 나머지: (+수치)를 표시하도록 {1} 추가
+        localizedData.Add("Upgrade_Damage", new string[] { "공격력 강화 (+{1}%)\n필요 샘플: {0}", "Damage (+{1}%)\nCost: {0}" });
+
+        // [수정] 탄약도 배율로 늘어나므로 %가 맞습니다. (기존 '발' -> '%')
+        // 예: 탄약 확장 (+20%)
+        localizedData.Add("Upgrade_Ammo", new string[] { "탄약 확장 (+{1}%)\n필요 샘플: {0}", "Max Ammo (+{1}%)\nCost: {0}" });
+
+        // 속도는 0.05 같은 소수점이므로 그냥 (+0.05)로 둘지, (+5%)로 할지 선택해야 합니다.
+        // 현재 코드(GameManager)는 0.05를 그대로 넘겨주므로, 그냥 (+0.05)라고 뜨게 두거나
+        // %로 하고 싶다면 GameManager에서 100을 곱해서 넘겨줘야 합니다.
+        // 일단은 기존대로 (+0.05) 형태로 둡니다.
+        localizedData.Add("Upgrade_Speed", new string[] { "속도 증가 (+{1}%)\n필요 샘플: {0}", "Speed (+{1}%)\nCost: {0}" });
         localizedData.Add("Resume_Btn", new string[] { "계속 하기", "Resume" });
         localizedData.Add("Option_Btn", new string[] { "설정", "Option" });
         localizedData.Add("Exit_Btn", new string[] { "게임 종료", "Exit Game" });
@@ -124,11 +133,23 @@ public class LanguageManager : MonoBehaviour
     {
         if (UIManager.Instance != null && GameManager.Instance != null)
         {
+            // [수정됨] GameManager의 실제 변수명과 연결하고, % 단위로 변환
+
+            // 0.1 -> 10으로 변환 (UI에 "10"으로 표시하기 위함)
+            int dmgPercent = (int)(GameManager.Instance.damageUpgradeVal * 100);
+            // 0.2 -> 20으로 변환
+            int ammoPercent = (int)(GameManager.Instance.ammoUpgradeVal * 100);
+
             UIManager.Instance.UpdateUpgradePrices(
                 GameManager.Instance.costHeal,
                 GameManager.Instance.costDamage,
                 GameManager.Instance.costAmmo,
-                GameManager.Instance.costSpeed
+                GameManager.Instance.costSpeed,
+
+                // ▼ 여기가 수정된 부분입니다 (실제 변수 연결)
+                dmgPercent,                           // 공격력 (10)
+                ammoPercent,                          // 탄약 (20)
+                GameManager.Instance.speedUpgradeVal  // 속도 (0.05)
             );
         }
     }
