@@ -32,6 +32,10 @@ public class UIManager : MonoBehaviour
     public GameObject progressBarObj;
     public Image progressBarFill;
 
+    [Header("미션 알림 UI")]
+    public TextMeshProUGUI missionText;
+    public CanvasGroup missionPanelGroup; // [변경] GameObject 대신 CanvasGroup을 씁니다.
+
     [Header("패널")]
     public GameObject upgradePanel;
     public GameObject pausePanel;
@@ -61,8 +65,12 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        // [중요] 여기서는 아무것도 하지 않습니다. 
-        // 튜토리얼 매니저나 게임 매니저가 제어하게 둡니다.
+        ShowGeneratorUI(false);
+        if (missionPanelGroup != null)
+        {
+            missionPanelGroup.alpha = 0f; // 투명하게 시작
+            missionPanelGroup.gameObject.SetActive(false);
+        }
     }
 
     // --- [핵심 추가] 버튼 연결용 중계 함수 (Bridge) ---
@@ -122,6 +130,77 @@ public class UIManager : MonoBehaviour
             globalFadeCanvas.alpha = alpha;
             globalFadeCanvas.blocksRaycasts = (alpha > 0.1f);
         }
+    }
+
+    public void ShowGeneratorUI(bool isShow)
+    {
+        if (generatorCountText != null)
+        {
+            generatorCountText.gameObject.SetActive(isShow);
+        }
+    }
+
+
+    public void ShowMissionStartMessage(int count)
+    {
+        // 1. 우측 상단 발전기 카운트 켜기
+        ShowGeneratorUI(true);
+
+        // 2. 중앙 메시지 페이드 효과 시작
+        if (missionPanelGroup != null && missionText != null)
+        {
+            // [수정] LanguageManager에서 텍스트 가져오기
+            string format = "";
+
+            if (LanguageManager.Instance != null)
+            {
+                // "Mission_Start" 키로 텍스트를 가져옴 ("{0}개의 발전기를..." 또는 "Activate {0}...")
+                format = LanguageManager.Instance.GetText("Mission_Start");
+            }
+            else
+            {
+                // 만약 매니저가 없으면 기본값 (안전장치)
+                format = "{0}개의 발전기를 켜고\n엘리베이터를 찾아 탑승하십시오";
+            }
+
+            // {0} 부분을 실제 숫자(count)로 치환
+            missionText.text = string.Format(format, count);
+
+            StartCoroutine(MissionFadeRoutine());
+        }
+    }
+
+    private IEnumerator MissionFadeRoutine()
+    {
+        // 1. 켜기 (아직 투명함)
+        missionPanelGroup.gameObject.SetActive(true);
+        missionPanelGroup.alpha = 0f;
+
+        // 2. 페이드 인 (나타나기) - 0.5초 동안
+        float timer = 0f;
+        while (timer < 0.5f)
+        {
+            timer += Time.deltaTime;
+            missionPanelGroup.alpha = Mathf.Lerp(0f, 1f, timer / 0.5f);
+            yield return null;
+        }
+        missionPanelGroup.alpha = 1f;
+
+        // 3. 유지 (2초 대기)
+        yield return new WaitForSeconds(2.0f);
+
+        // 4. 페이드 아웃 (사라지기) - 1초 동안
+        timer = 0f;
+        while (timer < 1.0f)
+        {
+            timer += Time.deltaTime;
+            missionPanelGroup.alpha = Mathf.Lerp(1f, 0f, timer / 1.0f);
+            yield return null;
+        }
+        missionPanelGroup.alpha = 0f;
+
+        // 5. 끄기
+        missionPanelGroup.gameObject.SetActive(false);
     }
 
     public void ShowTutorialText(string message)

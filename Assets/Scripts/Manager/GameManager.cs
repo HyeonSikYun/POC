@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     [Header("게임 상태")]
     public int currentFloor = -9;
     public bool isMapGenerated = false;
-    private int requiredGenerators = 0;
+    public int requiredGenerators = 0;
     private int activatedGenerators = 0;
     public bool isPaused = false;
     public bool isRetry = false;
@@ -582,7 +582,9 @@ public class GameManager : MonoBehaviour
 
         // [UI 갱신]
         if (UIManager.Instance != null)
+        {
             UIManager.Instance.UpdateGeneratorCount(activatedGenerators, requiredGenerators);
+        }
 
         // [탈출구 잠금]
         if (currentFinishElevator != null)
@@ -596,6 +598,10 @@ public class GameManager : MonoBehaviour
 
     private void CleanupObjectsForNextLevel()
     {
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowGeneratorUI(false);
+        }
         if (PoolManager.Instance != null) PoolManager.Instance.ReturnAllActiveObjects();
         if (currentFinishElevator != null) Destroy(currentFinishElevator);
 

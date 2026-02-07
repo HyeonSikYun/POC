@@ -87,6 +87,11 @@ public class LanguageManager : MonoBehaviour
         // %로 하고 싶다면 GameManager에서 100을 곱해서 넘겨줘야 합니다.
         // 일단은 기존대로 (+0.05) 형태로 둡니다.
         localizedData.Add("Upgrade_Speed", new string[] { "속도 증가 (+{1}%)\n필요 샘플: {0}", "Speed (+{1}%)\nCost: {0}" });
+        localizedData.Add("Mission_Start", new string[]
+        {
+            "{0}개의 발전기를 켜고\n엘리베이터를 찾아 탑승하십시오",
+            "Activate {0} generators\nand find the elevator to escape."
+        });
         localizedData.Add("Resume_Btn", new string[] { "계속 하기", "Resume" });
         localizedData.Add("Option_Btn", new string[] { "설정", "Option" });
         localizedData.Add("Exit_Btn", new string[] { "게임 종료", "Exit Game" });

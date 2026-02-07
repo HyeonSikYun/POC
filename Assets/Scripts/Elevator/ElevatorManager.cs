@@ -243,6 +243,13 @@ public class ElevatorManager : MonoBehaviour
             SoundManager.Instance.PlayBGM(SoundManager.Instance.mainBgm);
         }
 
+        if (UIManager.Instance != null && GameManager.Instance != null)
+        {
+            // GameManager에서 필요한 개수를 가져와서 띄움
+            int count = GameManager.Instance.requiredGenerators;
+            UIManager.Instance.ShowMissionStartMessage(count);
+        }
+
         UnlockDoor();
         isProcessing = false;
     }
