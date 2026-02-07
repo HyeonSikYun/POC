@@ -56,7 +56,7 @@ public class UIManager : MonoBehaviour
     public TMP_Dropdown resolutionDropdown;  // 해상도 변경 드롭다운
     public TMP_Dropdown displayModeDropdown; // 전체화면/창모드 드롭다운
 
-
+    private int currentMissionCount = 0;
     private void Awake()
     {
         if (Instance == null) { Instance = this; }
@@ -143,30 +143,22 @@ public class UIManager : MonoBehaviour
 
     public void ShowMissionStartMessage(int count)
     {
-        // 1. 우측 상단 발전기 카운트 켜기
+        currentMissionCount = count; // 개수 기억해두기!
         ShowGeneratorUI(true);
 
-        // 2. 중앙 메시지 페이드 효과 시작
-        if (missionPanelGroup != null && missionText != null)
+        // 텍스트 갱신 (함수로 분리)
+        RefreshMissionText();
+
+        if (missionPanelGroup != null) StartCoroutine(MissionFadeRoutine());
+    }
+
+    public void RefreshMissionText()
+    {
+        if (missionText != null && LanguageManager.Instance != null)
         {
-            // [수정] LanguageManager에서 텍스트 가져오기
-            string format = "";
-
-            if (LanguageManager.Instance != null)
-            {
-                // "Mission_Start" 키로 텍스트를 가져옴 ("{0}개의 발전기를..." 또는 "Activate {0}...")
-                format = LanguageManager.Instance.GetText("Mission_Start");
-            }
-            else
-            {
-                // 만약 매니저가 없으면 기본값 (안전장치)
-                format = "{0}개의 발전기를 켜고\n엘리베이터를 찾아 탑승하십시오";
-            }
-
-            // {0} 부분을 실제 숫자(count)로 치환
-            missionText.text = string.Format(format, count);
-
-            StartCoroutine(MissionFadeRoutine());
+            // 기억해둔 currentMissionCount를 다시 넣어서 재번역
+            string format = LanguageManager.Instance.GetText("Mission_Start");
+            missionText.text = string.Format(format, currentMissionCount);
         }
     }
 

@@ -129,8 +129,17 @@ public class LanguageManager : MonoBehaviour
 
         // 모든 텍스트 갱신
         UpdateAllText();
-
-        if (TutorialManager.Instance != null) TutorialManager.Instance.RefreshCurrentMessage();
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.RefreshMissionText(); // 이 함수를 UIManager에 만들어야 함
+        }
+        if (TutorialManager.Instance != null && GameManager.Instance != null)
+        {
+            if (GameManager.Instance.currentFloor == -9)
+            {
+                TutorialManager.Instance.RefreshCurrentMessage();
+            }
+        }
         RefreshPriceUI();
     }
 
