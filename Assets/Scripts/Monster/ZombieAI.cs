@@ -127,7 +127,6 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     public void OnObjectSpawn()
     {
         HideMyself();
-
         float multiplier = 1.0f;
         if (GameManager.Instance != null)
         {
@@ -472,7 +471,6 @@ public class DeadState : IZombieState
         // 대신 Trigger로 바꿔서 플레이어가 밟지 않고 지나갈 수 있게 합니다.
         if (zombie.Col != null)
         {
-            // zombie.Col.enabled = false;  <-- 이 줄이 문제였음 (삭제)
             zombie.Col.isTrigger = true; // <-- 이렇게 변경 (감지는 되되, 길막은 안 함)
         }
 
@@ -486,6 +484,7 @@ public class DeadState : IZombieState
 
         zombie.StartCoroutine(DespawnRoutine(zombie));
     }
+
 
     public void Execute(ZombieAI zombie) { }
     public void Exit(ZombieAI zombie) { }

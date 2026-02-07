@@ -521,36 +521,77 @@ public class GameManager : MonoBehaviour
     private void PlaceGenerators()
     {
         activatedGenerators = 0;
+        requiredGenerators = 0; // 초기화
 
-        // CASE 1: -9층 (튜토리얼)
+        // ---------------------------------------------------------
+        // [난이도별 발전기 배치 로직]
+        // ---------------------------------------------------------
+
+        // CASE 0: -9층 (튜토리얼)
         if (currentFloor == -9)
         {
             Generator[] existingGenerators = FindObjectsByType<Generator>(FindObjectsSortMode.None);
             requiredGenerators = existingGenerators.Length > 0 ? existingGenerators.Length : 1;
         }
-        // CASE 2: -8층 ~ -5층 (난이도 하: 1개)
-        else if (currentFloor <= -5)
+        // CASE 1: 지하 8층 (발전기 1개) -> KeyRoom
+        else if (currentFloor == -8)
         {
             requiredGenerators = 1;
             SpawnGeneratorOnWall("KeyRoom");
         }
-        // CASE 3: -4층 이상 (난이도 상: 2개)
-        else
+        // CASE 2: 지하 7층 ~ 6층 (발전기 2개) -> KeyRoom, BossRoom
+        else if (currentFloor >= -7 && currentFloor <= -6)
         {
             requiredGenerators = 2;
             SpawnGeneratorOnWall("KeyRoom");
-            if (!SpawnGeneratorOnWall("BossRoom")) SpawnGeneratorOnWall("KeyRoom");
+            SpawnGeneratorOnWall("BossRoom");
+        }
+        // CASE 3: 지하 5층 ~ 3층 (발전기 3개) -> KeyRoom, BossRoom, ExtraRooms[0]
+        else if (currentFloor >= -5 && currentFloor <= -3)
+        {
+            requiredGenerators = 3;
+            SpawnGeneratorOnWall("KeyRoom");
+            SpawnGeneratorOnWall("BossRoom");
+            SpawnGeneratorOnWall("ExtraRooms"); // 이름에 ExtraRooms가 포함된 방 중 하나
+        }
+        // CASE 4: 지하 2층 ~ 1층 (발전기 4개) -> Key, Boss, Extra[0], Extra[3]
+        else if (currentFloor >= -2)
+        {
+            requiredGenerators = 4;
+            SpawnGeneratorOnWall("KeyRoom");
+            SpawnGeneratorOnWall("BossRoom");
+
+            // ExtraRooms는 보통 여러 개 생성되므로, 인덱스로 접근하거나 이름을 다르게 검색해야 함
+            // 여기서는 편의상 "ExtraRooms"가 포함된 방들을 찾아서 2곳에 배치
+            if (!SpawnGeneratorOnWall("ExtraRooms"))
+            {
+                // 만약 ExtraRooms라는 이름의 방이 없으면 비상용으로 KeyRoom에 하나 더 배치 시도 (중복 방지 로직 필요할 수 있음)
+                Debug.LogWarning("ExtraRooms를 찾지 못해 대체 위치에 생성 시도");
+                SpawnGeneratorOnWall("StartRoom");
+            }
+
+            // 4번째 발전기는 또 다른 ExtraRoom이나 다른 곳에 배치
+            // (SpawnGeneratorOnWall 함수는 이름이 포함된 방 '하나'만 찾아서 배치하므로,
+            //  여러 ExtraRoom에 각각 배치하려면 함수를 조금 개선하거나, 태그/리스트를 써야 함.
+            //  일단은 "ExtraRooms" 이름이 들어간 *또 다른* 방을 찾기가 어려우므로,
+            //  단순하게 다시 호출하면 운 좋게 다른 방에 걸리거나, 같은 방 다른 벽에 걸림)
+            SpawnGeneratorOnWall("ExtraRooms");
         }
 
-        // [추가됨] 배치 직후 UI 갱신 (예: 0/2)
+        // ---------------------------------------------------------
+
+        // [UI 갱신]
         if (UIManager.Instance != null)
             UIManager.Instance.UpdateGeneratorCount(activatedGenerators, requiredGenerators);
 
+        // [탈출구 잠금]
         if (currentFinishElevator != null)
         {
             ElevatorManager em = currentFinishElevator.GetComponent<ElevatorManager>();
             if (em != null) em.LockDoor();
         }
+
+        Debug.Log($"[{currentFloor}층] 발전기 {requiredGenerators}개 배치 완료");
     }
 
     private void CleanupObjectsForNextLevel()
@@ -642,27 +683,75 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    private bool SpawnGeneratorOnWall(string roomNamePartial)
+    // 이름이 포함된 모든 오브젝트를 리스트로 반환
+    private List<GameObject> FindAllObjectsByNameContains(string partialName)
     {
-        GameObject targetRoom = FindObjectByNameContains(roomNamePartial);
-        if (targetRoom == null) return false;
-
-        Vector3 center = targetRoom.transform.position + Vector3.up * 1.5f;
-        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
-        ShuffleArray(directions);
-
-        foreach (Vector3 dir in directions)
+        List<GameObject> foundList = new List<GameObject>();
+        GameObject[] allGo = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+        foreach (var go in allGo)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(center, dir, out hit, 20f, wallLayer))
+            if (go.name.Contains(partialName))
             {
-                Instantiate(generatorPrefab, hit.point + (hit.normal * 0.5f), Quaternion.LookRotation(hit.normal));
-                return true;
+                foundList.Add(go);
             }
         }
-        return false;
+        return foundList;
     }
 
+    private bool SpawnGeneratorOnWall(string roomNamePartial)
+    {
+        // 1. 해당 이름을 가진 모든 방을 찾음
+        List<GameObject> targetRooms = FindAllObjectsByNameContains(roomNamePartial);
+
+        if (targetRooms.Count == 0) return false;
+
+        // 2. 방 목록을 섞어서 랜덤성을 부여 (항상 같은 방에만 생기지 않게)
+        ShuffleList(targetRooms);
+
+        foreach (GameObject room in targetRooms)
+        {
+            // 이 방에 이미 발전기가 있는지 체크 (자식 오브젝트 확인)
+            if (room.GetComponentInChildren<Generator>() != null)
+            {
+                continue; // 이미 있으면 다른 방으로 패스
+            }
+
+            // 3. 발전기가 없는 방을 찾았으면 벽 탐색 시작
+            Vector3 center = room.transform.position + Vector3.up * 1.5f;
+            Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+            ShuffleArray(directions);
+
+            foreach (Vector3 dir in directions)
+            {
+                RaycastHit hit;
+                // 방 중앙에서 벽 쪽으로 레이저 발사
+                if (Physics.Raycast(center, dir, out hit, 20f, wallLayer))
+                {
+                    // 발전기 생성!
+                    GameObject gen = Instantiate(generatorPrefab, hit.point + (hit.normal * 0.5f), Quaternion.LookRotation(hit.normal));
+
+                    // [중요] 생성된 발전기를 방의 자식으로 넣어서, 나중에 "이 방에 발전기 있나?" 체크할 때 쓰게 함
+                    gen.transform.SetParent(room.transform);
+
+                    return true; // 성공했으니 종료
+                }
+            }
+        }
+
+        // 모든 방을 뒤졌는데도 실패했으면 (벽이 없거나 이미 다 찼거나)
+        Debug.LogWarning($"발전기 배치 실패: {roomNamePartial} (공간 부족 또는 방 없음)");
+        return false;
+    }
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            T temp = list[i];
+            int randomIndex = Random.Range(i, list.Count);
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
+    }
     private void ShuffleArray<T>(T[] array) { for (int i = array.Length - 1; i > 0; i--) { int j = Random.Range(0, i + 1); T temp = array[i]; array[i] = array[j]; array[j] = temp; } }
     private void SetCursorType(bool isGameCursor) { if (isGameCursor && crosshairTexture != null) Cursor.SetCursor(crosshairTexture, cursorHotspot, CursorMode.Auto); else Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); Cursor.visible = true; Cursor.lockState = CursorLockMode.None; }
     private void ToggleUpgradeMenu()
