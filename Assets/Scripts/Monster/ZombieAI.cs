@@ -349,6 +349,12 @@ public class ChaseState : IZombieState
 
         float dist = Vector3.Distance(zombie.transform.position, zombie.player.position);
 
+        PlayerController pc = zombie.player.GetComponent<PlayerController>();
+        if (pc != null && pc.isSafeZone)
+        {
+            zombie.ChangeState(new IdleState());
+            return;
+        }
         // [수정] 공격 사거리 안이거나 OR (플레이어가 근처에 있고 && 앞이 막혔으면)
         // dist < 5.0f 조건은 너무 멀리서끼리 비비는 건 무시하고, 플레이어 근처에서만 작동하게 함
         bool isBlocked = zombie.IsBlockedByZombie();

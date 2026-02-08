@@ -107,6 +107,12 @@ public class ElevatorManager : MonoBehaviour
         {
             bool shouldHideMap = (GameManager.Instance.currentFloor != -9) || GameManager.Instance.isRetry;
 
+            if (playerTransform != null)
+            {
+                var pc = playerTransform.GetComponent<PlayerController>();
+                if (pc) pc.isSafeZone = true;
+            }
+
             if (shouldHideMap)
             {
                 CloseDoorsImmediate();
@@ -241,6 +247,12 @@ public class ElevatorManager : MonoBehaviour
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlayBGM(SoundManager.Instance.mainBgm);
+        }
+
+        if (playerTransform != null)
+        {
+            var pc = playerTransform.GetComponent<PlayerController>();
+            if (pc) pc.isSafeZone = false;
         }
 
         if (UIManager.Instance != null && GameManager.Instance != null)

@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     public float stepRate = 0.4f;   // 발소리 간격 (0.4초마다)
     private float nextStepTime = 0f; // 다음 발소리 시간
 
+    public bool isSafeZone = false;
     private float verticalVelocity;
     private float gravity = -9.81f;
     private Vector2 move, mouseLook, joystickLook;
