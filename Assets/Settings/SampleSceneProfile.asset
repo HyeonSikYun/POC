@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25792a1c800b6f5498b76a67b3c5b765, type: 3}
   m_Name: CRTSettings
   m_EditorClassIdentifier: Assembly-CSharp::RetroShadersPro.URP.CRTSettings
-  active: 0
+  active: 1
   showInSceneView:
     m_OverrideState: 1
     m_Value: 1

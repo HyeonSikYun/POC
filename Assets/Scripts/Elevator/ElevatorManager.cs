@@ -309,13 +309,28 @@ public class ElevatorManager : MonoBehaviour
     {
         isProcessing = true;
         yield return StartCoroutine(CloseDoors());
-        yield return StartCoroutine(FadeOut());
-        SoundManager.Instance.StopBGM();
+        yield return StartCoroutine(FadeOut()); // 화면 암전
+
+        if (SoundManager.Instance != null) SoundManager.Instance.StopBGM();
+
         if (currentDestination) TeleportPlayer(currentDestination);
 
         if (currentType == ElevatorType.Finish)
         {
-            if (GameManager.Instance) GameManager.Instance.LoadNextLevel();
+            if (GameManager.Instance != null)
+            {
+                // [핵심 수정] 현재 층이 마지막 층(finalFloor)인지 확인!
+                if (GameManager.Instance.currentFloor >= GameManager.Instance.finalFloor)
+                {
+                    // 마지막 층이면 엔딩 씬으로!
+                    GameManager.Instance.LoadEndingScene();
+                }
+                else
+                {
+                    // 아니면 평소처럼 다음 층 맵 생성!
+                    GameManager.Instance.LoadNextLevel();
+                }
+            }
         }
         else
         {

@@ -47,6 +47,10 @@ public class GameManager : MonoBehaviour
     public bool isPaused = false;
     public bool isRetry = false;
 
+    [Header("엔딩 설정")]
+    public int finalFloor = -1; // 탈출하는 마지막 층 (B1)
+    public string endingSceneName = "EndingScene"; // 이동할 엔딩 씬의 이름
+
     [Header("시야 차단 설정")]
     public LayerMask hideLayerMask;
 
@@ -955,5 +959,19 @@ public class GameManager : MonoBehaviour
                 damageScript.Setup(damage);
             }
         }
+    }
+
+    public void LoadEndingScene()
+    {
+        Debug.Log("탈출 성공! 엔딩 씬을 로드합니다.");
+
+        // (선택) 엔딩 넘어갈 때 모든 소리 끄기
+        //if (SoundManager.Instance != null) SoundManager.Instance.StopBGM();
+
+        // 시간 흐름 정상화 (혹시 멈춰있을 수 있으니)
+        Time.timeScale = 1f;
+
+        // 엔딩 씬 로드
+        SceneManager.LoadScene(endingSceneName);
     }
 }
