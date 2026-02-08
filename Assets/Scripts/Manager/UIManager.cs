@@ -59,7 +59,7 @@ public class UIManager : MonoBehaviour
     private int currentMissionCount = 0;
     private void Awake()
     {
-        if (Instance == null) { Instance = this; }
+        if (Instance == null) { Instance = this; } 
         else { Destroy(gameObject); }
     }
 
@@ -321,5 +321,23 @@ public class UIManager : MonoBehaviour
         while (t > 0f) { t -= Time.deltaTime * 1.5f; globalFadeCanvas.alpha = t; yield return null; }
         globalFadeCanvas.alpha = 0f;
         globalFadeCanvas.blocksRaycasts = false;
+    }
+
+    public void SetEndingUIState()
+    {
+        // 1. 전투 정보 숨기기
+        if (floorText != null) floorText.gameObject.SetActive(false);
+        if (healthText != null) healthText.gameObject.SetActive(false);
+        if (weaponNameText != null) weaponNameText.gameObject.SetActive(false);
+        if (ammoText != null) ammoText.gameObject.SetActive(false);
+        if (bioSampleText != null) bioSampleText.gameObject.SetActive(false);
+        if (generatorCountText != null) generatorCountText.gameObject.SetActive(false);
+
+        // 2. 장전 게이지 같은 것도 끄기
+        if (reloadGaugeGroup != null) reloadGaugeGroup.SetActive(false);
+        if (reloadingObject != null) reloadingObject.SetActive(false);
+
+        // 3. 하지만 일시정지 패널, 설정 패널, 페이드 패널은 살려둡니다. (ESC 키 작동을 위해)
+        // 따로 건드리지 않으면 그대로 존재합니다.
     }
 }

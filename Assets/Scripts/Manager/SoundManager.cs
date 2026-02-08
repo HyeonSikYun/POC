@@ -12,6 +12,7 @@ public class SoundManager : MonoBehaviour
     [Header("Audio Clip")]
     public AudioClip mainBgm;
     public AudioClip tutorialBgm;
+    public AudioClip calmEndingBGM;
     public AudioClip btnClick;
     public AudioClip gunPickup;
     public AudioClip Rifle;

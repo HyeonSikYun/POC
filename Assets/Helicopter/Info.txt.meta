@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f44baf61602954042bbc91478188b9c6
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9472
+  packageName: Military Helicopter II
+  packageVersion: 1.2
+  assetPath: Assets/Helicopter/Info.txt
+  uploadId: 13323

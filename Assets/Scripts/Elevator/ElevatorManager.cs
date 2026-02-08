@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class ElevatorManager : MonoBehaviour
 {
@@ -7,7 +8,8 @@ public class ElevatorManager : MonoBehaviour
     {
         Normal,
         Finish,
-        RestArea
+        RestArea,
+        Ending
     }
 
     [Header("엘리베이터 타입")]
@@ -61,7 +63,7 @@ public class ElevatorManager : MonoBehaviour
     private bool isLocked = false;
 
     private bool isRestTimerStarted = false;
-
+    public bool isEndingElevator = false;
     public static ElevatorManager RestAreaInstance;
 
     void Awake()
@@ -74,12 +76,10 @@ public class ElevatorManager : MonoBehaviour
     void Start()
     {
         mainCam = Camera.main;
-        if (mainCam != null)
-        {
-            originalCullingMask = mainCam.cullingMask;
-        }
+        if (mainCam != null) originalCullingMask = mainCam.cullingMask;
 
-        if (currentType != ElevatorType.RestArea)
+        // [수정] RestArea와 Ending은 생성 즉시 작동하지 않고, GameManager가 Initialize()를 부를 때만 시작함
+        if (currentType != ElevatorType.RestArea && currentType != ElevatorType.Ending)
         {
             Initialize();
         }
@@ -106,7 +106,7 @@ public class ElevatorManager : MonoBehaviour
         if (currentType == ElevatorType.RestArea)
         {
             bool shouldHideMap = (GameManager.Instance.currentFloor != -9) || GameManager.Instance.isRetry;
-
+            //SetSafeZone(true);
             if (playerTransform != null)
             {
                 var pc = playerTransform.GetComponent<PlayerController>();
@@ -152,6 +152,28 @@ public class ElevatorManager : MonoBehaviour
                 isViewLocked = false;
                 mainCam.cullingMask = -1;
             }
+        }
+        else if (currentType == ElevatorType.Ending)
+        {
+            Debug.Log("[Elevator] 엔딩 시퀀스를 시작합니다.");
+            SetSafeZone(true); // 무적 설정
+            CloseDoorsImmediate();
+            LockDoor();
+
+            if (fadeCanvasGroup != null && fadeCanvasGroup.alpha > 0.1f)
+            {
+                StartCoroutine(FadeIn());
+            }
+
+            if (mainCam != null)
+            {
+                isViewLocked = true;
+                mainCam.cullingMask &= ~hideLayerMask;
+            }
+
+            // 엔딩은 맵을 숨길 필요는 없지만, 10초 흔들림은 필요함
+            StopAllCoroutines();
+            StartCoroutine(EndingAutoOpenSequence()); // 시퀀스 강제 시작
         }
 
         SetupTriggers();
@@ -244,10 +266,10 @@ public class ElevatorManager : MonoBehaviour
 
         Debug.Log("[RestArea] 이동 완료! 문을 엽니다.");
 
+            // 일반 맵(B8 등)으로 가는 거라면 기존 메인 BGM 재생
         if (SoundManager.Instance != null)
-        {
             SoundManager.Instance.PlayBGM(SoundManager.Instance.mainBgm);
-        }
+
 
         if (playerTransform != null)
         {
@@ -289,16 +311,24 @@ public class ElevatorManager : MonoBehaviour
             System.Action onPlayerDetected = () =>
             {
                 isPlayerInside = true;
-                if (!isProcessing && doorsOpen && currentType != ElevatorType.RestArea)
+
+                // [수정 핵심] RestArea뿐만 아니라 Ending 타입일 때도 '출발(Depart)'하지 않도록 막아야 합니다.
+                if (!isProcessing && doorsOpen &&
+                    currentType != ElevatorType.RestArea &&
+                    currentType != ElevatorType.Ending) // <--- 이 부분 추가!
                 {
                     StartCoroutine(DepartSequence());
                 }
             };
             it.onPlayerEnter = onPlayerDetected;
             it.onPlayerStay = onPlayerDetected;
+
             it.onPlayerExit = () => {
                 isPlayerInside = false;
-                if (!isProcessing && currentType == ElevatorType.RestArea && doorsOpen)
+
+                // [수정] 내릴 때 문 닫히는 로직도 RestArea와 Ending 둘 다 적용되게 합니다.
+                if (!isProcessing && doorsOpen &&
+                   (currentType == ElevatorType.RestArea || currentType == ElevatorType.Ending)) // <--- 수정
                 {
                     StartCoroutine(CloseDoors());
                 }
@@ -378,4 +408,49 @@ public class ElevatorManager : MonoBehaviour
     IEnumerator FadeOut() { if (!fadeCanvasGroup) yield break; fadeCanvasGroup.blocksRaycasts = true; float t = fadeCanvasGroup.alpha; while (t < 1) { t += Time.deltaTime * fadeSpeed; fadeCanvasGroup.alpha = t; yield return null; } fadeCanvasGroup.alpha = 1; }
     IEnumerator FadeIn() { if (!fadeCanvasGroup) yield break; float t = fadeCanvasGroup.alpha; while (t > 0) { t -= Time.deltaTime * fadeSpeed; fadeCanvasGroup.alpha = t; yield return null; } fadeCanvasGroup.alpha = 0; fadeCanvasGroup.blocksRaycasts = false; }
     public void SetType(ElevatorType type) => currentType = type;
+
+    IEnumerator EndingAutoOpenSequence()
+    {
+        isProcessing = true;
+        UpdateLightColor(true);
+        if (speedLineEffect != null) speedLineEffect.Play();
+        if (SoundManager.Instance != null && SoundManager.Instance.elevatorAmbience != null)
+        {
+            SoundManager.Instance.PlayBGM(SoundManager.Instance.elevatorAmbience);
+        }
+        // 1. 10초 흔들림 (RestArea와 동일한 연출)
+        float totalTimer = 0f;
+        Vector3 originalPosition = transform.position;
+        while (totalTimer < restAreaWaitTime)
+        {
+            totalTimer += Time.deltaTime;
+            transform.position = originalPosition + (Random.insideUnitSphere * shakeIntensity);
+            yield return null;
+        }
+        transform.position = originalPosition;
+        if (speedLineEffect != null) speedLineEffect.Stop();
+
+        isViewLocked = false;
+        if (mainCam != null)
+        {
+            mainCam.cullingMask = -1;
+        }
+        // 2. [엔딩 전용] BGM 전환 (잔잔한 노래)
+        if (SoundManager.Instance != null && EndingSceneManager.Instance != null)
+        {
+            SoundManager.Instance.PlayBGM(EndingSceneManager.Instance.calmEndingBGM);
+        }
+
+        SetSafeZone(false);
+        UnlockDoor(); // 여기서 '띵' 소리 한 번만 발생
+        isProcessing = false;
+    }
+    private void SetSafeZone(bool safe)
+    {
+        if (playerTransform != null)
+        {
+            var pc = playerTransform.GetComponent<PlayerController>();
+            if (pc) pc.isSafeZone = safe;
+        }
+    }
 }

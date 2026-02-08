@@ -963,15 +963,56 @@ public class GameManager : MonoBehaviour
 
     public void LoadEndingScene()
     {
-        Debug.Log("탈출 성공! 엔딩 씬을 로드합니다.");
+        Debug.Log("지하 1층 탈출 성공! 엔딩 구역으로 이동합니다.");
 
-        // (선택) 엔딩 넘어갈 때 모든 소리 끄기
-        //if (SoundManager.Instance != null) SoundManager.Instance.StopBGM();
+        // 1. 기존 맵 데이터 삭제 (최적화 및 불필요한 연산 방지)
+        if (buildPlanner != null) buildPlanner.ClearGenerated(); // PGG 생성 맵 삭제
+        CleanupObjectsForNextLevel(); // 좀비, 아이템, 스포너 등 싹 정리
+        navMeshBaker.ClearNavMesh();
+        // 2. UI 정리 (전투용 HUD 숨기기)
+        if (UIManager.Instance != null) UIManager.Instance.SetEndingUIState();
+        
+        // 3. 플레이어 위치 이동 (엔딩 구역 스폰 포인트로 순간이동)
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            PlayerController pc = player.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                pc.hasGun = false;
+                // 만약 무기를 즉시 숨기는 처리가 PlayerController 내부에 없다면 
+                // 여기서 관련 함수를 추가로 호출해주거나 모델을 꺼줄 필요가 있을 수 있습니다.
+            }
 
-        // 시간 흐름 정상화 (혹시 멈춰있을 수 있으니)
-        Time.timeScale = 1f;
+            CharacterController cc = player.GetComponent<CharacterController>();
+            if (cc) cc.enabled = false; // 이동 중 충돌 방지를 위해 잠시 끔
 
-        // 엔딩 씬 로드
-        SceneManager.LoadScene(endingSceneName);
+            GameObject endPoint = GameObject.Find("EndingSpawnPoint");
+            if (endPoint != null)
+            {
+                player.transform.position = endPoint.transform.position;
+                player.transform.rotation = endPoint.transform.rotation;
+            }
+
+            if (cc) cc.enabled = true;
+        }
+
+        // 4. 엔딩 전용 엘리베이터 작동
+        // 타입을 강제로 바꾸지 않고(꼬임 방지), 씬에 배치된 'Ending' 타입 엘리베이터를 직접 찾아 실행합니다.
+        ElevatorManager[] allElevs = FindObjectsByType<ElevatorManager>(FindObjectsSortMode.None);
+        foreach (var e in allElevs)
+        {
+            if (e.currentType == ElevatorManager.ElevatorType.Ending)
+            {
+                e.Initialize(); // 10초 덜커덩 시퀀스 시작
+                break;
+            }
+        }
+
+        // 5. 페이드 인 연출 시작 (암전되었던 화면을 서서히 밝힘)
+        if (UIManager.Instance != null)
+        {
+            StartCoroutine(UIManager.Instance.FadeIn());
+        }
     }
 }

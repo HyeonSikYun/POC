@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 701a49cf4af894e4ea2290853532a540
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 9472
+  packageName: Military Helicopter II
+  packageVersion: 1.2
+  assetPath: Assets/Helicopter/Fly.controller
+  uploadId: 13323
