@@ -64,6 +64,7 @@ public class UIManager : MonoBehaviour
 
     private int currentMissionCount = 0;
     private Coroutine iconMoveCoroutine;
+    private bool isEnding = false;
     private void Awake()
     {
         if (Instance == null) { Instance = this; } 
@@ -332,6 +333,8 @@ public class UIManager : MonoBehaviour
     // 1. 즉시 이동 (게임 시작 혹은 층 로딩 직후)
     public void SetFloorIconImmediate(int floor)
     {
+        if (isEnding) return; // [추가] 엔딩 상태면 로직 무시
+
         // 아이콘이 꺼져있다면 다시 켭니다 (엔딩 후 재시작 대비)
         if (playerIcon != null && !playerIcon.gameObject.activeSelf)
             playerIcon.gameObject.SetActive(true);
@@ -386,6 +389,7 @@ public class UIManager : MonoBehaviour
 
     public void SetEndingUIState()
     {
+        isEnding = true;
         // 1. 전투 정보 숨기기
         if (floorPanel != null) floorPanel.SetActive(false);
 
