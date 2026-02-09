@@ -208,7 +208,6 @@ public class GunController : MonoBehaviour
 
         if (UIManager.Instance != null)
         {
-            // [적용] 쏠 때도 늘어난 최대 탄약량 기준으로 갱신
             UIManager.Instance.UpdateAmmo(currentAmmo, GetFinalMaxAmmo());
         }
 
@@ -222,20 +221,47 @@ public class GunController : MonoBehaviour
             targetPoint = ray.GetPoint(distance);
         }
 
-        Vector3 fireDirection = (targetPoint - spawn.position).normalized;
+        // ================================================================
+        // [수정 핵심] GunController.cs
+        // ================================================================
+
+        Vector3 fireDirection;
+
+        // 1. 거리 계산 (플레이어 중심 기준)
+        float distanceToMouse = Vector3.Distance(transform.position, targetPoint);
+
+        // 2. 데드존 (마우스가 너무 가까울 때)
+        float deadZoneRadius = 2.0f;
+
+        if (distanceToMouse < deadZoneRadius)
+        {
+            // [변경!] transform.forward 대신 spawn.forward를 사용하세요.
+            // spawn은 총구 위치이므로, 시각적으로 총이 가리키는 방향 그 자체입니다.
+            fireDirection = spawn.forward;
+        }
+        else
+        {
+            // 거리가 멀면 마우스 지점을 향해 발사
+            fireDirection = (targetPoint - spawn.position).normalized;
+        }
+
+        // 3. 높이 오차 제거 (Y축 0으로 평탄화)
+        fireDirection.y = 0;
+        fireDirection.Normalize();
+
+        // ================================================================
 
         if (currentWeapon.useProjectile)
         {
             Quaternion fireRotation = Quaternion.LookRotation(fireDirection);
-
             GameObject projectileObj = PoolManager.Instance.SpawnFromPool(currentWeapon.projectilePoolTag, spawn.position, fireRotation);
-            SoundManager.Instance.PlaySFX(SoundManager.Instance.Bazooka,0.1f);
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.Bazooka, 0.1f);
+
             if (projectileObj != null)
             {
                 Projectile proj = projectileObj.GetComponent<Projectile>();
                 if (proj != null)
                 {
-                    // [적용] 전역 데미지 배율 적용
                     proj.damage = GetFinalDamage();
                     proj.Launch(fireDirection);
                 }
@@ -246,7 +272,7 @@ public class GunController : MonoBehaviour
             FireRaycast(fireDirection);
             if (currentWeapon.type == WeaponType.Rifle)
             {
-                SoundManager.Instance.PlaySFX(SoundManager.Instance.Rifle,0.1f);
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.Rifle, 0.1f);
             }
         }
 

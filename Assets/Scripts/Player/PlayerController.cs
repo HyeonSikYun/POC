@@ -301,16 +301,37 @@ public class PlayerController : MonoBehaviour
             if (GameManager.Instance != null && GameManager.Instance.isPaused) return;
 
             var lookPos = rotationTarget - transform.position;
-            lookPos.y = 0f;
+            lookPos.y = 0f; // 높이 오차 제거
 
             if (lookPos != Vector3.zero)
             {
-                var rotation = Quaternion.LookRotation(lookPos);
-                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.05f);
+                var targetRotation = Quaternion.LookRotation(lookPos);
+
+                // [수정 핵심] 마우스와 플레이어 사이의 거리 계산
+                float dist = lookPos.magnitude;
+
+                // 거리가 가까우면(예: 2.0f 이내) 즉시 회전, 멀면 부드럽게 회전
+                if (dist < 2.0f)
+                {
+                    // 방법 A: 즉시 회전 (가장 반응 빠름)
+                    transform.rotation = targetRotation;
+
+                    // 방법 B: 초고속 회전 (조금 더 부드러움)
+                    // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 50f);
+                }
+                else
+                {
+                    // 평소대로 부드러운 회전 (기존 0.05f는 너무 느릴 수 있으니 Time.deltaTime 기반으로 변경 추천)
+                    // 기존 코드: transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 0.05f);
+
+                    // 개선 코드: 프레임 속도에 독립적인 부드러운 회전 (속도 15f 정도 추천)
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15f);
+                }
             }
         }
         else
         {
+            // 조이스틱 로직 (유지)
             Vector3 aimDir = new Vector3(joystickLook.x, 0f, joystickLook.y);
             if (aimDir != Vector3.zero)
             {
