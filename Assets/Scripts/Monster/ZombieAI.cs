@@ -295,7 +295,9 @@ public class ZombieAI : MonoBehaviour, IPooledObject
         finalSpawnPos.y += 1f;
 
         // 3. 아이템 생성
-        Instantiate(bioSamplePrefab, finalSpawnPos, Quaternion.identity);
+        Quaternion spawnRotation = Quaternion.Euler(90f, Random.Range(0f, 360f), 0f);
+
+        Instantiate(bioSamplePrefab, finalSpawnPos, spawnRotation);
     }
 
     public void Despawn()

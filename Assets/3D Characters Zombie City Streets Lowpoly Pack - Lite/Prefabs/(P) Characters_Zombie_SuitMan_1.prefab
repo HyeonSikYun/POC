@@ -1434,7 +1434,7 @@ MonoBehaviour:
   meshRenderer: {fileID: 7770752821320799135}
   damageColor: {r: 1, g: 1, b: 1, a: 1}
   flashMaterial: {fileID: 2100000, guid: 547b3de4ad7e5fe4a926f6a7a896e63d, type: 2}
-  bioSamplePrefab: {fileID: 16345909985125488, guid: d8ca85adf363af342834cb3969bbbbb5, type: 3}
+  bioSamplePrefab: {fileID: 5306517082443769295, guid: 0d99f704df71abe41b8d476dd31ea5fa, type: 3}
   groundLayer:
     serializedVersion: 2
     m_Bits: 128

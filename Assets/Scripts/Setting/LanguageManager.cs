@@ -74,19 +74,19 @@ public class LanguageManager : MonoBehaviour
     // 언어 데이터 등록
     void InitLocalizationData()
     {
-        localizedData.Add("Upgrade_Heal", new string[] { "회복 30 (최대 100)\n필요 샘플: {0}", "Heal 30 (Max 100)\nCost: {0}" });
+        localizedData.Add("Upgrade_Heal", new string[] { "회복 30 (최대 100)\n필요 샘플: {0}", "Heal 30 (Max 100)\nSamples: {0}" });
         // 나머지: (+수치)를 표시하도록 {1} 추가
-        localizedData.Add("Upgrade_Damage", new string[] { "공격력 강화 (+{1}%)\n필요 샘플: {0}", "Damage (+{1}%)\nCost: {0}" });
+        localizedData.Add("Upgrade_Damage", new string[] { "공격력 강화 (+{1}%)\n필요 샘플: {0}", "Damage (+{1}%)\nSamples: {0}" });
 
         // [수정] 탄약도 배율로 늘어나므로 %가 맞습니다. (기존 '발' -> '%')
         // 예: 탄약 확장 (+20%)
-        localizedData.Add("Upgrade_Ammo", new string[] { "탄약 확장 (+{1}%)\n필요 샘플: {0}", "Max Ammo (+{1}%)\nCost: {0}" });
+        localizedData.Add("Upgrade_Ammo", new string[] { "탄약 확장 (+{1}%)\n필요 샘플: {0}", "Max Ammo (+{1}%)\nSamples: {0}" });
 
         // 속도는 0.05 같은 소수점이므로 그냥 (+0.05)로 둘지, (+5%)로 할지 선택해야 합니다.
         // 현재 코드(GameManager)는 0.05를 그대로 넘겨주므로, 그냥 (+0.05)라고 뜨게 두거나
         // %로 하고 싶다면 GameManager에서 100을 곱해서 넘겨줘야 합니다.
         // 일단은 기존대로 (+0.05) 형태로 둡니다.
-        localizedData.Add("Upgrade_Speed", new string[] { "속도 증가 (+{1}%)\n필요 샘플: {0}", "Speed (+{1}%)\nCost: {0}" });
+        localizedData.Add("Upgrade_Speed", new string[] { "속도 증가 (+{1}%)\n필요 샘플: {0}", "Speed (+{1}%)\nSamples: {0}" });
         localizedData.Add("Mission_Start", new string[]
         {
             "{0}개의 발전기를 켜고\n엘리베이터를 찾아 탑승하십시오",

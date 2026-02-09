@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
 
     [Header("재화 UI")]
     public TextMeshProUGUI bioSampleText;
+    public Image bioSampleImg;
 
     [Header("튜토리얼 UI")]
     public TextMeshProUGUI tutorialText;
@@ -228,7 +229,14 @@ public class UIManager : MonoBehaviour
     }
 
     // --- 기존 UI 함수들 ---
-    public void UpdateBioSample(int amount) { if (bioSampleText != null) bioSampleText.text = $"Samples: {amount}"; }
+    public void UpdateBioSample(int amount)
+    {
+        if (bioSampleText != null)
+        {
+            // 앞에 이미지를 배치했으므로 텍스트는 곱하기 기호(X)와 숫자만 표시
+            bioSampleText.text = $"X {amount}";
+        }
+    }
     public void ShowUpgradePanel(bool show) { if (upgradePanel != null) upgradePanel.SetActive(show); }
 
     // [수정] 가격 업데이트 함수 ({0} 문제 해결)
@@ -424,7 +432,7 @@ public class UIManager : MonoBehaviour
         upgradePanel.SetActive(false);
         // [추가] 엔딩 시 플레이어 아이콘도 확실히 숨김
         if (playerIcon != null) playerIcon.gameObject.SetActive(false);
-
+        bioSampleImg.gameObject.SetActive(false);
         if (healthText != null) healthText.gameObject.SetActive(false);
         if (weaponNameText != null) weaponNameText.gameObject.SetActive(false);
         if (ammoText != null) ammoText.gameObject.SetActive(false);

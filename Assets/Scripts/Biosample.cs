@@ -20,7 +20,7 @@ public class BioSample : MonoBehaviour
     private void Update()
     {
         // 1. 회전 연출
-        transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime);
+        transform.Rotate(Vector3.forward * rotateSpeed * Time.deltaTime);
 
         // 2. 거리 체크 로직
         if (playerTransform != null)
