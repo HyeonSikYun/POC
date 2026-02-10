@@ -135,8 +135,10 @@ public class PlayerController : MonoBehaviour
         currentHealth += amount;
         if (currentHealth > maxHealth) currentHealth = maxHealth;
 
-        if (UIManager.Instance != null)
-            UIManager.Instance.UpdateHealth(currentHealth);
+        //if (UIManager.Instance != null)
+        //UIManager.Instance.UpdateHealth(currentHealth);
+        if (HealthSystem.Instance != null)
+            HealthSystem.Instance.HealDamage(amount);
     }
 
     public void TakeDamage(int damage)
@@ -145,15 +147,20 @@ public class PlayerController : MonoBehaviour
 
         currentHealth -= damage;
 
+        // [추가] 에셋 체력바 깎기
+        if (HealthSystem.Instance != null)
+            HealthSystem.Instance.TakeDamage(damage);
+
         if (damageEffect != null)
         {
             damageEffect.OnTakeDamage();
         }
 
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.UpdateHealth(currentHealth);
-        }
+        // [기존] 텍스트 UI 갱신
+        //if (UIManager.Instance != null)
+        //{
+        //    UIManager.Instance.UpdateHealth(currentHealth);
+        //}
 
         if (currentHealth <= 0)
         {

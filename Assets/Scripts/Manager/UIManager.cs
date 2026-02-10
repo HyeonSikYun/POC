@@ -438,7 +438,10 @@ public class UIManager : MonoBehaviour
         if (ammoText != null) ammoText.gameObject.SetActive(false);
         if (bioSampleText != null) bioSampleText.gameObject.SetActive(false);
         if (generatorCountText != null) generatorCountText.gameObject.SetActive(false);
-
+        if (HealthSystem.Instance != null)
+        {
+            HealthSystem.Instance.gameObject.SetActive(false);
+        }
         // 2. 장전 게이지 등 끄기
         if (reloadGaugeGroup != null) reloadGaugeGroup.SetActive(false);
         if (reloadingObject != null) reloadingObject.SetActive(false);
