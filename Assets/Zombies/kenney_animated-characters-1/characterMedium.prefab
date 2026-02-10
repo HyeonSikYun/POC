@@ -375,6 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 253e6c8224fabea4aa14ac356abd56e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZombieAI
+  zombieType: 0
   player: {fileID: 0}
   detectionRange: 8
   attackRange: 2
@@ -388,6 +389,10 @@ MonoBehaviour:
   maxHealth: 200
   currentHealth: 0
   deathAnimationDuration: 3
+  explosionRange: 3
+  explosionDamage: 50
+  explosionEffect: {fileID: 0}
+  rangeIndicatorPrefab: {fileID: 0}
   meshRenderer: {fileID: 0}
   damageColor: {r: 1, g: 1, b: 1, a: 1}
   flashMaterial: {fileID: 2100000, guid: 547b3de4ad7e5fe4a926f6a7a896e63d, type: 2}

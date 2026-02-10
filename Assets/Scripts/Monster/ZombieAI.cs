@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using FIMSpace.FProceduralAnimation;
 
 public interface IZombieState
 {
@@ -77,6 +78,7 @@ public class ZombieAI : MonoBehaviour, IPooledObject
     public readonly int hashIsCrawling = Animator.StringToHash("isCrawling");
     public readonly int hashAtk = Animator.StringToHash("zombie1Atk");
     public readonly int hashDie = Animator.StringToHash("zombie1Die");
+    public readonly int hashFrontDie = Animator.StringToHash("zombieFrontDie");
 
     private void Awake()
     {
@@ -646,14 +648,14 @@ public class DeadState : IZombieState
     {
         zombie.isDead = true;
 
+        // 1. 소리 끄기
         if (zombie.audioSource != null)
         {
             zombie.audioSource.Stop();
             zombie.audioSource.loop = false;
         }
 
-        zombie.Anim.SetLayerWeight(1, 0f);
-
+        // 2. 이동 멈추기 (필수)
         if (zombie.Agent.enabled)
         {
             zombie.Agent.isStopped = true;
@@ -661,6 +663,8 @@ public class DeadState : IZombieState
             zombie.Agent.enabled = false;
         }
 
+        // 3. 메인 콜라이더는 Trigger로 변경 (시체 통과 가능하게)
+        // 단, 래그돌의 콜라이더(뼈대)들은 살아있어야 함
         if (zombie.Col != null)
         {
             zombie.Col.isTrigger = true;
@@ -671,26 +675,57 @@ public class DeadState : IZombieState
             TutorialManager.Instance.OnZombieKilled();
         }
 
-        // [수정] 죽을 때 애니메이션 파라미터 정리
-        if (zombie.zombieType == ZombieAI.ZombieType.Explosive)
-        {
-            zombie.Anim.SetBool(zombie.hashIsCrawling, false);
-        }
-        else
-        {
-            zombie.Anim.SetBool(zombie.hashIsRun, false);
-            // 폭발 좀비는 Die 애니메이션이 없을 수도 있으니 일반 좀비일 때만 트리거
-            zombie.Anim.SetTrigger(zombie.hashDie);
-        }
-
-        zombie.StartCoroutine(DespawnRoutine(zombie));
+        // [핵심] 애니메이션 재생 후 래그돌 전환 코루틴 시작
+        zombie.StartCoroutine(RagdollDeathRoutine(zombie));
     }
 
     public void Execute(ZombieAI zombie) { }
     public void Exit(ZombieAI zombie) { }
 
-    private IEnumerator DespawnRoutine(ZombieAI zombie)
+    private IEnumerator RagdollDeathRoutine(ZombieAI zombie)
     {
+        // A. 폭발 좀비
+        if (zombie.zombieType == ZombieAI.ZombieType.Explosive)
+        {
+            zombie.Anim.SetBool(zombie.hashIsCrawling, false);
+        }
+        else
+        // B. 일반 좀비
+        {
+            zombie.Anim.SetBool(zombie.hashIsRun, false);
+
+            // -------------------------------------------------
+            // [방향 계산 및 애니메이션 실행]
+            // 물리 힘(AddForce)이나 Ragdoll 함수는 전부 제거했습니다.
+            // -------------------------------------------------
+            if (zombie.player != null)
+            {
+                // 플레이어 -> 좀비 방향 (공격 방향)
+                Vector3 attackDir = (zombie.transform.position - zombie.player.position).normalized;
+                Vector3 zombieForward = zombie.transform.forward;
+
+                // 내적 계산
+                // 양수(+) = 뒤에서 맞음 -> 앞으로 넘어짐
+                // 음수(-) = 앞에서 맞음 -> 뒤로 넘어짐
+                float dot = Vector3.Dot(zombieForward, attackDir);
+
+                if (dot > 0)
+                {
+                    zombie.Anim.SetTrigger(zombie.hashFrontDie);
+                }
+                else
+                {
+                    zombie.Anim.SetTrigger(zombie.hashDie);
+                }
+            }
+            else
+            {
+                // 플레이어가 없으면 기본 모션(뒤로 넘어짐)
+                zombie.Anim.SetTrigger(zombie.hashDie);
+            }
+        }
+
+        // 애니메이션 재생 시간만큼 대기 후 삭제
         yield return new WaitForSeconds(zombie.deathAnimationDuration);
         zombie.Despawn();
     }
