@@ -2,19 +2,35 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement; // 씬 이동 필수
 using System.Collections;
+using TMPro;
 
 public class EndingCreditScroller : MonoBehaviour
 {
     public RectTransform scrollContent; // 위로 올라갈 내용물
     public float scrollSpeed = 50f;     // 속도 (천천히 올라가야 분위기 있음)
-
-    // 로고가 화면 중앙에 멈추길 원하면 이 값을 조정 (예: 1500), 
-    // 화면 위로 싹 다 올라가길 원하면 더 큰 값 입력
     public float targetPosY = 2000f;
+    [Header("통계 표시용 텍스트")]
+    public TextMeshProUGUI statsText;
 
     public void StartScroll()
     {
+        UpdateStatsText();
         StartCoroutine(ScrollRoutine());
+    }
+
+    private void UpdateStatsText()
+    {
+        if (statsText != null && GameManager.Instance != null)
+        {
+            // 예시: 
+            // Total Kills: 150
+            // Play Time: 00:15:30
+            string playTime = GameManager.Instance.GetPlayTimeFormatted();
+            int kills = GameManager.Instance.totalZombieKills;
+
+            statsText.text = $"Total Zombies Killed : <color=red>{kills}</color>\n" +
+                             $"Total Play Time : <color=red>{playTime}</color>";
+        }
     }
 
     IEnumerator ScrollRoutine()

@@ -47,6 +47,10 @@ public class GameManager : MonoBehaviour
     public bool isPaused = false;
     public bool isRetry = false;
 
+    [Header("통계 데이터")]
+    public int totalZombieKills = 0; // 잡은 좀비 수
+    private float gameStartTime;     // 게임 시작 시간
+
     [Header("엔딩 설정")]
     public int finalFloor = -1; // 탈출하는 마지막 층 (B1)
     public string endingSceneName = "EndingScene"; // 이동할 엔딩 씬의 이름
@@ -98,7 +102,11 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log("[GameManager] 씬 로드 완료.");
-
+        if (currentFloor == -9 || isRetry)
+        {
+            totalZombieKills = 0;
+            gameStartTime = Time.time; // 현재 시간을 시작 시간으로 기록
+        }
         // 맵 생성기 재연결
         if (buildPlanner == null) buildPlanner = FindAnyObjectByType<BuildPlannerExecutor>();
         if (navMeshBaker == null) navMeshBaker = FindAnyObjectByType<RuntimeNavMeshBaker>();
@@ -263,6 +271,22 @@ public class GameManager : MonoBehaviour
         //yield return new WaitForSeconds(0.5f); // 로딩 안전 대기
         //if (UIManager.Instance != null) StartCoroutine(UIManager.Instance.FadeIn());
     }
+    public void AddZombieKill()
+    {
+        totalZombieKills++;
+    }
+
+    // [추가] 플레이 시간을 "00:00:00" 형식의 문자열로 반환하는 함수
+    public string GetPlayTimeFormatted()
+    {
+        float duration = Time.time - gameStartTime;
+
+        int hours = (int)(duration / 3600);
+        int minutes = (int)((duration % 3600) / 60);
+        int seconds = (int)(duration % 60);
+
+        return string.Format("{0:D2}:{1:D2}:{2:D2}", hours, minutes, seconds);
+    }
 
     // 데이터 초기화 함수
     private void ResetGameData()
@@ -272,7 +296,8 @@ public class GameManager : MonoBehaviour
         currentFloor = -9;
         isRetry = true;
         bioSamples = 10;
-
+        totalZombieKills = 0;
+        gameStartTime = Time.time;
         // [핵심] 상태 변수 초기화 (강화 버튼 작동 안 함 문제 해결)
         isPaused = false;
         isUpgradeMenuOpen = false;

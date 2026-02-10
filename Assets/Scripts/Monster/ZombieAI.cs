@@ -695,6 +695,11 @@ public class DeadState : IZombieState
     {
         zombie.isDead = true;
 
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddZombieKill();
+        }
+
         // 1. ¼Ò¸® ²ô±â
         if (zombie.audioSource != null)
         {
