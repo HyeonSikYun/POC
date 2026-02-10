@@ -11,6 +11,10 @@ public class EndingSceneManager : MonoBehaviour
     public Image fadeImage; // UIManager의 FadeCanvas에 있는 Image를 꼭 연결해주세요.
     private bool isEndingTriggered = false;
 
+    [Header("엔딩 크레딧 설정")]
+    public GameObject endingCreditCanvas; // 아까 만든 EndingCreditCanvas 연결
+    public EndingCreditScroller creditScroller; // 그 안에 있는 스크립트 연결
+
     private void Awake() { Instance = this; }
 
     public void TriggerWhiteEnding()
@@ -68,7 +72,15 @@ public class EndingSceneManager : MonoBehaviour
 
         // 3. 완전히 하얘진 후 처리 (예: 타이틀 이동)
         yield return new WaitForSeconds(2.0f);
-        Debug.Log("엔딩 완료 - 타이틀 씬으로 이동할 준비가 되었습니다.");
-        // UnityEngine.SceneManagement.SceneManager.LoadScene("TitleScene");
+        if (endingCreditCanvas != null)
+        {
+            // 페이드 이미지가 덮고 있으니, 크레딧 캔버스를 켜서 그 위로 덮어씌움
+            endingCreditCanvas.SetActive(true);
+
+            if (creditScroller != null)
+            {
+                creditScroller.StartScroll();
+            }
+        }
     }
 }

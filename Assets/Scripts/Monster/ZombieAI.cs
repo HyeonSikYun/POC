@@ -534,12 +534,12 @@ public class ChaseState : IZombieState
                 // 선택된 게 '기존의 큰 소리(zombieChase)'라면 -> 볼륨을 60%로 줄임
                 if (selectedClip == sm.zombieChase)
                 {
-                    zombie.audioSource.volume = 0.4f; // 필요하면 0.5f로 더 줄이세요
+                    zombie.audioSource.volume = 0.1f; // 필요하면 0.5f로 더 줄이세요
                 }
                 else
                 {
                     // 새로 추가한 작은 소리들이라면 -> 볼륨을 100%로
-                    zombie.audioSource.volume = 0.7f;
+                    zombie.audioSource.volume = 0.1f;
                 }
 
                 zombie.audioSource.Play();

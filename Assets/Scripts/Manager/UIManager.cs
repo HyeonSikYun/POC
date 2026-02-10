@@ -77,6 +77,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        ResetGameUI();
         ShowGeneratorUI(false);
         if (missionPanelGroup != null)
         {
@@ -449,5 +450,42 @@ public class UIManager : MonoBehaviour
         // 일시정지 패널 등 시스템 UI는 ESC 작동을 위해 유지됩니다.
     }
 
+    public void ResetGameUI()
+    {
+        isEnding = false; // 엔딩 상태 해제
 
+        // 1. 기본 HUD 켜기
+        if (floorPanel != null) floorPanel.SetActive(true);
+        if (upgradePanel != null) upgradePanel.SetActive(false); // 업그레이드는 꺼진게 기본
+
+        // 아이콘 다시 켜기
+        if (playerIcon != null)
+        {
+            playerIcon.gameObject.SetActive(true);
+            // 위치도 초기화하고 싶다면 여기서 SetFloorIconImmediate(0) 호출 가능
+        }
+
+        if (bioSampleImg != null) bioSampleImg.gameObject.SetActive(true);
+        if (weaponNameText != null) weaponNameText.gameObject.SetActive(true);
+        if (ammoText != null) ammoText.gameObject.SetActive(true);
+        if (bioSampleText != null) bioSampleText.gameObject.SetActive(true);
+
+        // 2. 미션/발전기 관련은 튜토리얼 룸에서는 꺼져있는 게 맞음
+        ShowGeneratorUI(false);
+
+        // 3. 체력 시스템 등 다른 매니저의 오브젝트가 있다면 켜주기
+        if (HealthSystem.Instance != null)
+        {
+            HealthSystem.Instance.gameObject.SetActive(true);
+        }
+
+        // 4. 페이드 캔버스 초기화 (투명하게)
+        if (globalFadeCanvas != null)
+        {
+            globalFadeCanvas.alpha = 0f;
+            globalFadeCanvas.blocksRaycasts = false;
+        }
+
+        Debug.Log("UI가 리셋되었습니다 (다시 보임)");
+    }
 }
