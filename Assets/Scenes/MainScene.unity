@@ -19539,6 +19539,10 @@ MonoBehaviour:
   footStep: {fileID: 8300000, guid: b7a13170ec8f73a45a0c174c5bf9e993, type: 3}
   gunHit: {fileID: 8300000, guid: 8c2c08eed3290cd4c989385a83a4eaaa, type: 3}
   zombieExplosion: {fileID: 8300000, guid: 0efc690d428f68e43a9348455ea54ec6, type: 3}
+  kingZombieSound: {fileID: 8300000, guid: 3cf33f50c6b6cf7418b37b614b721214, type: 3}
+  zombieChase2: {fileID: 8300000, guid: e7ea52a92d42cd944be017747f904789, type: 3}
+  zombieChase3: {fileID: 8300000, guid: 2bc92e41fec4d094d8b87a388ae2c1a0, type: 3}
+  zombieDie: {fileID: 8300000, guid: ef48a7ba1818342448a9cfbb42d96b5b, type: 3}
 --- !u!4 &1338073599
 Transform:
   m_ObjectHideFlags: 0

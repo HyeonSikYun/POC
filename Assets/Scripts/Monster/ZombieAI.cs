@@ -492,28 +492,59 @@ public class ChaseState : IZombieState
 {
     public void Enter(ZombieAI zombie)
     {
+        // (이동/애니메이션 설정 코드는 기존 유지...)
         if (zombie.Agent.isOnNavMesh)
         {
             zombie.Agent.isStopped = false;
-
-            // [수정] 타입에 따라 속도와 애니메이션 분기
             if (zombie.zombieType == ZombieAI.ZombieType.Explosive)
             {
                 zombie.Agent.speed = zombie.moveSpeed * 0.6f;
                 zombie.Anim.SetBool(zombie.hashIsCrawling, true);
-                // 일반 좀비용 파라미터는 건드리지 않음
             }
             else
             {
                 zombie.Agent.speed = zombie.moveSpeed;
                 zombie.Anim.SetBool(zombie.hashIsRun, true);
-                // 폭발 좀비용 파라미터는 건드리지 않음
             }
         }
 
-        zombie.audioSource.clip = SoundManager.Instance.zombieChase;
-        zombie.audioSource.loop = true;
-        zombie.audioSource.Play();
+        // -------------------------------------------------------
+        // [수정] 랜덤 재생 + 볼륨 밸런스 조절
+        // -------------------------------------------------------
+        if (SoundManager.Instance != null)
+        {
+            var sm = SoundManager.Instance;
+            System.Collections.Generic.List<AudioClip> chaseClips = new System.Collections.Generic.List<AudioClip>();
+
+            // 리스트에 추가
+            if (sm.zombieChase != null) chaseClips.Add(sm.zombieChase);  // 0번 (기존, 큰 소리)
+            if (sm.zombieChase2 != null) chaseClips.Add(sm.zombieChase2); // 1번 (신규, 작은 소리)
+            if (sm.zombieChase3 != null) chaseClips.Add(sm.zombieChase3); // 2번 (신규, 작은 소리)
+
+            if (chaseClips.Count > 0)
+            {
+                // 랜덤 선택
+                int randomIndex = Random.Range(0, chaseClips.Count);
+                AudioClip selectedClip = chaseClips[randomIndex];
+
+                zombie.audioSource.clip = selectedClip;
+                zombie.audioSource.loop = true;
+
+                // [핵심] 볼륨 밸런스 조절
+                // 선택된 게 '기존의 큰 소리(zombieChase)'라면 -> 볼륨을 60%로 줄임
+                if (selectedClip == sm.zombieChase)
+                {
+                    zombie.audioSource.volume = 0.4f; // 필요하면 0.5f로 더 줄이세요
+                }
+                else
+                {
+                    // 새로 추가한 작은 소리들이라면 -> 볼륨을 100%로
+                    zombie.audioSource.volume = 0.7f;
+                }
+
+                zombie.audioSource.Play();
+            }
+        }
     }
 
     public void Execute(ZombieAI zombie)
@@ -669,6 +700,26 @@ public class DeadState : IZombieState
         {
             zombie.audioSource.Stop();
             zombie.audioSource.loop = false;
+
+            if (SoundManager.Instance != null)
+            {
+                // 재생 가능한 클립을 담을 리스트
+                System.Collections.Generic.List<AudioClip> dieClips = new System.Collections.Generic.List<AudioClip>();
+
+                // SoundManager에 등록된 1, 2, 3번 사운드 추가
+                // (변수 이름이 SoundManager 스크립트와 정확히 일치해야 합니다)
+                if (SoundManager.Instance.zombieDie != null) dieClips.Add(SoundManager.Instance.zombieDie);
+                if (SoundManager.Instance.zombieDie2 != null) dieClips.Add(SoundManager.Instance.zombieDie2);
+                if (SoundManager.Instance.zombieDie3 != null) dieClips.Add(SoundManager.Instance.zombieDie3);
+
+                // 리스트에 있는 것 중 하나를 랜덤으로 뽑아서 재생
+                if (dieClips.Count > 0)
+                {
+                    int randomIndex = Random.Range(0, dieClips.Count);
+                    // PlayOneShot(클립, 볼륨): 볼륨 1.0f로 확실하게 재생
+                    zombie.audioSource.PlayOneShot(dieClips[randomIndex], 1.0f);
+                }
+            }
         }
 
         // 2. 이동 멈추기 (필수)
