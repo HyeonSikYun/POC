@@ -12,6 +12,18 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI weaponNameText;
     public TextMeshProUGUI ammoText;
 
+    [Header("무기 슬롯 UI")]
+    // 5개의 무기 슬롯 배경 (혹은 아이콘)
+    public GameObject weaponSlotPanel;
+    public Image[] weaponSlotImages;
+    public Sprite[] normalWeaponSprites; // 일반 총 이미지 5개
+    public Sprite[] lockedWeaponSprites; // 잠긴 총 이미지 5개
+
+    public Color activeColor = Color.white;   // 선택된 무기 색상 (보통 흰색)
+    public Color unlockedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
+    public Color inactiveColor = new Color(0.6f, 0.6f, 0.6f, 1f); // 미선택(해금됨) 색상 (약간 어둡게)
+    private Vector3[] originalScales;
+
     [Header("층수UI")]
     [SerializeField] private RectTransform playerIcon;
     [SerializeField] private RectTransform[] floorAnchors; // B9(-9)부터 B1(-1)까지 순서대로 할당 (총 9개)
@@ -83,6 +95,19 @@ public class UIManager : MonoBehaviour
         {
             missionPanelGroup.alpha = 0f; // 투명하게 시작
             missionPanelGroup.gameObject.SetActive(false);
+        }
+
+        if (weaponSlotImages != null)
+        {
+            originalScales = new Vector3[weaponSlotImages.Length];
+            for (int i = 0; i < weaponSlotImages.Length; i++)
+            {
+                if (weaponSlotImages[i] != null)
+                {
+                    // 에디터에서 설정한 그 크기를 그대로 기억!
+                    originalScales[i] = weaponSlotImages[i].rectTransform.localScale;
+                }
+            }
         }
     }
 
@@ -425,12 +450,57 @@ public class UIManager : MonoBehaviour
         iconMoveCoroutine = null; // 초기화
     }
 
+    public void UpdateWeaponSlots(bool[] unlockedStates, int currentIndex)
+    {
+        if (weaponSlotImages == null) return;
+        // 방어 코드: Start가 실행되기 전에 호출될 경우를 대비
+        if (originalScales == null || originalScales.Length != weaponSlotImages.Length) return;
+
+        for (int i = 0; i < weaponSlotImages.Length; i++)
+        {
+            if (weaponSlotImages[i] == null) continue;
+
+            // 1. 현재 선택된 무기 (Selected)
+            if (i == currentIndex)
+            {
+                // 이미지 & 색상 변경
+                if (normalWeaponSprites != null && i < normalWeaponSprites.Length)
+                    weaponSlotImages[i].sprite = normalWeaponSprites[i];
+                weaponSlotImages[i].color = activeColor;
+
+                // [크기] 원래 크기 * 1.2배 (살짝 키움)
+                weaponSlotImages[i].rectTransform.localScale = originalScales[i] * 1.4f;
+            }
+            // 2. 해금됐지만 안 쓰는 무기 (Unlocked)
+            else if (unlockedStates[i])
+            {
+                if (normalWeaponSprites != null && i < normalWeaponSprites.Length)
+                    weaponSlotImages[i].sprite = normalWeaponSprites[i];
+                weaponSlotImages[i].color = unlockedColor;
+
+                // [크기] 원래 크기로 복구
+                weaponSlotImages[i].rectTransform.localScale = originalScales[i];
+            }
+            // 3. 잠긴 무기 (Locked)
+            else
+            {
+                if (lockedWeaponSprites != null && i < lockedWeaponSprites.Length)
+                    weaponSlotImages[i].sprite = lockedWeaponSprites[i];
+                weaponSlotImages[i].color = Color.white;
+
+                // [크기] 원래 크기로 복구
+                weaponSlotImages[i].rectTransform.localScale = originalScales[i];
+            }
+        }
+    }
+
     public void SetEndingUIState()
     {
         isEnding = true;
         // 1. 전투 정보 숨기기
         if (floorPanel != null) floorPanel.SetActive(false);
         upgradePanel.SetActive(false);
+        if (weaponSlotPanel != null) weaponSlotPanel.SetActive(false);
         // [추가] 엔딩 시 플레이어 아이콘도 확실히 숨김
         if (playerIcon != null) playerIcon.gameObject.SetActive(false);
         bioSampleImg.gameObject.SetActive(false);
@@ -457,7 +527,7 @@ public class UIManager : MonoBehaviour
         // 1. 기본 HUD 켜기
         if (floorPanel != null) floorPanel.SetActive(true);
         if (upgradePanel != null) upgradePanel.SetActive(false); // 업그레이드는 꺼진게 기본
-
+        if (weaponSlotPanel != null) weaponSlotPanel.SetActive(true);
         // 아이콘 다시 켜기
         if (playerIcon != null)
         {

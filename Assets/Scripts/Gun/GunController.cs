@@ -50,9 +50,12 @@ public class GunController : MonoBehaviour
     public List<WeaponStats> weapons;
     private int currentWeaponIndex = 0;
     private WeaponStats currentWeapon;
+    private int[] weaponAmmoList;
+    private bool[] isWeaponUnlocked;
+    private int nextUnlockIndex = 2; //
 
     [Header("상태")]
-    private int currentAmmo;
+    //private int currentAmmo;
     private bool isReloading = false;
     private bool isHoldingTrigger = false;
 
@@ -71,10 +74,45 @@ public class GunController : MonoBehaviour
     private void Start()
     {
         playerController = GetComponentInParent<PlayerController>();
+
+        // [수정] 데이터 초기화 및 1, 2번 무기 해금
+        int count = weapons.Count;
+        weaponAmmoList = new int[count];
+        isWeaponUnlocked = new bool[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            // 탄약 꽉 채우기 & 일단 다 잠금
+            weaponAmmoList[i] = GetFinalMaxAmmo(weapons[i]);
+            isWeaponUnlocked[i] = false;
+        }
+
+        // 1번(Index 0), 2번(Index 1)만 해제
+        if (count >= 1) isWeaponUnlocked[0] = true;
+        if (count >= 2) isWeaponUnlocked[1] = true;
+
+        nextUnlockIndex = 2; // 다음 해금될 무기 번호
+
         if (weapons.Count > 0)
         {
             EquipWeapon(0);
         }
+    }
+
+    private void Update()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.isPaused) return;
+        if (isReloading) return;
+
+        var keyboard = Keyboard.current;
+        if (keyboard == null) return;
+
+        // 잠금 해제된 무기만 교체 가능
+        if (keyboard.digit1Key.wasPressedThisFrame) TrySwitchWeapon(0);
+        if (keyboard.digit2Key.wasPressedThisFrame) TrySwitchWeapon(1);
+        if (keyboard.digit3Key.wasPressedThisFrame) TrySwitchWeapon(2);
+        if (keyboard.digit4Key.wasPressedThisFrame) TrySwitchWeapon(3);
+        if (keyboard.digit5Key.wasPressedThisFrame) TrySwitchWeapon(4);
     }
 
     private int GetFinalDamage()
@@ -93,12 +131,19 @@ public class GunController : MonoBehaviour
     {
         if (UIManager.Instance != null && currentWeapon != null)
         {
-            UIManager.Instance.UpdateAmmo(currentAmmo, GetFinalMaxAmmo());
+            int current = weaponAmmoList[currentWeaponIndex];
+            UIManager.Instance.UpdateAmmo(current, GetFinalMaxAmmo());
         }
     }
 
     private void EquipWeapon(int index)
     {
+        if (gunAudioSource != null)
+        {
+            gunAudioSource.Stop();
+            gunAudioSource.loop = false;
+        }
+
         if (currentWeapon != null && currentWeapon.weaponParticle != null)
         {
             currentWeapon.weaponParticle.Stop();
@@ -107,7 +152,6 @@ public class GunController : MonoBehaviour
 
         currentWeaponIndex = index;
         currentWeapon = weapons[currentWeaponIndex];
-        currentAmmo = GetFinalMaxAmmo();
 
         lastFireTime = -currentWeapon.fireRate;
 
@@ -117,12 +161,14 @@ public class GunController : MonoBehaviour
             currentWeapon.weaponParticle.Stop();
         }
 
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.UpdateWeaponName(currentWeapon.weaponName);
-            UIManager.Instance.UpdateAmmo(currentAmmo, GetFinalMaxAmmo());
-            UIManager.Instance.ShowReloading(false);
-        }
+        //if (UIManager.Instance != null)
+        //{
+        //    UIManager.Instance.UpdateWeaponName(currentWeapon.weaponName);
+        //    UIManager.Instance.UpdateAmmo(currentAmmo, GetFinalMaxAmmo());
+        //    UIManager.Instance.ShowReloading(false);
+        //}
+
+        RefreshUI(); // [수정] UI 갱신 함수 호출로 변경
 
         Debug.Log($"무기 장착: {currentWeapon.weaponName}");
     }
@@ -133,9 +179,8 @@ public class GunController : MonoBehaviour
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
         if (!playerController.hasGun || isReloading) return;
 
-        if (currentAmmo <= 0)
+        if (weaponAmmoList[currentWeaponIndex] <= 0)
         {
-            if (context.started) StartCoroutine(ReloadAndSwitch());
             return;
         }
 
@@ -196,7 +241,7 @@ public class GunController : MonoBehaviour
 
     private IEnumerator AutoShootRoutine()
     {
-        while (isHoldingTrigger && currentAmmo > 0 && !isReloading)
+        while (isHoldingTrigger && weaponAmmoList[currentWeaponIndex] > 0 && !isReloading)
         {
             Shoot();
             yield return new WaitForSeconds(currentWeapon.fireRate);
@@ -211,12 +256,14 @@ public class GunController : MonoBehaviour
 
     private void Shoot()
     {
-        currentAmmo--;
+        weaponAmmoList[currentWeaponIndex]--;
 
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.UpdateAmmo(currentAmmo, GetFinalMaxAmmo());
-        }
+        //if (UIManager.Instance != null)
+        //{
+        //    UIManager.Instance.UpdateAmmo(currentAmmo, GetFinalMaxAmmo());
+        //}
+
+        RefreshUI();
 
         // --- 발사 방향 계산 ---
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -272,9 +319,9 @@ public class GunController : MonoBehaviour
 
         if (currentWeapon.ejectShell) SpawnShell();
 
-        if (currentAmmo <= 0)
+        if (weaponAmmoList[currentWeaponIndex] <= 0)
         {
-            StartCoroutine(ReloadAndSwitch());
+            HandleWeaponDepleted(); // [신규] 함수 호출
         }
     }
 
@@ -444,34 +491,34 @@ public class GunController : MonoBehaviour
         }
     }
 
-    private IEnumerator ReloadAndSwitch()
-    {
-        if (isReloading) yield break;
-        isReloading = true;
+    //private IEnumerator ReloadAndSwitch()
+    //{
+    //    if (isReloading) yield break;
+    //    isReloading = true;
 
-        if (shootCoroutine != null) StopCoroutine(shootCoroutine);
-        if (currentWeapon.weaponParticle != null) currentWeapon.weaponParticle.Stop();
+    //    if (shootCoroutine != null) StopCoroutine(shootCoroutine);
+    //    if (currentWeapon.weaponParticle != null) currentWeapon.weaponParticle.Stop();
 
-        if (gunAudioSource.isPlaying && currentWeapon.type == WeaponType.FlameThrower)
-        {
-            gunAudioSource.Stop();
-            gunAudioSource.loop = false;
-        }
+    //    if (gunAudioSource.isPlaying && currentWeapon.type == WeaponType.FlameThrower)
+    //    {
+    //        gunAudioSource.Stop();
+    //        gunAudioSource.loop = false;
+    //    }
 
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.ShowReloading(true);
-        }
-        if (SoundManager.Instance != null)
-            SoundManager.Instance.PlaySFX(SoundManager.Instance.reload);
+    //    if (UIManager.Instance != null)
+    //    {
+    //        UIManager.Instance.ShowReloading(true);
+    //    }
+    //    if (SoundManager.Instance != null)
+    //        SoundManager.Instance.PlaySFX(SoundManager.Instance.reload);
 
-        yield return new WaitForSeconds(reloadTime);
+    //    yield return new WaitForSeconds(reloadTime);
 
-        int nextIndex = (currentWeaponIndex + 1) % weapons.Count;
-        EquipWeapon(nextIndex);
+    //    int nextIndex = (currentWeaponIndex + 1) % weapons.Count;
+    //    EquipWeapon(nextIndex);
 
-        isReloading = false;
-    }
+    //    isReloading = false;
+    //}
 
     public void SetWeaponVisible(bool isVisible)
     {
@@ -482,5 +529,127 @@ public class GunController : MonoBehaviour
                 child.gameObject.SetActive(isVisible);
             }
         }
+    }
+
+    // [신규] 무기 교체 시도 (잠겨있거나 탄약 없으면 실패)
+    private void TrySwitchWeapon(int index)
+    {
+        if (index < 0 || index >= weapons.Count) return;
+        if (!isWeaponUnlocked[index]) return; // 잠겨있음
+        if (weaponAmmoList[index] <= 0) return; // 탄약 없음
+        if (index == currentWeaponIndex) return;
+
+        EquipWeapon(index);
+    }
+
+    // [신규] 탄약 소진 시 다음 무기 해금 및 교체 로직
+    private void HandleWeaponDepleted()
+    {
+        // 1. [수정] 다 쓴 무기의 이펙트와 소리 즉시 끄기
+        if (currentWeapon.weaponParticle != null)
+        {
+            currentWeapon.weaponParticle.Stop();
+        }
+        if (gunAudioSource != null)
+        {
+            gunAudioSource.Stop();
+            gunAudioSource.loop = false;
+        }
+
+        // 발사 상태 강제 해제
+        isHoldingTrigger = false;
+        if (shootCoroutine != null)
+        {
+            StopCoroutine(shootCoroutine);
+            shootCoroutine = null;
+        }
+
+        Debug.Log($"{currentWeapon.weaponName} 탄약 소진! 무기를 잠급니다.");
+
+        // 2. 현재 무기 잠금
+        isWeaponUnlocked[currentWeaponIndex] = false;
+
+        // 3. [핵심 수정] "이미 열려있는 무기"는 건너뛰고, "잠겨있는 다음 무기"를 찾습니다.
+        // 이렇게 해야 무기 개수가 줄어들지 않고 계속 2개씩 유지됩니다.
+        int unlockTargetIndex = nextUnlockIndex;
+        int safetyCount = 0; // 무한루프 방지용
+
+        // 잠겨있는 무기가 나올 때까지 인덱스를 계속 넘김
+        while (isWeaponUnlocked[unlockTargetIndex] && safetyCount < weapons.Count)
+        {
+            unlockTargetIndex = (unlockTargetIndex + 1) % weapons.Count;
+            safetyCount++;
+        }
+
+        // 4. 찾은 무기 해제 및 탄약 리필
+        isWeaponUnlocked[unlockTargetIndex] = true;
+        weaponAmmoList[unlockTargetIndex] = GetFinalMaxAmmo(weapons[unlockTargetIndex]);
+        Debug.Log($"새로운 무기 해제: {weapons[unlockTargetIndex].weaponName}");
+
+        // 다음 해금 순서는 이번에 연 것의 다음 번호로 설정
+        nextUnlockIndex = (unlockTargetIndex + 1) % weapons.Count;
+
+        // 5. 사용 가능한(열려있고 탄약 있는) 무기로 자동 교체
+        int switchTargetIndex = -1;
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            if (isWeaponUnlocked[i] && weaponAmmoList[i] > 0)
+            {
+                switchTargetIndex = i;
+                break;
+            }
+        }
+
+        if (switchTargetIndex != -1)
+        {
+            StartCoroutine(AutoSwitchRoutine(switchTargetIndex));
+        }
+        else
+        {
+            // 만약 정말 쏠 게 없다면 1번 강제 지급 (비상용)
+            Debug.Log("사용 가능한 무기 없음. 1번 강제 보급");
+            isWeaponUnlocked[0] = true;
+            weaponAmmoList[0] = GetFinalMaxAmmo(weapons[0]);
+            EquipWeapon(0);
+        }
+    }
+
+    // [신규] 자동 교체 딜레이
+    private IEnumerator AutoSwitchRoutine(int targetIndex)
+    {
+        if (shootCoroutine != null) StopCoroutine(shootCoroutine);
+        isHoldingTrigger = false;
+
+        if (UIManager.Instance != null) UIManager.Instance.ShowReloading(true);
+        if (SoundManager.Instance != null) SoundManager.Instance.PlaySFX(SoundManager.Instance.reload);
+
+        yield return new WaitForSeconds(1.0f); // 교체 시간 (reloadTime보다 짧게)
+
+        EquipWeapon(targetIndex);
+
+        if (UIManager.Instance != null) UIManager.Instance.ShowReloading(false);
+    }
+
+    // [신규] UI 갱신 헬퍼
+    private void RefreshUI()
+    {
+        if (UIManager.Instance != null)
+        {
+            int current = weaponAmmoList[currentWeaponIndex];
+            int max = GetFinalMaxAmmo(weapons[currentWeaponIndex]);
+
+            UIManager.Instance.UpdateAmmo(current, max);
+            UIManager.Instance.UpdateWeaponName(currentWeapon.weaponName);
+
+            // 슬롯 UI가 있다면 여기서 갱신 (UIManager에 UpdateWeaponSlots 함수 필요)
+            UIManager.Instance.UpdateWeaponSlots(isWeaponUnlocked, currentWeaponIndex);
+        }
+    }
+
+    // [신규] 인자 받는 GetFinalMaxAmmo 오버로딩
+    private int GetFinalMaxAmmo(WeaponStats weapon)
+    {
+        float multiplier = GameManager.Instance != null ? GameManager.Instance.globalAmmoMultiplier : 1.0f;
+        return Mathf.RoundToInt(weapon.maxAmmo * multiplier);
     }
 }
