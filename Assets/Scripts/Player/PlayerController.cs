@@ -62,13 +62,25 @@ public class PlayerController : MonoBehaviour
         if (GameManager.Instance != null && (GameManager.Instance.currentFloor >= -8 || GameManager.Instance.isRetry))
         {
             hasGun = true;
-            if (gunController != null) gunController.SetWeaponVisible(true);
             anim.SetBool("gunReady", true);
+
+            // [핵심 변경] 단순히 켜는 게 아니라, 0번 무기를 '장착'하는 함수를 호출
+            if (gunController != null)
+            {
+                gunController.EquipStartingWeapon();
+            }
         }
         else
         {
+            // 튜토리얼(-9층) 등: 총 없음 (맨손)
             hasGun = false;
-            if (gunController != null) gunController.SetWeaponVisible(false);
+            anim.SetBool("gunReady", false);
+
+            // [핵심 변경] 모든 무기 모델을 확실하게 숨김
+            if (gunController != null)
+            {
+                gunController.HideAllWeapons();
+            }
         }
 
         isDead = false;
@@ -119,10 +131,24 @@ public class PlayerController : MonoBehaviour
     public void AcquireGun()
     {
         hasGun = true;
-        if (gunController != null)
-            gunController.SetWeaponVisible(true);
 
-        anim.SetBool("gunReady", true);
+        // 1. 플레이어 애니메이션 변경 (총 든 자세)
+        if (anim != null) anim.SetBool("gunReady", true);
+
+        // 2. [핵심] 0번 무기(기본 무기) 장착 및 모델 켜기
+        if (gunController != null)
+        {
+            gunController.EquipStartingWeapon();
+        }
+
+        // 3. 숨겨뒀던 무기 UI(탄약, 슬롯 등) 표시
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.SetWeaponUIVisible(true);
+
+            // UI 켜지자마자 탄약 수치 즉시 갱신 (0/0으로 보이는 것 방지)
+            if (gunController != null) gunController.RefreshAmmoUI();
+        }
     }
 
     // --- 체력 관련 함수 ---

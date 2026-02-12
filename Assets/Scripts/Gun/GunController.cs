@@ -104,9 +104,17 @@ public class GunController : MonoBehaviour
 
         nextUnlockIndex = 2; // 다음 해금될 무기 번호
 
-        if (weapons.Count > 0)
+        if (playerController != null && playerController.hasGun)
         {
-            EquipWeapon(0);
+            if (weapons.Count > 0)
+            {
+                EquipWeapon(0);
+            }
+        }
+        else
+        {
+            // 총이 없다면(튜토리얼 등) -> 모든 모델 숨기기
+            HideAllWeapons();
         }
     }
 
@@ -115,15 +123,30 @@ public class GunController : MonoBehaviour
         if (GameManager.Instance != null && GameManager.Instance.isPaused) return;
         if (isReloading || isSwitching) return;
 
-        var keyboard = Keyboard.current;
-        if (keyboard == null) return;
+        var mouse = Mouse.current;
+        if (mouse != null)
+        {
+            float scrollY = mouse.scroll.ReadValue().y;
 
-        // 잠금 해제된 무기만 교체 가능
-        if (keyboard.digit1Key.wasPressedThisFrame) TrySwitchWeapon(0);
-        if (keyboard.digit2Key.wasPressedThisFrame) TrySwitchWeapon(1);
-        if (keyboard.digit3Key.wasPressedThisFrame) TrySwitchWeapon(2);
-        if (keyboard.digit4Key.wasPressedThisFrame) TrySwitchWeapon(3);
-        if (keyboard.digit5Key.wasPressedThisFrame) TrySwitchWeapon(4);
+            if (scrollY > 0) // 휠 올림 (다음 무기)
+            {
+                SwitchToNextWeapon();
+            }
+            else if (scrollY < 0) // 휠 내림 (이전 무기)
+            {
+                SwitchToPreviousWeapon();
+            }
+        }
+
+        //var keyboard = Keyboard.current;
+        //if (keyboard == null) return;
+
+        //// 잠금 해제된 무기만 교체 가능
+        //if (keyboard.digit1Key.wasPressedThisFrame) TrySwitchWeapon(0);
+        //if (keyboard.digit2Key.wasPressedThisFrame) TrySwitchWeapon(1);
+        //if (keyboard.digit3Key.wasPressedThisFrame) TrySwitchWeapon(2);
+        //if (keyboard.digit4Key.wasPressedThisFrame) TrySwitchWeapon(3);
+        //if (keyboard.digit5Key.wasPressedThisFrame) TrySwitchWeapon(4);
     }
 
     private int GetFinalDamage()
@@ -630,9 +653,10 @@ public class GunController : MonoBehaviour
     }
 
     // [신규] 탄약 소진 시 다음 무기 해금 및 교체 로직
+    // [수정] 탄약 소진 시 로직 (순서대로 해금 및 즉시 교체)
     private void HandleWeaponDepleted()
     {
-        // 1. [수정] 다 쓴 무기의 이펙트와 소리 즉시 끄기
+        // 1. 다 쓴 무기 정리 (이펙트, 소리 끄기)
         if (currentWeapon.weaponParticle != null)
         {
             currentWeapon.weaponParticle.Stop();
@@ -642,8 +666,6 @@ public class GunController : MonoBehaviour
             gunAudioSource.Stop();
             gunAudioSource.loop = false;
         }
-
-        // 발사 상태 강제 해제
         isHoldingTrigger = false;
         if (shootCoroutine != null)
         {
@@ -653,52 +675,43 @@ public class GunController : MonoBehaviour
 
         Debug.Log($"{currentWeapon.weaponName} 탄약 소진! 무기를 잠급니다.");
 
-        // 2. 현재 무기 잠금
+        // 2. 현재 무기 잠금 (확실하게 잠금)
         isWeaponUnlocked[currentWeaponIndex] = false;
 
-        // 3. [핵심 수정] "이미 열려있는 무기"는 건너뛰고, "잠겨있는 다음 무기"를 찾습니다.
-        // 이렇게 해야 무기 개수가 줄어들지 않고 계속 2개씩 유지됩니다.
+        // 3. [핵심] 다음 해금할 무기 가져오기
+        // nextUnlockIndex는 Start()에서 이미 2로 설정되어 있고, 
+        // 무기가 바뀔 때마다 계속 다음 순번을 가리키고 있습니다.
         int unlockTargetIndex = nextUnlockIndex;
-        int safetyCount = 0; // 무한루프 방지용
 
-        // 잠겨있는 무기가 나올 때까지 인덱스를 계속 넘김
+        // 방어 코드: 만약 해금하려는 게 이미 열려있다면(꼬임 방지), 
+        // 닫혀있는 걸 찾을 때까지 뒤로 넘어감
+        int safetyCount = 0;
         while (isWeaponUnlocked[unlockTargetIndex] && safetyCount < weapons.Count)
         {
             unlockTargetIndex = (unlockTargetIndex + 1) % weapons.Count;
             safetyCount++;
         }
 
-        // 4. 찾은 무기 해제 및 탄약 리필
+        // 4. 새 무기 해금 및 탄약 충전
         isWeaponUnlocked[unlockTargetIndex] = true;
         weaponAmmoList[unlockTargetIndex] = GetFinalMaxAmmo(weapons[unlockTargetIndex]);
         Debug.Log($"새로운 무기 해제: {weapons[unlockTargetIndex].weaponName}");
 
-        // 다음 해금 순서는 이번에 연 것의 다음 번호로 설정
-        nextUnlockIndex = (unlockTargetIndex + 1) % weapons.Count;
+        // 5. [중요] 다음 해금 순서 미리 갱신해두기
+        // 이번에 unlockTargetIndex를 열었으니, 그 다음 번호부터 검사해서 잠긴 걸 찾음
+        int tempNextIndex = (unlockTargetIndex + 1) % weapons.Count;
+        safetyCount = 0;
+        // 잠겨있는 무기가 나올 때까지 계속 다음으로 넘김
+        while (isWeaponUnlocked[tempNextIndex] && safetyCount < weapons.Count)
+        {
+            tempNextIndex = (tempNextIndex + 1) % weapons.Count;
+            safetyCount++;
+        }
+        nextUnlockIndex = tempNextIndex; // 찾은 값을 저장
 
-        // 5. 사용 가능한(열려있고 탄약 있는) 무기로 자동 교체
-        int switchTargetIndex = -1;
-        for (int i = 0; i < weapons.Count; i++)
-        {
-            if (isWeaponUnlocked[i] && weaponAmmoList[i] > 0)
-            {
-                switchTargetIndex = i;
-                break;
-            }
-        }
-
-        if (switchTargetIndex != -1)
-        {
-            StartCoroutine(AutoSwitchRoutine(switchTargetIndex));
-        }
-        else
-        {
-            // 만약 정말 쏠 게 없다면 1번 강제 지급 (비상용)
-            Debug.Log("사용 가능한 무기 없음. 1번 강제 보급");
-            isWeaponUnlocked[0] = true;
-            weaponAmmoList[0] = GetFinalMaxAmmo(weapons[0]);
-            EquipWeapon(0);
-        }
+        // 6. [해결책] "새로 해금된 무기"로 즉시 교체!
+        // 예전에는 '사용 가능한 아무거나'를 찾았지만, 이제는 unlockTargetIndex로 바로 바꿉니다.
+        StartCoroutine(AutoSwitchRoutine(unlockTargetIndex));
     }
 
     // [신규] 자동 교체 딜레이
@@ -747,5 +760,74 @@ public class GunController : MonoBehaviour
     {
         float multiplier = GameManager.Instance != null ? GameManager.Instance.globalAmmoMultiplier : 1.0f;
         return Mathf.RoundToInt(weapon.maxAmmo * multiplier);
+    }
+
+    // [신규] 모든 무기 모델을 강제로 끄는 함수 (맨손 상태)
+    public void HideAllWeapons()
+    {
+        if (weapons == null) return;
+
+        foreach (var weapon in weapons)
+        {
+            if (weapon.weaponModel != null)
+            {
+                weapon.weaponModel.SetActive(false);
+            }
+            if (weapon.weaponParticle != null)
+            {
+                weapon.weaponParticle.gameObject.SetActive(false);
+            }
+        }
+
+        // 현재 무기 정보도 초기화 (안 하면 쏠 수 있음)
+        //currentWeaponIndex = -1; // 인덱스는 놔두더라도
+        currentWeapon = null;    // 무기 데이터는 비워야 안전함
+    }
+
+    // [신규] 외부(PlayerController)에서 총 먹었을 때 호출할 함수
+    public void EquipStartingWeapon()
+    {
+        // 0번(기본 무기) 장착
+        if (weapons.Count > 0)
+        {
+            EquipWeapon(0);
+        }
+    }
+
+    // [신규] 다음 무기로 교체 (휠 올림)
+    private void SwitchToNextWeapon()
+    {
+        int nextIndex = currentWeaponIndex;
+        // 최대 무기 개수만큼 반복하며 찾음
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            nextIndex = (nextIndex + 1) % weapons.Count; // 인덱스 증가 및 순환 (0->1->2->0)
+
+            // 해금되었고 & 탄약이 있고 & 현재 무기가 아니라면 교체
+            if (isWeaponUnlocked[nextIndex] && weaponAmmoList[nextIndex] > 0 && nextIndex != currentWeaponIndex)
+            {
+                TrySwitchWeapon(nextIndex);
+                return;
+            }
+        }
+    }
+
+    // [신규] 이전 무기로 교체 (휠 내림)
+    private void SwitchToPreviousWeapon()
+    {
+        int prevIndex = currentWeaponIndex;
+        // 최대 무기 개수만큼 반복하며 찾음
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            prevIndex--;
+            if (prevIndex < 0) prevIndex = weapons.Count - 1; // 인덱스 감소 및 순환 (0->2->1->0)
+
+            // 해금되었고 & 탄약이 있고 & 현재 무기가 아니라면 교체
+            if (isWeaponUnlocked[prevIndex] && weaponAmmoList[prevIndex] > 0 && prevIndex != currentWeaponIndex)
+            {
+                TrySwitchWeapon(prevIndex);
+                return;
+            }
+        }
     }
 }

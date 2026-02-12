@@ -522,6 +522,19 @@ public class UIManager : MonoBehaviour
         // 일시정지 패널 등 시스템 UI는 ESC 작동을 위해 유지됩니다.
     }
 
+    public void SetWeaponUIVisible(bool isVisible)
+    {
+        if (weaponSlotPanel != null) weaponSlotPanel.SetActive(isVisible);
+        if (weaponNameText != null) weaponNameText.gameObject.SetActive(isVisible);
+        if (ammoText != null) ammoText.gameObject.SetActive(isVisible); // 탄약 텍스트도 같이 숨기는 게 자연스럽습니다.
+
+        // 무기 슬롯이 보일 때만 초기화 한번 해주기 (선택적)
+        if (isVisible && weaponSlotImages != null)
+        {
+            // 켜질 때 갱신이 필요하다면 여기서 로직 추가 가능
+        }
+    }
+
     public void ResetGameUI()
     {
         isEnding = false; // 엔딩 상태 해제
@@ -529,7 +542,17 @@ public class UIManager : MonoBehaviour
         // 1. 기본 HUD 켜기
         if (floorPanel != null) floorPanel.SetActive(true);
         if (upgradePanel != null) upgradePanel.SetActive(false); // 업그레이드는 꺼진게 기본
-        if (weaponSlotPanel != null) weaponSlotPanel.SetActive(true);
+        bool showWeaponUI = true;
+
+        if (GameManager.Instance != null)
+        {
+            // -9층(튜토리얼)이면서, 재시작(Retry) 상태가 아니면 숨김
+            if (GameManager.Instance.currentFloor == -9 && !GameManager.Instance.isRetry)
+            {
+                showWeaponUI = false;
+            }
+        }
+        SetWeaponUIVisible(showWeaponUI);
         // 아이콘 다시 켜기
         if (playerIcon != null)
         {
@@ -538,8 +561,8 @@ public class UIManager : MonoBehaviour
         }
 
         if (bioSampleImg != null) bioSampleImg.gameObject.SetActive(true);
-        if (weaponNameText != null) weaponNameText.gameObject.SetActive(true);
-        if (ammoText != null) ammoText.gameObject.SetActive(true);
+        //if (weaponNameText != null) weaponNameText.gameObject.SetActive(true);
+        //if (ammoText != null) ammoText.gameObject.SetActive(true);
         if (bioSampleText != null) bioSampleText.gameObject.SetActive(true);
 
         // 2. 미션/발전기 관련은 튜토리얼 룸에서는 꺼져있는 게 맞음

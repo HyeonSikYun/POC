@@ -114,7 +114,7 @@ public class LanguageManager : MonoBehaviour
 
         localizedData.Add("TUTORIAL_MOVE", new string[] { "WASD를 눌러 이동하세요.", "Press WASD to move." });
         localizedData.Add("TUTORIAL_GunPickup", new string[] { "전방의 무기를 획득하세요.", "Acquire the weapon ahead." });
-        localizedData.Add("TUTORIAL_GunShoot", new string[] { "프로토타입 무기 가동.\n[L-Click]으로 타겟을 제거하세요.", "Prototype weapon activated.\nEliminate targets with [L-Click]." });
+        localizedData.Add("TUTORIAL_GunShoot", new string[] { "<color=yellow>[L-Click]</color> 사격, <color=yellow>[Wheel]</color> 교체.\n탄약 소진 시 <color=#00ff00>새로운 무기가 순차적으로 지급</color>됩니다.", "<color=yellow>[L-Click]</color> Fire, <color=yellow>[Wheel]</color> Swap.\nWeapons <color=#00ff00>cycle automatically</color> when ammo is depleted." });
         localizedData.Add("TUTORIAL_Sample", new string[] { "바이오 캡슐을 획득하세요.", "Collect Bio Capsules." });
         localizedData.Add("TUTORIAL_Tap", new string[] { "[TAB] 키를 눌러 능력치를 강화하세요.", "Press [TAB] to upgrade your abilities." });
         localizedData.Add("TUTORIAL_FinUpgrade", new string[] { "보안 프로토콜 해제.\n다음 구역으로 이동하십시오.", "Security protocol disabled.\nProceed to the next sector." });
