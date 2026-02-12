@@ -16,6 +16,8 @@ public class EndingCreditScroller : MonoBehaviour
     {
         UpdateStatsText();
         StartCoroutine(ScrollRoutine());
+        if (AchiManager.Instance != null)
+            AchiManager.Instance.UnlockAchi(0);
     }
 
     private void UpdateStatsText()

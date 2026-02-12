@@ -132,6 +132,9 @@ public class PlayerController : MonoBehaviour
     {
         hasGun = true;
 
+        if (AchiManager.Instance != null)
+            AchiManager.Instance.UnlockAchi(1);
+
         // 1. 플레이어 애니메이션 변경 (총 든 자세)
         if (anim != null) anim.SetBool("gunReady", true);
 
