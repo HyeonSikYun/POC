@@ -377,7 +377,7 @@ public class GunController : MonoBehaviour
 
         Vector3 baseDirection;
         float distanceToMouse = Vector3.Distance(transform.position, targetPoint);
-        float deadZoneRadius = 2.0f;
+        float deadZoneRadius = 3.0f;
 
         if (distanceToMouse < deadZoneRadius)
         {

@@ -344,7 +344,7 @@ public class PlayerController : MonoBehaviour
                 float dist = lookPos.magnitude;
 
                 // 거리가 가까우면(예: 2.0f 이내) 즉시 회전, 멀면 부드럽게 회전
-                if (dist < 2.0f)
+                if (dist < 3.0f)
                 {
                     // 방법 A: 즉시 회전 (가장 반응 빠름)
                     transform.rotation = targetRotation;
