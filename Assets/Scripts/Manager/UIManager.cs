@@ -18,7 +18,8 @@ public class UIManager : MonoBehaviour
     public Image[] weaponSlotImages;
     public Sprite[] normalWeaponSprites; // 일반 총 이미지 5개
     public Sprite[] lockedWeaponSprites; // 잠긴 총 이미지 5개
-
+    public GameObject[] nextLabels;
+    public Color nextPreviewColor = new Color(0f, 0f, 0f, 0.6f);
     public Color activeColor = Color.white;   // 선택된 무기 색상 (보통 흰색)
     public Color unlockedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
     public Color inactiveColor = new Color(0.6f, 0.6f, 0.6f, 1f); // 미선택(해금됨) 색상 (약간 어둡게)
@@ -85,17 +86,6 @@ public class UIManager : MonoBehaviour
     {
         if (Instance == null) { Instance = this; } 
         else { Destroy(gameObject); }
-    }
-
-    private void Start()
-    {
-        ResetGameUI();
-        ShowGeneratorUI(false);
-        if (missionPanelGroup != null)
-        {
-            missionPanelGroup.alpha = 0f; // 투명하게 시작
-            missionPanelGroup.gameObject.SetActive(false);
-        }
 
         if (weaponSlotImages != null)
         {
@@ -109,6 +99,19 @@ public class UIManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void Start()
+    {
+        ResetGameUI();
+        ShowGeneratorUI(false);
+        if (missionPanelGroup != null)
+        {
+            missionPanelGroup.alpha = 0f; // 투명하게 시작
+            missionPanelGroup.gameObject.SetActive(false);
+        }
+
+        
     }
 
     // --- [핵심 추가] 버튼 연결용 중계 함수 (Bridge) ---
@@ -452,45 +455,53 @@ public class UIManager : MonoBehaviour
         iconMoveCoroutine = null; // 초기화
     }
 
-    public void UpdateWeaponSlots(bool[] unlockedStates, int currentIndex)
+    public void UpdateWeaponSlots(bool[] unlockedStates, int currentIndex, int nextUnlockIndex)
     {
         if (weaponSlotImages == null) return;
-        // 방어 코드: Start가 실행되기 전에 호출될 경우를 대비
-        if (originalScales == null || originalScales.Length != weaponSlotImages.Length) return;
 
         for (int i = 0; i < weaponSlotImages.Length; i++)
         {
             if (weaponSlotImages[i] == null) continue;
 
-            // 1. 현재 선택된 무기 (Selected)
+            // 1. NEXT 라벨 켜고 끄기 (이건 유지!)
+            // "다음 순서"인 슬롯에만 NEXT 글자가 뜸
+            if (nextLabels != null && i < nextLabels.Length && nextLabels[i] != null)
+            {
+                bool isNext = (i == nextUnlockIndex);
+                nextLabels[i].SetActive(isNext);
+            }
+
+            // 2. 아이콘 및 색상 결정
+
+            // A. 현재 선택된 무기 (Current)
             if (i == currentIndex)
             {
-                // 이미지 & 색상 변경
                 if (normalWeaponSprites != null && i < normalWeaponSprites.Length)
                     weaponSlotImages[i].sprite = normalWeaponSprites[i];
-                weaponSlotImages[i].color = activeColor;
 
-                // [크기] 원래 크기 * 1.2배 (살짝 키움)
+                weaponSlotImages[i].color = activeColor;
                 weaponSlotImages[i].rectTransform.localScale = originalScales[i] * 1.4f;
             }
-            // 2. 해금됐지만 안 쓰는 무기 (Unlocked)
+            // B. 해금됐지만 안 쓰는 무기 (Unlocked)
             else if (unlockedStates[i])
             {
                 if (normalWeaponSprites != null && i < normalWeaponSprites.Length)
                     weaponSlotImages[i].sprite = normalWeaponSprites[i];
-                weaponSlotImages[i].color = unlockedColor;
 
-                // [크기] 원래 크기로 복구
+                weaponSlotImages[i].color = unlockedColor;
                 weaponSlotImages[i].rectTransform.localScale = originalScales[i];
             }
-            // 3. 잠긴 무기 (Locked)
+            // C. 잠긴 무기 (Locked) -> [수정됨] 실루엣 로직 삭제
             else
             {
+                // 무조건 자물쇠 아이콘 사용
                 if (lockedWeaponSprites != null && i < lockedWeaponSprites.Length)
                     weaponSlotImages[i].sprite = lockedWeaponSprites[i];
+
+                // 색상도 그냥 흰색 (실루엣 효과 X)
                 weaponSlotImages[i].color = Color.white;
 
-                // [크기] 원래 크기로 복구
+                // 크기는 원래대로
                 weaponSlotImages[i].rectTransform.localScale = originalScales[i];
             }
         }

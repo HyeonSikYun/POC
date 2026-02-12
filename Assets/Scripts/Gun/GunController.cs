@@ -751,7 +751,7 @@ public class GunController : MonoBehaviour
             UIManager.Instance.UpdateWeaponName(currentWeapon.weaponName);
 
             // 슬롯 UI가 있다면 여기서 갱신 (UIManager에 UpdateWeaponSlots 함수 필요)
-            UIManager.Instance.UpdateWeaponSlots(isWeaponUnlocked, currentWeaponIndex);
+            UIManager.Instance.UpdateWeaponSlots(isWeaponUnlocked, currentWeaponIndex, nextUnlockIndex);
         }
     }
 
